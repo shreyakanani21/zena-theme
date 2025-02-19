@@ -1,0 +1,194 @@
+<div class="product-section-box pb-0 pt-5">
+  <div class="custom-container container">
+    <div class="product-bundle">
+      <div class="d-xl-flex d-block align-items-start gap-5">
+        <div class="bundle-main-box scrollable-theme">
+          <ul class="d-flex align-items-start">
+            <li>
+              <div class="product-box-5" id="current-product-box">
+                <!-- Placeholder for current product -->
+              </div>
+            </li>
+            <li style="align-self: center;">+</li>
+            <li>
+              <div class="product-box-5" id="related-product-box">
+                <!-- Placeholder for first related product -->
+              </div>
+            </li>
+            <li style="align-self: center;">+</li>
+            <li>
+              <div class="product-box-5" id="second-related-product-box">
+                <!-- Placeholder for second related product -->
+              </div>
+            </li>
+          </ul>
+          <ul id="bundle-checklist">
+            <!-- Placeholder for checklist of products -->
+          </ul>
+        </div>
+        <div class="bundle-list">
+          <h6>Total price:</h6>
+          <h5 id="total-price">₹0.00</h5>
+          <a class="btn" id="add-to-cart-button" href="#">Add selected to cart</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    const productId = {{ product.id }};
+    const currentProductBox = document.getElementById('current-product-box');
+    const relatedProductBox = document.getElementById('related-product-box');
+    const secondRelatedProductBox = document.getElementById('second-related-product-box');
+    const bundleChecklist = document.getElementById('bundle-checklist');
+    const totalPriceContainer = document.getElementById('total-price');
+    const addToCartButton = document.getElementById('add-to-cart-button');
+
+    // Fetch recommendations
+    const fetchRecommendations = async () => {
+      try {
+        const response = await fetch(`/recommendations/products.json?product_id=${productId}`);
+        const data = await response.json();
+        return data.products.slice(0, 2); // Limit to 2 related products
+      } catch (error) {
+        console.error('Error fetching recommendations:', error);
+        return [];
+      }
+    };
+
+    // Render products
+    const renderProducts = async () => {
+      const recommendations = await fetchRecommendations();
+
+      // Render Current Product
+      currentProductBox.innerHTML = `
+        <div class="img-wrapper">
+          <div class="product-image text-center">
+            <a href="{{ product.url }}">
+              <img class="img-fluid" src="{{ product.featured_image | img_url: 'medium' }}" alt="{{ product.title }}">
+            </a>
+          </div>
+          <div class="product-detail">
+            <h6>{{ product.title }}</h6>
+            <p>{{ product.price | money_without_trailing_zeros }} <del>{{ product.compare_at_price | money_without_trailing_zeros }}</del></p>
+          </div>
+        </div>
+      `;
+
+      // Handle first related product
+      if (recommendations[0]) {
+        const firstProduct = recommendations[0];
+        relatedProductBox.innerHTML = `
+          <div class="img-wrapper">
+            <div class="product-image text-center">
+              <a href="${firstProduct.url}">
+                <img class="img-fluid" src="${firstProduct.featured_image}" alt="${firstProduct.title}">
+              </a>
+            </div>
+            <div class="product-detail">
+              <h6>${firstProduct.title}</h6>
+              <p>Rs.${(firstProduct.price / 100)} <del>Rs.${firstProduct.compare_at_price / 100}</del></p>
+            </div>
+          </div>
+        `;
+      } else {
+        // Hide the related product box and the '+' sign if the product doesn't exist
+        relatedProductBox.parentElement.style.display = 'none';
+        relatedProductBox.parentElement.previousElementSibling.style.display = 'none'; // Hide the "+" sign
+      }
+
+      // Handle second related product
+      if (recommendations[1]) {
+        const secondProduct = recommendations[1];
+        secondRelatedProductBox.innerHTML = `
+          <div class="img-wrapper">
+            <div class="product-image text-center">
+              <a href="${secondProduct.url}">
+                <img class="img-fluid" src="${secondProduct.featured_image}" alt="${secondProduct.title}">
+              </a>
+            </div>
+            <div class="product-detail">
+              <h6>${secondProduct.title}</h6>
+              <p>Rs.${(secondProduct.price / 100)} <del>Rs.${secondProduct.compare_at_price / 100}</del></p>
+            </div>
+          </div>
+        `;
+      } else {
+        // Hide the second related product box and the '+' sign if the product doesn't exist
+        secondRelatedProductBox.parentElement.style.display = 'none';
+        secondRelatedProductBox.parentElement.previousElementSibling.style.display = 'none'; // Hide the "+" sign
+      }
+
+      // Render Checklist with all available products
+      bundleChecklist.innerHTML = `
+        <li>
+          <input class="custom-checkbox" id="product-current" type="checkbox" data-id="{{ product.variants.first.id }}" data-price="{{ product.price }}" checked>
+          <label for="product-current">{{ product.title }} <b>₹{{ product.price | money_without_currency }}</b></label>
+        </li>
+        ${recommendations[0] ? `
+        <li>
+          <input class="custom-checkbox" id="product-${recommendations[0].id}" type="checkbox" data-id="${recommendations[0].variants[0].id}" data-price="${recommendations[0].price}" checked>
+          <label for="product-${recommendations[0].id}">${recommendations[0].title} <b>₹${(recommendations[0].price / 100).toFixed(2)}</b></label>
+        </li>
+        ` : ''}
+        ${recommendations[1] ? `
+        <li>
+          <input class="custom-checkbox" id="product-${recommendations[1].id}" type="checkbox" data-id="${recommendations[1].variants[0].id}" data-price="${recommendations[1].price}" checked>
+          <label for="product-${recommendations[1].id}">${recommendations[1].title} <b>₹${(recommendations[1].price / 100).toFixed(2)}</b></label>
+        </li>
+        ` : ''}
+      `;
+
+      // Update total price and handle checkbox change
+      const updateTotalPrice = () => {
+        const selectedPrices = Array.from(document.querySelectorAll('.custom-checkbox:checked'))
+          .map(cb => parseFloat(cb.getAttribute('data-price')) / 100);
+        const totalPrice = selectedPrices.reduce((a, b) => a + b, 0);
+        totalPriceContainer.textContent = `₹${totalPrice.toFixed(2)}`;
+      };
+
+      document.querySelectorAll('.custom-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', updateTotalPrice);
+      });
+
+      // Initialize total price
+      updateTotalPrice();
+
+      // Handle Add to Cart
+      addToCartButton.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const selectedProducts = Array.from(document.querySelectorAll('.custom-checkbox:checked'))
+          .map(cb => ({
+            id: cb.getAttribute('data-id'), 
+            quantity: 1 
+          }));
+
+        if (selectedProducts.length > 0) {
+          try {
+            const addItemsToCart = async () => {
+              for (const product of selectedProducts) {
+                await fetch('/cart/add.js', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                  },
+                  body: JSON.stringify({ items: [{ id: product.id, quantity: product.quantity }] })
+                });
+              }
+            };
+
+            await addItemsToCart();
+            window.location.href = '/cart';
+          } catch (error) {
+            console.error('Error adding products to cart:', error);
+          }
+        }
+      });
+    };
+
+    renderProducts();
+  });
+</script>

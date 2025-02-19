@@ -1,0 +1,347 @@
+<section
+  class="review-section {% if section.settings.section_padding == 'top' %}section-t-space{% elsif section.settings.section_padding == 'bottom' %}section-b-space{% elsif section.settings.section_padding == 'both' %}section-space{% endif %}"
+  data-aos="fade-up"
+  data-aos-duration="700"
+>
+  <div class="{% if section.settings.section_width == 'fluid' %}container-fluid{% else %}custom-container container{% endif %}">
+    <div class="title">
+      <h2 style="color: {{ section.settings.section_title_color }};text-align:{{ section.settings.title_align }};">
+        {{ section.settings.section_title }}
+      </h2>
+    </div>
+    <div class="review-slider slick">
+      <div
+        class="slick-review"
+        data-slick='{"slidesToShow": {{ section.settings.slide_main }}, "slidesToScroll": 1, "autoplay": {{ section.settings.use_autoplay | json }}, "autoplaySpeed": {{ section.settings.slider_speed }}000, "infinite": {{ section.settings.use_loop | json }}, "centerMode": true, "centerPadding": "0px", {% if section.settings.slider_pagination == "dot" %}"dots": true, "arrows": false {% elsif section.settings.slider_pagination == "arrow" %}"arrows": true {% else %} "arrows": false {% endif %}, "responsive": [{"breakpoint":1600,"settings":{"slidesToShow":{{ section.settings.slide_2xl }},"slidesToScroll":1, "centerPadding": "0px"}},{"breakpoint":1200,"settings":{"slidesToShow":{{ section.settings.slide_xl }},"slidesToScroll":1, "centerPadding": "0px"}},{"breakpoint":992,"settings":{"slidesToShow":{{ section.settings.slide_lg }},"slidesToScroll":1, "centerPadding": "0px"}},{"breakpoint":768,"settings":{"slidesToShow":{{ section.settings.slide_md }},"slidesToScroll":1, "centerPadding": "0px"}},{"breakpoint":576,"settings":{"slidesToShow":{{ section.settings.slide_sm }},"slidesToScroll":1, "centerPadding": "0px"}} ]}'
+      >
+        {% for block in section.blocks %}
+          <div class="slick-slide">
+            {% assign is_even = forloop.index | modulo: 2 %}
+            <div class="review-block {% if is_even == 0 %}even-block{% endif %}">
+              <div class="review-rating">
+                {% for i in (1..5) %}
+                  {% if i <= block.settings.review_stars %}
+                    {% render 'icon-star', color: section.settings.review_star_color %}
+                  {% else %}
+                    {% render 'icon-star', color: section.settings.review_nostar_color %}
+                  {% endif %}
+                {% endfor %}
+              </div>
+              <div class="review-content">
+                <p style="color: {{ section.settings.review_description_color }};">
+                  {{ block.settings.review_description }}
+                </p>
+                <h5 style="color: {{ section.settings.review_name_color }};">– {{ block.settings.review_name }}</h5>
+                <span style="color: {{ section.settings.review_svg_color }};">
+                  {% render 'icon-quote-right' %}
+                </span>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+      <div class="slick-pagination"></div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+    "name": "Customer Reviews",
+    "settings": [
+        {
+            "type": "select",
+            "id": "section_width",
+            "label": "Section Width",
+            "options": [
+                {
+                    "value": "fluid",
+                    "label": "Full Width"
+                },
+                {
+                    "value": "normal",
+                    "label": "Standard Width"
+                }
+            ],
+            "default": "fluid"
+        },
+            {
+        "type": "select",
+        "id": "section_padding",
+        "label": "Section Padding",
+        "options": [
+          {
+            "value": "top",
+            "label": "Top"
+          },
+          {
+            "value": "bottom",
+            "label": "Bottom"
+          },
+          {
+            "value": "both",
+            "label": "Top & Bottom"
+          }
+        ],
+        "default": "top"
+      },
+        {
+            "type": "text",
+            "id": "section_title",
+            "label": "Section Title",
+            "default": "Title"
+        },
+        {
+            "type": "color",
+            "id": "section_title_color",
+            "label": "Title Color"
+        },
+        {
+            "type": "select",
+            "id": "title_align",
+            "label": "Title Alignment",
+            "options": [
+                {
+                    "label": "Left",
+                    "value": "left"
+                },
+                {
+                    "label": "Center",
+                    "value": "center"
+                },
+                {
+                    "label": "Right",
+                    "value": "right"
+                }
+            ],
+            "default": "center"
+        },
+        {
+            "type": "header",
+            "content": "Review Card Settings"
+        },
+        {
+            "type": "color",
+            "id": "review_star_color",
+            "label": "Rating Color"
+        },
+        {
+            "type": "color",
+            "id": "review_nostar_color",
+            "label": "Empty Rating Color"
+        },
+        {
+            "type": "color",
+            "id": "review_description_color",
+            "label": "Description Color"
+        },
+        {
+            "type": "color",
+            "id": "review_name_color",
+            "label": "Name Color"
+        },
+        {
+            "type": "color",
+            "id": "review_svg_color",
+            "label": "Quote Symbol Color"
+        },
+        {
+        "type": "header",
+        "content": "Slider Settings( Only for Slider layout )"
+      },
+      {
+        "type": "checkbox",
+        "id": "use_autoplay",
+        "label": "Enable Autoplay",
+        "info": "Enable to activate autoplay for the slider.",
+        "default": false
+      },
+      {
+        "type": "range",
+        "id": "slider_speed",
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "label": "Autoplay Speed In Milliseconds",
+        "unit": "sec",
+        "default": 3
+      },
+      {
+        "type": "checkbox",
+        "id": "use_loop",
+        "label": "Enable Infinite Loop Sliding",
+        "default": false
+      },
+   {
+        "type": "select",
+        "id": "slider_pagination",
+        "label": "Slider Pagination",
+        "options": [
+          {
+            "label": "Dots",
+            "value": "dot"
+          },
+          {
+            "label": "Arrows",
+            "value": "arrow"
+          },
+          {
+            "label": "None",
+            "value": "none"
+          }
+        ],
+        "default": "none"
+      },
+    {
+        "type": "header",
+        "content": "Slider Breakpoints"
+      },
+      {
+        "type": "range",
+        "id": "slide_main",
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "default": 7,
+        "label": "Slides To Show"
+      },
+      {
+        "type": "header",
+        "content": "Breakpoint: 1600px"
+      },
+      {
+        "type": "range",
+        "id": "slide_2xl",
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "default": 6,
+        "label": "Slides To Show"
+      },
+      {
+        "type": "header",
+        "content": "Breakpoint: 1200px"
+      },
+      {
+        "type": "range",
+        "id": "slide_xl",
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "default": 6,
+        "label": "Slides To Show"
+      },
+      {
+        "type": "header",
+        "content": "Breakpoint: 992px"
+      },
+      {
+        "type": "range",
+        "id": "slide_lg",
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "default": 5,
+        "label": "Slides To Show"
+      },
+      {
+        "type": "header",
+        "content": "Breakpoint: 768px"
+      },
+      {
+        "type": "range",
+        "id": "slide_md",
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "default": 4,
+        "label": "Slides To Show"
+      },
+      {
+        "type": "header",
+        "content": "Breakpoint: 576px"
+      },
+      {
+        "type": "range",
+        "id": "slide_sm",
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "default": 3,
+        "label": "Slides To Show"
+      }
+    ],
+    "blocks": [
+        {
+            "type": "review_block",
+            "name": "Review Block",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "review_description",
+                    "label": "Review Description",
+                    "default": "Description..."
+                },
+                {
+                    "type": "text",
+                    "id": "review_name",
+                    "label": "Review Name",
+                    "default": "Name"
+                },
+                {
+                    "type": "range",
+                    "id": "review_stars",
+                    "label": "Number Of Stars",
+                    "min": 0,
+                    "max": 5,
+                    "step": 1,
+                    "default": 5
+                }
+            ]
+        }
+    ],
+    "presets": [
+        {
+            "name": "Customer Reviews"
+        }
+    ]
+}
+{% endschema %}
+
+<style>
+      /* Style for the Slick dots (pagination) */
+    .review-slider .slick-dots {
+      bottom: -30px; /* Adjust positioning if needed */
+      text-align: center; /* Center the dots */
+      padding: 0;
+    }
+
+    .review-slider .slick-dots li {
+      display: inline-block;
+      margin: 0 5px; /* Add spacing between the dots */
+    }
+
+   .review-slider .slick-dots li button {
+      width: 12px; /* Set the width of the dots */
+      height: 12px; /* Set the height of the dots */
+      border-radius: 50%; /* Make the dots round */
+      background-color:rgba(var(--theme-dark-secondary), 1); /* Default dot color */
+      border: none;
+      outline: none;
+      padding: 0;
+      transition: background-color 0.3s ease; /* Smooth transition on hover */
+    }
+
+    .review-slider .slick-dots li.slick-active button {
+      background-color: rgba(var(--theme-default), 1);
+      outline: 1px solid rgba(var(--theme-default), 1);
+    outline-offset: 2px;
+    }
+
+  .review-slider .slick-dots li.slick-active button:before{
+           opacity: 0;
+   }
+  .review-slider .slick-dots li button:before{
+         opacity: 0;
+  }
+</style>

@@ -1,0 +1,108 @@
+@keyframes rotating {
+    100% {
+        transform: rotate(-360deg);
+    }
+}
+
+@keyframes marquee-motion {
+    0% {
+        transform: translateX(0%);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+@keyframes tada {
+  0% {
+    transform: scaleX(1)
+  }
+
+  10% {
+    transform: scale3d(.9, .9, .9) rotate(-3deg)
+  }
+
+  20% {
+    transform: scale3d(.9, .9, .9) rotate(-3deg)
+  }
+
+  30% {
+    transform: scale3d(1.1, 1.1, 1.1) rotate(3deg)
+  }
+
+  50% {
+    transform: scale3d(1.1, 1.1, 1.1) rotate(3deg)
+  }
+
+  70% {
+    transform: scale3d(1.1, 1.1, 1.1) rotate(3deg)
+  }
+
+  90% {
+    transform: scale3d(1.1, 1.1, 1.1) rotate(3deg)
+  }
+
+  40% {
+    transform: scale3d(1.1, 1.1, 1.1) rotate(-3deg)
+  }
+
+  60% {
+    transform: scale3d(1.1, 1.1, 1.1) rotate(-3deg)
+  }
+
+  80% {
+    transform: scale3d(1.1, 1.1, 1.1) rotate(-3deg)
+  }
+
+  to {
+    transform: scaleX(1)
+  }
+}
+
+@keyframes fadeInDown {
+    0% {
+        opacity: 0;
+        transform: translate3d(0, -100%, 0);
+    }
+    
+    100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+@keyframes marquee-move-text {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes rotateIt {
+  to {
+    transform: rotate(-1turn);
+  }
+}
+
+@keyframes shine-effect {
+  0% {
+    left: -100%;
+  }
+  40% {
+    left: 100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+@keyframes horizontal-shaking{
+  0%, 18%, 100% {
+    transform: translateZ(0);
+}
+2%, 6%, 10%, 14% {
+    transform: translate3d(-5px, 0, 0);
+}
+4%, 8%, 12%, 16% {
+    transform: translate3d(5px, 0, 0);
+}
+}

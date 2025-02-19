@@ -1,0 +1,74 @@
+<section >
+<div class="instagram-section" style="background-color: {{ section.settings.post_bg_color }};">
+    <div class="{% if section.settings.section_width == 'fluid' %}container-fluid{% else %}custom-container container{% endif %}">
+      <div class="swiper post-slider">
+          <div class="swiper-wrapper">
+            {% for block in section.blocks %}
+            <div class="swiper-slide post-block">
+              <a href="{{ block.settings.post_url }}" style="color: {{ section.settings.post_text_color }};"> 
+               <img class="img-fluid" src="{{ block.settings.post_img | image_url }}">
+                <div class="hover-effect"> 
+                  <span>
+                    <i class="fa-brands fa-instagram"></i>
+                  </span>                  
+                </div>
+              </a>
+            </div>
+          {% endfor %}              
+          </div>
+      </div>
+  </div>
+</div>
+</section>
+
+{% schema %}
+  {
+  "name": "Instagram Post",
+  "settings": [
+      {
+      "type": "select",
+      "id": "section_width",
+      "label": "Section Width",
+      "options": [
+        {
+          "value": "fluid",
+          "label": "Full Width"
+        },
+        {
+          "value": "normal",
+          "label": "Standard Width"
+        }
+      ],
+      "default": "fluid"
+      },
+      {
+      "type": "color",
+      "id": "post_bg_color",
+      "label": "Background Color",
+      }, 
+      ],
+      "blocks": [
+      {
+        "type": "post_block",
+        "name": "Post Block",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "post_img",
+            "label": "Post Image"
+          },
+          {
+            "type": "url",
+            "id": "post_url",
+            "label": "Redirecting Url"
+          }
+        ]
+      }
+  ],
+  "presets": [
+      {
+        "name": "Instagram Post"
+      }
+    ]
+  }
+{% endschema %}

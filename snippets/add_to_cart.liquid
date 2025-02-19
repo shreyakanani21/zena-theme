@@ -1,0 +1,28 @@
+<div class="advanced_add_cart select-dropdown">
+      
+{% if settings.add_cart_btn == 'advanced' %}
+{% if product.available and product.variants.size > 1 %}
+<div class="advanced_add_cart">
+    <form action="/cart/add" method="post" enctype="multipart/form-data" id="add-to-cart-form">      
+        <select name="id" id="productSelect-{{ product.id }}" class="variantsList">
+          {% for variant in product.variants %}
+            {% if variant.available %}
+              <option value="{{ variant.id }}">{{ variant.title }}</option>
+            {% else %}
+              <option disabled="disabled">{{ variant.title }} - Sold Out</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      
+      <div class="qty-add-box d-flex">
+        <div class="qty-box d-flex">
+          <label for="quantity">Qty</label>
+          <input type="number" class="form-control input-number" id="quantity" name="quantity" min="1" value="1">
+        </div>
+        <button type="submit"  class="btn btn-solid" class="btn" style="flex: 0 0 48%;">Add</button> 
+      </div>     
+    </form>
+</div>
+{% endif %}
+{% endif %}
+</div>

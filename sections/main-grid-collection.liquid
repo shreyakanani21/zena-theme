@@ -1,0 +1,327 @@
+<script src="{{ 'left-filter.js' | asset_url }}" defer="defer"></script>
+
+{{ 'component-facets.css' | asset_url | stylesheet_tag }}
+{{ 'left-Sidebar.css' | asset_url | stylesheet_tag }}
+
+<section id="collections-filter-grid" class="section-b-space" data-collection-handle="{{ collection.handle }}">
+  <div class="custom-container container">
+    {% if section.settings.left_filter_type == 'vertical' %}
+      <div class="row py-5 vertical-sidebar">
+        <div class="col-3">
+          <h2 class="facets__heading facets__heading--vertical" id="verticalTitle" tabindex="-1">Filter:</h2>
+          {% render 'left-filters' %}
+        </div>
+        <div class="col-9">
+          <div class="d-flex justify-content-between pb-4 product-container">
+            <div>
+              {% render 'left-filters-sort' %}
+            </div>
+            <div>
+              {% render 'filter-grid-options' %}
+            </div>
+          </div>
+
+          {%- if collection.products.size == 0 -%}
+            No products in collection remove some filters
+
+          {% else %}
+            {%- paginate collection.products by section.settings.products_per_page -%}
+              <div
+                class="row-cols-2 row-cols-sm-3 row-cols-xl-4 row g-3 g-xl-4 product-list product-container product-paginate-grid"
+                id="product-grid-container"
+              >
+                {%- for product in collection.products -%}
+                  <div class="col">
+                    {% render 'left-card-product', card-product: product %}
+                  </div>
+                {% endfor %}
+
+                {%- if paginate.pages > 1 -%}
+                  {% render 'pagination', paginate: paginate, anchor: '', style: section.settings['pagination-style'] %}
+                {%- endif -%}
+              </div>
+            {% endpaginate %}
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if section.settings.left_filter_type == 'horizontal' %}
+      <div class="row horizantal-sidebar">
+        <!-- Horizontal filters for large screens -->
+        <div class="col-12">
+          {% render 'left-horizontal-filters' %}
+        </div>
+
+        <!-- Offcanvas filter button for small screens -->
+        <div class="col-12 horizontal-filter-buttons">
+          <div class="d-flex gap-5 pb-4 product-container">
+            <span
+              class="filter-drawer-btn"
+              type="button"
+              data-bs-toggle="offcanvas"
+              data-bs-target="#filterRight"
+              aria-controls="filterRight"
+            >
+              Filter Menu
+            </span>
+
+            <!-- Offcanvas that will show up on smaller screens -->
+            <div class="offcanvas offcanvas-end" tabindex="-1" id="filterRight" aria-labelledby="filterRightLabel">
+              <div class="offcanvas-header">
+                <h2 class="facets__heading facets__heading--vertical" id="verticalTitle" tabindex="-1">Filter:</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+              </div>
+              <div class="offcanvas-body">
+                {% render 'left-horizontal-filters' %}
+              </div>
+            </div>
+
+            <!-- Sort filters for both views -->
+            <div class="d-flex g-1">
+              {% render 'left-filters-sort' %}
+            </div>
+            <div>
+              {% render 'filter-grid-options' %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Product listing section -->
+        <div class="col-12">
+          {%- if collection.products.size == 0 -%}
+            No products in collection, remove some filters
+          {% else %}
+            {%- paginate collection.products by section.settings.products_per_page -%}
+              <div
+                class="row-cols-2 row-cols-md-3 row-cols-lg-4 row g-4 g-xl-4 product-list product-container product-paginate-grid"
+                id="product-grid-container"
+              >
+                {%- for product in collection.products -%}
+                  <div class="col">
+                    {% render 'left-card-product', card-product: product %}
+                  </div>
+                {% endfor %}
+
+                {%- if paginate.pages > 1 -%}
+                  {% render 'pagination', paginate: paginate, anchor: '', style: section.settings['pagination-style'] %}
+                {%- endif -%}
+              </div>
+            {% endpaginate %}
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if section.settings.left_filter_type == 'drawer' %}
+      <div class="row drawer-filter pt-4 filter-drawer">
+        <div class="d-flex justify-content-between gap-5 pb-4 product-container">
+          <span
+            class="filter-drawer-btn"
+            type="button"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#filterRight"
+            aria-controls="filterRight"
+          >
+            Filter Menu
+          </span>
+          <div class="offcanvas offcanvas-end" tabindex="-1" id="filterRight" aria-labelledby="filterRightLabel">
+            <div class="offcanvas-header">
+              <h2 class="facets__heading facets__heading--vertical" id="verticalTitle" tabindex="-1">Filter:</h2>
+              <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+              {% render 'left-filters' %}
+            </div>
+          </div>
+          <div class="d-flex gap-4 align-center">
+            <div>
+              {% render 'left-filters-sort' %}
+            </div>
+            <div>
+              {% render 'filter-grid-options' %}
+            </div>
+          </div>
+        </div>
+
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="filterRight" aria-labelledby="filterRightLabel">
+          <div class="offcanvas-header">
+            <h2 class="facets__heading facets__heading--vertical" id="verticalTitle" tabindex="-1">Filter:</h2>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            {% render 'left-filters' %}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <div class="col-12">
+              {%- if collection.products.size == 0 -%}
+                No products in collection remove some filters
+
+              {% else %}
+                {%- paginate collection.products by section.settings.products_per_page -%}
+                  <div
+                    class="row-cols-2 row-cols-md-3 row-cols-lg-4 row g-4 g-xl-4 product-list product-container product-paginate-grid"
+                    id="product-grid-container"
+                  >
+                    {%- for product in collection.products -%}
+                      <div class="col">
+                        {% render 'left-card-product', card-product: product %}
+                      </div>
+                    {% endfor %}
+
+                    {%- if paginate.pages > 1 -%}
+                      {% render 'pagination',
+                        paginate: paginate,
+                        anchor: '',
+                        style: section.settings['pagination-style']
+                      %}
+                    {%- endif -%}
+                  </div>
+                {% endpaginate %}
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "left-sidebar",
+  "class": "section",
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 8,
+      "max": 36,
+      "step": 4,
+      "default": 16,
+      "label": "t:sections.main-collection-product-grid.settings.products_per_page.label"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 4,
+      "label": "t:sections.main-collection-product-grid.settings.columns_desktop.label"
+    },
+    {
+      "type": "header",
+      "content": "pagination"
+    },
+    {
+      "type": "select",
+      "id": "pagination-style",
+      "label": "Pagination Style",
+      "options": [
+        {
+          "label": "Numbered",
+          "value": "number"
+        },
+        {
+          "label": "load more button",
+          "value": "load"
+        },
+        {
+          "label": "infinite scroll",
+          "value": "scroll"
+        }
+      ]
+    },
+     {
+      "type": "select",
+      "id": "left_filter_type",
+      "options": [
+        {
+          "value": "horizontal",
+          "label": "t:sections.main-collection-product-grid.settings.filter_type.options__1.label"
+        },
+        {
+          "value": "vertical",
+          "label": "t:sections.main-collection-product-grid.settings.filter_type.options__2.label"
+        },
+        {
+          "value": "drawer",
+          "label": "t:sections.main-collection-product-grid.settings.filter_type.options__3.label"
+        }
+      ],
+      "default": "vertical",
+      "label": "Desktop Filter Layout",
+      "info": "t:sections.main-collection-product-grid.settings.filter_type.info"
+    },
+  ]
+}
+{% endschema %}
+
+<style>
+  .horizantal-sidebar .pagination-wrap{
+    width:100%
+  }
+  .horizantal-sidebar .facets__disclosure-vertical .facets__summary:after{
+    right: -14px;
+  }
+  .offcanvas-body .remove-apply-btn{
+    display: flex;
+    justify-content: space-between;
+    width: 20%;
+    position: fixed;
+    bottom: 0;
+    padding: 18px;
+    background-color: white;
+    border-top: 1px solid lightgray;
+  }
+  .remove-apply-btn{
+    display:none;
+  }
+  .offcanvas-body .horizontal-filters{
+    display:block;
+  }
+</style>
+
+{% javascript %}
+document.addEventListener("DOMContentLoaded", function() {
+    // Get all filter inputs for both horizontal and offcanvas views
+    const horizontalFilters = document.querySelectorAll('.left-horizontal-filters .filter-element');
+    const offcanvasFilters = document.querySelectorAll('.offcanvas-body .filter-element');
+    
+    // Function to sync the filter state from horizontal to offcanvas and vice versa
+    function syncFilters(source, target) {
+        source.forEach(function(sourceFilter) {
+            const matchingFilter = target.querySelector(`[name="${sourceFilter.name}"]`);
+            if (matchingFilter) {
+                // Copy the value of the selected filter to the matching one
+                matchingFilter.value = sourceFilter.value;
+                // If it's a checkbox, copy checked status
+                if (sourceFilter.type === 'checkbox') {
+                    matchingFilter.checked = sourceFilter.checked;
+                }
+            }
+        });
+    }
+
+    // Event listener to update horizontal filters when offcanvas filters are changed
+    offcanvasFilters.forEach(function(offcanvasFilter) {
+        offcanvasFilter.addEventListener('change', function() {
+            syncFilters([offcanvasFilter], horizontalFilters);
+        });
+    });
+
+    // Event listener to update offcanvas filters when horizontal filters are changed
+    horizontalFilters.forEach(function(horizontalFilter) {
+        horizontalFilter.addEventListener('change', function() {
+            syncFilters([horizontalFilter], offcanvasFilters);
+        });
+    });
+
+    // Sync filters on initial load
+    syncFilters(horizontalFilters, offcanvasFilters);
+    syncFilters(offcanvasFilters, horizontalFilters);
+});
+{% endjavascript %}

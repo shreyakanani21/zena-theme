@@ -1,0 +1,140 @@
+<section class="{% if section.settings.section_padding == 'top' %}section-t-space{% elsif section.settings.section_padding == 'bottom' %}section-b-space{% elsif section.settings.section_padding == 'both' %}section-space{% endif %}">
+  <div class="{% if section.settings.section_width == 'fluid' %}container-fluid{% else %}custom-container container{% endif %}">
+    <div class="title">
+      <h2 style="color: {{ section.settings.section_title_color }};text-align:{{ section.settings.title_align }};">
+      {{ section.settings.section_title }}
+    </h2>
+    <div class="swiper blog-slider">
+      <div class="swiper-wrapper">
+        {% assign latest_articles = section.settings.blog.articles %}
+        {% for article in latest_articles limit: section.settings.blog_number %}
+          <div class="swiper-slide blog-main">
+              <a class="blog-img" href="{{ article.url }}">
+                  <img
+                    class="img-fluid"
+                    src="{{ article.image | image_url }}"
+                    alt="">
+                </a>
+              <div class="blog-content">
+                <a href="{{ article.url }}">
+                  <h5>
+                    {{ article.title }}
+                  </h5>
+                </a>
+                <p>
+                  {{ article.excerpt }}
+                </p>  
+                <div class="btn_group">
+                  <a class="btn btn_secondary"
+                  href="{{ article.url }}"
+                  >
+                    <span>Read More</span>
+                </a>
+                  <span>
+                    <i class="fa-solid fa-arrow-right-long"></i>
+                  </span>
+                </div>
+              </div>
+            </div>
+        {% endfor %}
+      </div>
+            <div class="swiper-round-pagination"></div>
+      
+    </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+  {
+    "name": "Latest Blog",
+    "settings": [
+      {
+      "type": "select",
+      "id": "section_width",
+      "label": "Section Width",
+      "options": [
+        {
+          "value": "fluid",
+          "label": "Full Width"
+        },
+        {
+          "value": "normal",
+          "label": "Standard Width"
+        }
+      ],
+      "default": "normal"
+    },
+            {
+        "type": "select",
+        "id": "section_padding",
+        "label": "Section Padding",
+        "options": [
+          {
+            "value": "top",
+            "label": "Top"
+          },
+          {
+            "value": "bottom",
+            "label": "Bottom"
+          },
+          {
+            "value": "both",
+            "label": "Top & Bottom"
+          }
+        ],
+        "default": "top"
+      },
+      {
+        "type": "text",
+        "id": "section_title",
+        "label": "Section Title",
+        "default": "Title"
+      },
+      {
+        "type": "color",
+        "id": "section_title_color",
+        "label": "Title Color"
+      },
+      {
+      "type": "select",
+      "id": "title_align",
+      "label": "Title Alignment",
+      "options": [
+        {
+          "label": "Left",
+          "value": "left"
+        },
+        {
+          "label": "Center",
+          "value": "center"
+        },
+        {
+          "label": "Right",
+          "value": "right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "blog",
+      "id": "blog",
+      "label": "Select Blog"
+    },
+    {
+      "type": "range",
+      "id": "blog_number",
+      "label": "Number of Blogs",
+      "max": 10,
+      "min": 1,
+      "step": 1,
+      "default": 4
+    },
+    ],
+    "presets": [
+      {
+        "name": "Latest Blog"
+      }
+    ]
+  }
+{% endschema %}

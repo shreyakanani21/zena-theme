@@ -1,0 +1,766 @@
+{%- style -%}
+  .section-{{ section.id }}-padding {
+  padding-block: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+     padding-block: {{ section.settings.padding_top }}px {{ section.settings.padding_bottom }}px;
+
+    }
+  }
+{%- endstyle -%}
+
+<section class="user-dashboard-section section-b-space">
+  <div class="{% if section.settings.section_width == 'standard-width' %}container-fluid-lg {% else %}custom-container{% endif %}">
+    <div class="row">
+      <div class="col-xxl-3 col-lg-4">
+        <div class="profile-card">
+          <!-- Profile Section -->
+          <div class="profile-section">
+            <div class="profile-cover">
+              <img src="{{ 'bg2.jpg' | asset_url }}" class="empty-img" alt="{{ images }}">
+            </div>
+            <div class="profile-picture">
+              <img src="{{ 'user.png' | asset_url }}" class="empty-img" alt="{{ user.name }}">
+            </div>
+
+            <!-- Profile Details -->
+            <div class="profile-details">
+              <h2 class="full-name">{{ customer.name }}</h2>
+              <p class="email">{{ customer.email }}</p>
+              {% if customer %}
+                <p class="location" id="customer-location">
+                  {% if customer.tags contains 'location:' %}
+                    {{ customer.tags | split: 'location:' | last | split: ',' | first }}
+                  {% else %}
+                    Location not available
+                  {% endif %}
+                  &bull;
+                  {% if customer.tags contains 'join_date:' %}
+                    Joined {{ customer.tags | split: 'join_date:' | last | split: ',' | first }}
+                  {% else %}
+                    Join date not available
+                  {% endif %}
+                </p>
+              {% else %}
+                <p>Please log in to view your location and join date.</p>
+              {% endif %}
+            </div>
+            <button
+              type="button"
+              class="btn btn-sm add-button w-100"
+              data-bs-toggle="modal"
+              data-bs-target="#editProfile"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="17"
+                height="17"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="feather feather-edit"
+              >
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+              </svg>
+              Edit
+            </button>
+          </div>
+        </div>
+
+        <div class="dashboard-left-sidebar scrollable-theme">
+          <div class="close-button d-flex d-lg-none">
+            <button class="close-sidebar">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+
+          <!-- Tabs Navigation -->
+          <ul class="nav nav-pills user-nav-pills flex-column" id="dashboardTabs" role="tablist">
+            <li class="nav-item">
+              <button
+                class="nav-link active"
+                id="profile-tab"
+                data-bs-toggle="pill"
+                data-bs-target="#profile"
+                type="button"
+                role="tab"
+                aria-controls="profile"
+                aria-selected="true"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="19"
+                  height="19"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="feather feather-user"
+                >
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                Profile
+              </button>
+            </li>
+            <li class="nav-item">
+              <button onclick="location.href = '/pages/wishlist';" class="nav-link" type="button">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="19"
+                  height="19"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="feather feather-heart"
+                >
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+                Wishlist
+                <span class="badge" id="wishlist-badge">0</span>
+              </button>
+            </li>
+            <li class="nav-item">
+              <button
+                class="nav-link"
+                id="order-history-tab"
+                data-bs-toggle="pill"
+                data-bs-target="#order-history"
+                type="button"
+                role="tab"
+                aria-controls="order-history"
+                aria-selected="false"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="19"
+                  height="19"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="feather feather-shopping-bag"
+                >
+                  <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                  <line x1="3" y1="6" x2="21" y2="6"></line>
+                  <path d="M16 10a4 4 0 0 1-8 0"></path>
+                </svg>
+                Order History
+                <span class="badge" id="order-history-badge">0</span>
+              </button>
+            </li>
+            <li class="nav-item">
+              <button
+                class="nav-link"
+                id="notifications-tab"
+                data-bs-toggle="pill"
+                data-bs-target="#notifications"
+                type="button"
+                role="tab"
+                aria-controls="notifications"
+                aria-selected="false"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="19"
+                  height="19"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="feather feather-bell"
+                >
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+                Notifications
+                <span class="badge" id="notification-badge">
+                  {% assign counter = 0 %}
+                  {% assign notifications = shop.metaobjects.notification.values %}
+                  {% for notification in notifications %}
+                    {% assign metaobject_customer_ids = notification.customer %}
+                    {% if metaobject_customer_ids != blank %}
+                      {% assign customer_ids = metaobject_customer_ids | split: ',' %}
+                      {% assign matched = false %}
+                      {% for metaobject_customer_id in customer_ids %}
+                        {% assign customer_id = metaobject_customer_id
+                          | remove: 'gid://shopify/Customer/'
+                          | remove: '['
+                          | remove: ']'
+                          | remove: '"'
+                          | plus: 0
+                        %}
+                        {% if customer_id == customer.id %}
+                          {% assign matched = true %}
+                          {% break %}
+                        {% endif %}
+                      {% endfor %}
+                      {% if matched %}
+                        {% assign counter = counter | plus: 1 %}
+                      {% endif %}
+                    {% endif %}
+                  {% endfor %}
+                  {{ counter }}
+                </span>
+              </button>
+            </li>
+
+            <li class="nav-item">
+              <button
+                class="nav-link {% if template == 'page.custom_orders' %}active{% endif %}"
+                id="order-tab"
+                data-bs-toggle="pill"
+                data-bs-target="#order"
+                type="button"
+                role="tab"
+                aria-controls="order"
+                aria-selected="false"
+              >
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M15 22.75H9C3.57 22.75 1.25 20.43 1.25 15V9C1.25 3.57 3.57 1.25 9 1.25H15C20.43 1.25 22.75 3.57 22.75 9V15C22.75 20.43 20.43 22.75 15 22.75ZM9 2.75C4.39 2.75 2.75 4.39 2.75 9V15C2.75 19.61 4.39 21.25 9 21.25H15C19.61 21.25 21.25 19.61 21.25 15V9C21.25 4.39 19.61 2.75 15 2.75H9Z" fill="currentColor"></path>
+                  <path d="M12 18.6294C11.44 18.6294 10.91 18.3494 10.54 17.8594L9.94 17.0594C9.87 16.9694 9.79001 16.9194 9.70001 16.9094C9.61001 16.9094 9.53001 16.9494 9.45001 17.0294L8.89999 16.5194L9.45001 17.0294C8.48001 18.0694 7.68999 17.9694 7.29999 17.8194C6.90999 17.6594 6.25 17.1794 6.25 15.6994V9.06938C6.25 6.28938 7.14 5.35938 9.78 5.35938H14.23C16.87 5.35938 17.76 6.29938 17.76 9.06938V15.6994C17.76 17.1794 17.1 17.6694 16.71 17.8194C16.33 17.9694 15.54 18.0694 14.56 17.0294C14.48 16.9494 14.39 16.9094 14.3 16.9094C14.21 16.9094 14.13 16.9694 14.06 17.0594L13.47 17.8494C13.09 18.3494 12.56 18.6294 12 18.6294ZM9.69 15.4094C9.72 15.4094 9.75 15.4094 9.78 15.4094C10.31 15.4394 10.8 15.7094 11.13 16.1594L11.73 16.9594C11.9 17.1794 12.09 17.1794 12.25 16.9594L12.84 16.1694C13.17 15.7194 13.67 15.4494 14.2 15.4194C14.72 15.3794 15.25 15.6094 15.63 16.0194C15.91 16.3194 16.09 16.3994 16.16 16.4194C16.15 16.3694 16.24 16.1694 16.24 15.7094V9.07938C16.24 7.02938 15.93 6.86937 14.21 6.86937H9.76001C8.04001 6.86937 7.73001 7.02938 7.73001 9.07938V15.7094C7.73001 16.1694 7.82001 16.3694 7.85001 16.4294C7.88001 16.3894 8.05999 16.3094 8.32999 16.0094C8.32999 15.9994 8.34001 15.9994 8.35001 15.9894C8.72001 15.6294 9.2 15.4094 9.69 15.4094Z" fill="currentColor"></path>
+                </svg>
+                Order
+                <span class="badge" id="order-badge">{{ customer.orders_count }}</span>
+              </button>
+            </li>
+            <li class="nav-item">
+              <button
+                class="nav-link"
+                id="address-tab"
+                data-bs-toggle="pill"
+                data-bs-target="#address"
+                type="button"
+                role="tab"
+                aria-controls="address"
+                aria-selected="false"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="19"
+                  height="19"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="feather feather-map-pin"
+                >
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                  <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+                Address
+                <span class="badge" id="address-badge">0</span>
+              </button>
+            </li>
+            <li class="nav-item">
+              <button onclick="location.href = '/account/logout';" class="nav-link" type="button">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="19"
+                  height="19"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="feather feather-log-out"
+                >
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+                Log Out
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="col-xxl-9 col-lg-8">
+        <button class="btn left-dashboard-show btn-animation btn-md fw-bold d-block mb-4 d-lg-none">Show Menu</button>
+        <div class="dashboard-right-sidebar">
+          <!-- Tab Content -->
+          <div class="tab-content" id="dashboardTabsContent">
+            <!-- Profile Tab -->
+            <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+              <div class="dashboard-profile">
+                <h2>My Profile</h2>
+                <div class="dashboard-table">
+                  <h5>Profile About</h5>
+                  <table class="table">
+                    <tbody>
+                      <tr>
+                        <td>Name:</td>
+                        <td>{{ customer.name }}</td>
+                      </tr>
+                      <tr>
+                        <td>Email:</td>
+                        <td>{{ customer.email }}</td>
+                      </tr>
+                      <tr>
+                        <td>Address:</td>
+                        <td>{{ customer.default_address.address1 }}</td>
+                      </tr>
+                      <tr>
+                        <td>City :</td>
+                        <td>{{ customer.default_address.city | capitalize }}</td>
+                      </tr>
+                      <tr>
+                        <td>Pin Code :</td>
+                        <td>{{ customer.default_address.zip }}</td>
+                      </tr>
+                      <tr>
+                        <td>Country :</td>
+                        <td>{{ customer.default_address.country | capitalize }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- Order History Tab -->
+            <div class="tab-pane fade" id="order-history" role="tabpanel" aria-labelledby="order-history-tab">
+              <h2>Order History</h2>
+              {% if customer.orders.size > 0 %}
+                <!-- Order Table -->
+                <table class="table">
+                  <!-- Your order table rows -->
+                </table>
+              {% else %}
+                <p>No orders found.</p>
+              {% endif %}
+            </div>
+
+            <!-- Address Tab -->
+            <div class="tab-pane fade" id="address" role="tabpanel" aria-labelledby="address-tab">
+              <div class="address-title">
+                <div>
+                  <h2>Address</h2>
+                </div>
+                <div>
+                  <button
+                    class="btn add-address"
+                    data-bs-toggle="modal"
+                    data-bs-target="#add-address"
+                    title="Add Address"
+                    tabindex="0"
+                  >
+                    + Add Address
+                  </button>
+                </div>
+              </div>
+              {% paginate customer.addresses by 6 %}
+                <div class="row g-sm-4 g-3">
+                  {% for address in customer.addresses %}
+                    <div class="col-xxl-4 col-xl-6 col-lg-12 col-md-6">
+                      <div class="address-box">
+                        <div>
+                          <div class="scrollable-theme address-table">
+                            <div class="label">
+                              <label class="mb-0">
+                                {%- if address == customer.default_address %}Default{% else %}Another{% endif -%}
+                              </label>
+                            </div>
+                            <table class="table">
+                              <tbody>
+                                <tr>
+                                  <td colspan="2" class="address-text">
+                                    {{ address.first_name | capitalize }}
+                                    {{ address.last_name | capitalize }}
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>Address :</td>
+                                  <td>
+                                    <p>{{ address.address1 | capitalize }}</p>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>Company :</td>
+                                  <td>
+                                    <p>{{ address.company | capitalize }}</p>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>Pin Code :</td>
+                                  <td>{{ address.zip }}</td>
+                                </tr>
+                                <tr>
+                                  <td>Country :</td>
+                                  <td>{{ address.country | capitalize }}</td>
+                                </tr>
+                                <tr>
+                                  <td>Phone :</td>
+                                  <td>{{ address.phone }}</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+
+                        <form class="address-delete-form" method="post" action="/account/addresses/{{ address.id }}">
+                          <div class="button-group">
+                            <button
+                              type="button"
+                              class="btn btn-sm add-button w-100"
+                              data-bs-toggle="modal"
+                              data-bs-target="#editProfile"
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                class="feather feather-edit"
+                              >
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                              </svg>
+                              Edit
+                            </button>
+                            <input type="hidden" name="_method" value="delete">
+                            <button type="submit" class="btn btn-sm add-button w-100">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                class="feather feather-trash-2"
+                              >
+                                <polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line>
+                              </svg>
+                              Remove
+                            </button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  {% endfor %}
+                </div>
+                {% if paginate.pages > 1 %}
+                  <div class="custome-pagination">
+                    {% include 'pagination' %}
+                  </div>
+                {% endif %}
+              {% endpaginate %}
+            </div>
+
+            <!-- Notification -->
+            <div class="tab-pane fade" id="notifications" role="tabpanel" aria-labelledby="notifications-tab">
+              <div class="dashboard-right-box">
+                <div class="notification-tab">
+                  <div class="sidebar-title mb-0">
+                    <h2>Notifications</h2>
+                  </div>
+                  <ul class="notification-body">
+                    {% assign notifications = shop.metaobjects.notification.values %}
+                    {% assign counter = 0 %}
+
+                    {% for notification in notifications %}
+                      {% assign metaobject_customer_ids = notification.customer %}
+
+                      {% if metaobject_customer_ids != blank %}
+                        {% assign customer_ids = metaobject_customer_ids | split: ',' %}
+                      {% endif %}
+
+                      {% assign matched = false %}
+
+                      {% for metaobject_customer_id in customer_ids %}
+                        {% assign customer_id = metaobject_customer_id
+                          | remove: 'gid://shopify/Customer/'
+                          | remove: '['
+                          | remove: ']'
+                          | remove: '"'
+                          | plus: 0
+                        %}
+
+                        {% if customer_id == customer.id %}
+                          {% assign matched = true %}
+                          {% break %}
+                        {% endif %}
+                      {% endfor %}
+                      {% if matched %}
+                        <li>
+                          <div class="user-img">
+                            {%- if notification.image.value != blank -%}
+                              <a href="/collections/all">
+                                <img src="{{ notification.image.value | img_url: 'master' }}" alt="Notification Image">
+                              </a>
+                            {%- elsif notification.product.value != blank -%}
+                              <a href="{{ notification.product.value.url }}">
+                                <img
+                                  src="{{ notification.product.value.featured_image | img_url: 'master' }}"
+                                  alt="Product Image"
+                                >
+                              </a>
+                            {%- elsif notification.collection.value != blank -%}
+                              <a href="{{ notification.collection.value.url }}">
+                                <img
+                                  src="{{ notification.collection.value.image | img_url: 'master' }}"
+                                  alt="Collection Image"
+                                >
+                              </a>
+                            {%- else -%}
+                              <a href="/collections/all">
+                                {% render 'notification-placeholder' %}
+                              </a>
+                            {%- endif -%}
+                          </div>
+
+                          <div class="user-contant">
+                            <h6>
+                              {{ notification.subject.value }}
+                              <span>{{ notification.time.value | date: '%I:%M %p' }}</span>
+                            </h6>
+                            <p>{{ notification.body.value }}</p>
+                          </div>
+                        </li>
+
+                        {% assign counter = counter | plus: 1 %}
+                      {% endif %}
+                    {% endfor %}
+
+                    {% if counter < 1 %}
+                      <li>
+                        <div class="user-contant">
+                          <p>No notifications available at this time.</p>
+                        </div>
+                      </li>
+                    {% endif %}
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- Order -->
+            <div
+              class="tab-pane fade {% if template == 'page.custom_orders' %}show active{% endif %}"
+              id="order"
+              role="tabpanel"
+              aria-labelledby="order-tab"
+            >
+              <div class="dashboard-right-box">
+                <div class="order">
+                  <div class="sidebar-title">
+                    <h2>My Orders History</h2>
+                  </div>
+                  <div class="row gy-4">
+                    {% assign orders = customer.orders %}
+                    {% if orders.size > 0 %}
+                      {% for order in orders %}
+                        <div class="col-12 mt-0">
+                          <div class="order-box">
+                            <div class="order-container">
+                              <div class="order-icon">
+                                <i class="iconsax" data-icon="box">
+                                  <svg
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                  >
+                                    <path d="M11.9991 13.3008C11.8691 13.3008 11.7391 13.2708 11.6191 13.2008L2.78911 8.09083C2.43911 7.88083 2.30911 7.42083 2.51911 7.06083C2.72911 6.70083 3.18911 6.58083 3.54911 6.79083L11.9991 11.6808L20.3991 6.82083C20.7591 6.61083 21.2191 6.74083 21.4291 7.09083C21.6391 7.45083 21.5091 7.91083 21.1591 8.12083L12.3891 13.2008C12.2591 13.2608 12.1291 13.3008 11.9991 13.3008Z" fill="currentColor"></path>
+                                    <path d="M12 22.3591C11.59 22.3591 11.25 22.0191 11.25 21.6091V12.5391C11.25 12.1291 11.59 11.7891 12 11.7891C12.41 11.7891 12.75 12.1291 12.75 12.5391V21.6091C12.75 22.0191 12.41 22.3591 12 22.3591Z" fill="currentColor"></path>
+                                    <path d="M12.0006 22.75C11.1206 22.75 10.2506 22.56 9.56063 22.18L4.22062 19.21C2.77062 18.41 1.64062 16.48 1.64062 14.82V9.17C1.64062 7.51 2.77062 5.59 4.22062 4.78L9.56063 1.82C10.9306 1.06 13.0706 1.06 14.4406 1.82L19.7806 4.79C21.2306 5.59 22.3606 7.52 22.3606 9.18V14.83C22.3606 16.49 21.2306 18.41 19.7806 19.22L14.4406 22.18C13.7506 22.56 12.8806 22.75 12.0006 22.75ZM12.0006 2.75C11.3706 2.75 10.7506 2.88 10.2906 3.13L4.95062 6.1C3.99062 6.63 3.14063 8.07 3.14063 9.17V14.82C3.14063 15.92 3.99062 17.36 4.95062 17.9L10.2906 20.87C11.2006 21.38 12.8006 21.38 13.7106 20.87L19.0506 17.9C20.0106 17.36 20.8606 15.93 20.8606 14.82V9.17C20.8606 8.07 20.0106 6.63 19.0506 6.09L13.7106 3.12C13.2506 2.88 12.6306 2.75 12.0006 2.75Z" fill="currentColor"></path>
+                                  </svg>
+                                </i>
+                                <div class="couplet"><i class="fa-solid fa-check"></i></div>
+                              </div>
+                              <div class="order-detail">
+                                {% assign status_text = '' %}
+
+                                {% if order.fulfillment_status == 'fulfilled' %}
+                                  {% assign status_text = 'Delivered' %}
+                                {% else %}
+                                  {% if order.cancelled %}
+                                    {% if order.total_price == order.total_refunded_amount %}
+                                      {% assign status_text = 'Refunded' %}
+                                    {% else %}
+                                      {% assign status_text = 'Cancelled' %}
+                                    {% endif %}
+                                  {% else %}
+                                    {% if order.fulfillment_status == 'unfulfilled' %}
+                                      {% assign status_text = 'Pending' %}
+                                    {% elsif order.fulfillment_status == 'partial' %}
+                                      {% assign status_text = 'Partially Shipped' %}
+                                    {% else %}
+                                      {% assign status_text = 'Processing' %}
+                                    {% endif %}
+                                  {% endif %}
+                                {% endif %}
+                                {% assign currency_symbol = order.billing_address.country.currency.symbol %}
+                                <h5>{{ status_text }}</h5>
+                                <p>on {{ order.created_at | date: '%a, %d %b' }}</p>
+                              </div>
+                            </div>
+                            <div class="product-order-detail">
+                              {% for line_item in order.line_items %}
+                                {% if forloop.index == 1 %}
+                                  {% assign review_product_id = line_item.product.id %}
+                                {% endif %}
+                                <div class="product-box">
+                                  <a href="{{ line_item.product.url }}">
+                                    <img
+                                      src="{{ line_item.image | img_url: 'medium' }}"
+                                      alt="{{ line_item.product.title }}"
+                                    >
+                                  </a>
+                                  <div class="order-wrap">
+                                    <h5>{{ line_item.product.title }}</h5>
+                                    <p>{{ line_item.product.metafields.custom.tagline.value }}</p>
+                                    <ul>
+                                      <li>
+                                        <p>Price:</p>
+                                        <span>
+                                          {{ currency_symbol }}
+                                          {{- line_item.price | money_without_currency -}}
+                                        </span>
+                                      </li>
+                                      <li>
+                                        <p>Variant:</p>
+                                        <span> {{ line_item.variant.title }}</span>
+                                        <!-- Changed from size to variant -->
+                                      </li>
+                                      <li>
+                                        <p>Order Id:</p>
+                                        <span> {{ order.id }}</span>
+                                      </li>
+                                    </ul>
+                                  </div>
+                                </div>
+                                {% if forloop.index > 0 %}
+                                  {% if forloop.last %}
+                                  {% else %}
+                                    <div class="product-box-border"></div>
+                                  {% endif %}
+                                {% endif %}
+                              {% endfor %}
+                            </div>
+
+                            <div class="return-box">
+                              <h6>
+                                <span></span>* Exchange/Return window closed on
+                                {% assign order_date = order.created_at | date: '%Y-%m-%d' %}
+                                {% assign date = order_date | date: '%d' %}
+                                {% assign day = date | plus: 10 %}
+                                {% assign month = order_date | date: '%m' | plus: 0 %}
+                                {% assign year = order_date | date: '%Y' | plus: 0 %}
+                                {% assign leap_year = year | modulo: 4 %}
+
+                                {% if month == 1
+                                  or month == 3
+                                  or month == 5
+                                  or month == 7
+                                  or month == 8
+                                  or month == 10
+                                  or month == 12
+                                %}
+                                  {% assign max_days = 31 %}
+                                {% elsif month == 4 or month == 6 or month == 9 or month == 11 %}
+                                  {% assign max_days = 30 %}
+                                {% elsif month == 2 %}
+                                  {% if leap_year == 0 %}
+                                    {% assign max_days = 29 %}
+                                  {% else %}
+                                    {% assign max_days = 28 %}
+                                  {% endif %}
+                                {% endif %}
+
+                                {% if day > max_days %}
+                                  {% assign day = day | minus: max_days %}
+                                  {% assign month = month | plus: 1 %}
+                                {% endif %}
+
+                                {% if month > 12 %}
+                                  {% assign month = 1 %}
+                                  {% assign year = year | plus: 1 %}
+                                {% endif %}
+
+                                {% assign month_names = 'Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec'
+                                  | split: ','
+                                %}
+
+                                {% assign month_index = month | minus: 1 %}
+                                {% assign month_name = month_names[month_index] %}
+
+                                {{ day | plus: 0 }}
+                                {{ month_name }}
+                              </h6>
+                            </div>
+                          </div>
+                        </div>
+                      {% endfor %}
+                    {% else %}
+                      <div class="col-12">
+                        <p>No orders found.</p>
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "t:sections.main-account.name",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    }
+  ]
+}
+{% endschema %}

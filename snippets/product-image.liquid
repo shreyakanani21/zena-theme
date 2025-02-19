@@ -1,0 +1,25 @@
+<div class="product-grid">
+  {% for image in product.images %}
+    <div class="product-grid-item">
+      <img src="{{ image.src | image_url }}" alt="Product Image" class="img-fluid">
+    </div>
+  {% endfor %}
+</div>
+
+<style>
+    .product-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .product-grid-item {
+    width: 100%;
+  }
+
+  .product-grid img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+</style>

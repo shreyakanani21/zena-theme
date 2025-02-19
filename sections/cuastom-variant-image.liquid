@@ -1,0 +1,348 @@
+<section class="{% if section.settings.section_padding == 'top' %}section-t-space{% elsif section.settings.section_padding == 'bottom' %}section-b-space{% elsif section.settings.section_padding == 'both' %}section-space{% endif %} featured-product-section">
+  <div class="{% if section.settings.section_width == 'fluid' %}container-fluid{% else %}custom-container container{% endif %}">
+    <div class="product-wrapper">
+      <div class="product-image">
+        <a href="{{ section.settings.url_1 }}" class="h-100">
+          {% if section.settings.image_1 %}
+           <img 
+                  class="img-fluid blur-up lazyload h-100"
+                  {% if settings.enable_lazyload %}
+                    data-src="{{ section.settings.image_1 | img_url: 'master' }}"
+                  {% else %}
+                     src="{{ section.settings.image_1 | img_url: 'master' }}"
+                  {% endif %}
+                  alt="Banner">   
+          {% else %}
+            {{ 'image' | placeholder_svg_tag }}
+          {% endif %}
+        </a>
+      </div>
+      <div class="product-container swiper special-slider">
+        <div class="swiper-wrapper">
+      {% if section.settings.featured_collection %}
+        {% assign featured_collection = collections[section.settings.featured_collection] %}
+        {% assign sort = section.settings.collection_sort %}
+        
+        {% case sort %}
+          {% when 'title-ascending' %}
+            {% assign sorted_products = featured_collection.products | sort: 'title' %}
+          {% when 'title-descending' %}
+            {% assign sorted_products = featured_collection.products | sort: 'title' | reverse %}
+          {% when 'price-ascending' %}
+            {% assign sorted_products = featured_collection.products | sort: 'price' %}
+          {% when 'price-descending' %}
+            {% assign sorted_products = featured_collection.products | sort: 'price' | reverse %}
+          {% when 'created-ascending' %}
+            {% assign sorted_products = featured_collection.products | sort: 'created_at' %}
+          {% when 'created-descending' %}
+            {% assign sorted_products = featured_collection.products | sort: 'created_at' | reverse %}
+          {% else %}
+            {% assign sorted_products = featured_collection.products %}
+        {% endcase %}
+        
+        {% if sorted_products.size > 0 %}
+          {% for product in sorted_products limit: section.settings.product_limit %}
+            <div class="swiper-slide">
+              {% if settings.card_style == 'style-1' %}
+              <div class="product-card">
+              <div class="img-wrapper">
+                <span class="discount">10%Off</span>
+                <a href="{{ product.url }}">
+                  <img 
+                      alt="{{ product.title }}" 
+                      class="img-fluid blur-up lazyload"
+                      {% if settings.enable_lazyload %}
+                        data-src="{{ product.featured_image | image_url }}"
+                       {% else %}
+                         src="{{ product.featured_image | image_url }}"
+                       {% endif %}>
+                </a>
+                <a class="icon wishlist {% if forloop.index == 3 %}filled{% endif %}">
+                  {% render 'icon-heart' %}
+                </a>
+                <div class="button-div">
+                  <button class="btn btn_solid">
+                    <i class="iconsax" icon-name="eye"></i> Quick View
+                  </button>
+                  <button class="btn btn_solid">
+                    {% render 'icon-shopping-bag' %} Add to Cart
+                  </button>
+                </div>
+              </div>
+              <a href="{{ product.url }}"><h5>{{ product.title }}</h5></a>
+              <p>{{ product.price | money_without_trailing_zeros }} <del>{{ product.compare_at_price | money_without_trailing_zeros }}</del> </p>
+            </div>
+            {% elsif settings.card_style =='style-2' %}
+              <div class="product-card product-card-2">
+              <div class="img-wrapper">
+                {% assign price = product.price | divided_by: 100 %}
+                {% assign compare_price = product.compare_at_price | divided_by: 100 %}
+                {% if compare_price > price %}
+                  {% assign discount = compare_price | minus: price %}
+                  {% assign discount_amount = discount | times: 100 %}
+                  {% assign discount_percentage = discount_amount | divided_by: compare_price %}
+                {% endif %}
+                {% if discount_percentage >= 20 %}
+                  <span class="discount">{{ discount_percentage | round }}%Off</span>
+                {% endif %}
+                <a href="{{ product.url }}">
+                  <img 
+                      alt="{{ product.title }}" 
+                      class="img-fluid blur-up lazyload"
+                      {% if settings.enable_lazyload %}
+                        data-src="{{ product.featured_image | image_url }}"
+                       {% else %}
+                         src="{{ product.featured_image | image_url }}"
+                       {% endif %}>
+                </a>
+                <a class="wishlist {% if forloop.index == 3 %}filled{% endif %}">
+                    {% render 'icon-heart' %}
+                  </a>
+                <div class="icon-div">
+                  <a class="icon">
+                    {% render 'icon-cart-bag' %}
+                  </a>
+                  <a class="icon">
+                    <i class="iconsax" icon-name="refresh"></i>
+                  </a>
+                </div>
+                <div class="button-div">
+                  <ul class="color-variant">
+                    {% assign color_names = "Coral Tree,Medium Taupe,Copper Rose" | split: "," %}
+                    {% assign color_codes = "#9C605B,#684C48,#A66567" | split: "," %}
+                                          
+                    {% for option in product.options_with_values %}
+                      {% if option.name == 'Color' %}
+                        {% for value in option.values %}
+                          {% if option.values.size > 1 %}
+                            {% for color_name in color_names %}
+                              {% assign color_index = forloop.index0 %}  
+                              {% if color_name == value %}
+                                <li style="background-color:{{ color_codes[color_index] }};"></li>
+                              {% endif %}
+                            {% endfor %}
+
+                          {% endif %}
+                        {% endfor %}
+                      {% endif %}
+                    {% endfor %}
+                  </ul>
+                  <button class="view-btn">
+                    <i class="iconsax" icon-name="eye"></i> Quick View
+                  </button>
+                </div>
+              </div>
+              <a href="{{ product.url }}"><h5>{{ product.title }}</h5></a>
+              <p>{{ product.price | money_without_trailing_zeros }} <del>{{ product.compare_at_price | money_without_trailing_zeros }}</del> </p>
+            </div>
+            {% elsif settings.card_style =='style-3' %}
+              <div class="product-card product-card-2 product-card-3">
+              <div class="img-wrapper">
+                {% assign price = product.price | divided_by: 100 %}
+                {% assign compare_price = product.compare_at_price | divided_by: 100 %}
+                {% if compare_price > price %}
+                  {% assign discount = compare_price | minus: price %}
+                  {% assign discount_amount = discount | times: 100 %}
+                  {% assign discount_percentage = discount_amount | divided_by: compare_price %}
+                {% endif %}
+                {% if discount_percentage >= 10 %}
+                  <span class="discount">{{ discount_percentage | round }}%Off</span>
+                {% endif %}
+                <a href="{{ product.url }}">
+                  <img 
+                      alt="{{ product.title }}" 
+                      class="img-fluid blur-up lazyload"
+                      {% if settings.enable_lazyload %}
+                        data-src="{{ product.featured_image | image_url }}"
+                       {% else %}
+                         src="{{ product.featured_image | image_url }}"
+                       {% endif %}>
+                </a>
+                <a class="wishlist {% if forloop.index == 3 %}filled{% endif %}">
+                    {% render 'icon-heart' %}
+                  </a>
+                <div class="icon-div">
+                  <a class="icon">
+                    {% render 'icon-cart-bag' %}
+                  </a>
+                  <a class="icon">
+                    <i class="iconsax" icon-name="refresh"></i>
+                  </a>
+                </div>
+
+                <div class="button-div">
+                  <ul class="color-variant">
+                    {% assign color_names = "Coral Tree,Medium Taupe,Copper Rose,Rose gold,Beige,Light beige,Lime,Deep beige" | split: "," %}
+                    {% assign color_codes = "#9C605B,#684C48,#A66567,#B76E79,#ECCDBC,#F8DCCC,#F3F1C7,#DE9680" | split: "," %}
+                    
+                    {% for option in product.options_with_values %}
+                      {% if option.name == 'Color' %}
+                        {% for value in option.values %}
+                          
+                          {% assign color_index = -1 %}
+                          
+                          {% for color_name in color_names %}
+                            {% if color_name == value %}
+                              {% assign color_index = forloop.index0 %}
+                            {% endif %}
+                          {% endfor %}
+                  
+                          <li style="background-color:
+                            {% if color_index != -1 %}
+                              {{ color_codes[color_index] }}
+                            {% else %}
+                              {{ value }}
+                            {% endif %}
+                          ;"></li>
+                  
+                        {% endfor %}
+                      {% endif %}
+                    {% endfor %}
+                  </ul>
+                </div>
+              </div>
+              <div class="text-wrapper">
+                <div class="wrapper">
+                  <a href="{{ product.url }}"><h5>{{ product.title }}</h5></a>
+                  <p>{{ product.price | money_without_trailing_zeros }} <del>{{ product.compare_at_price | money_without_trailing_zeros }}</del> </p>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+            </div>
+          {% endfor %}
+        {% else %}
+          <p>No products found in this collection.</p>
+        {% endif %}
+      {% else %}
+        <p>Please select a collection to feature products.</p>
+      {% endif %}
+  </div>
+        <div class="swiper-round-pagination"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+  {
+    "name": "Custom Featured Products",
+    "settings": [
+      {
+      "type": "select",
+      "id": "section_width",
+      "label": "Section Width",
+      "options": [
+        {
+          "value": "fluid",
+          "label": "Full Width"
+        },
+        {
+          "value": "normal",
+          "label": "Standard Width"
+        }
+      ],
+      "default": "fluid"
+    },
+    {
+      "type": "select",
+      "id": "section_padding",
+      "label": "Section Padding",
+      "options": [
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        },
+        {
+          "value": "both",
+          "label": "Top & Bottom"
+        }
+      ],
+      "default": "top"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_1",
+      "label": "Banner Image"
+    },
+    {
+      "type": "url",
+      "id": "url_1",
+      "label": "Image Url"
+    },
+            {
+        "type": "collection",
+        "id": "featured_collection",
+        "label": "Featured Collection"
+      },
+      {
+        "type": "range",
+        "id": "product_limit",
+        "label": "Number of Products",
+        "max": 10,
+        "min": 4,
+        "step": 1,
+        "default": 4
+      },
+      {
+      "type": "select",
+      "id": "collection_sort",
+      "label": "Sort products by",
+      "options": [
+        {
+          "value": "title-ascending",
+          "label": "Title: A-Z"
+        },
+        {
+          "value": "title-descending",
+          "label": "Title: Z-A"
+        },
+        {
+          "value": "price-ascending",
+          "label": "Price: Low to High"
+        },
+        {
+          "value": "price-descending",
+          "label": "Price: High to Low"
+        },
+        {
+          "value": "created-ascending",
+          "label": "Date: Oldest to Newest"
+        },
+        {
+          "value": "created-descending",
+          "label": "Date: Newest to Oldest"
+        }
+      ]
+    },
+     {
+       "type": "header",
+       "content": "Slider Settings"
+     },
+      {
+        "type": "select",
+        "id": "dots_style",
+        "label": "Dots Style",
+        "options": [
+          {
+            "label": "Square",
+            "value": "square"
+          },
+          {
+            "label": "Round",
+            "value": "round"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Custom Featured Products"
+      }
+    ]
+  }
+{% endschema %}

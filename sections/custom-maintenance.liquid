@@ -1,0 +1,141 @@
+<div class="coming-soon-section">
+  <section>
+    <div class="coming-soon-box">
+      <h3 style="color: {{ section.settings.badge_color }};background-color: {{ section.settings.badge_bg }};">
+        {{ section.settings.badge_text }}
+      </h3>
+      <h5 style="color: {{ section.settings.title_color }};">
+        {{ section.settings.title }}
+      </h5>
+      <p style="color: {{ section.settings.subtitle_color}};">
+        {{ section.settings.subtitle }}
+      </p>
+      <a
+        class="btn btn_black"
+        href="{% if section.settings.link_url %}{{ section.settings.link_url }}{% else %}{{ shop.url }}{% endif %}"
+      >
+        {{ section.settings.link -}}
+      </a>
+    </div>
+  </section>
+  <footer>
+    <p>
+      Copyright © <span id="current-year-2" style="color: inherit; font-size: inherit;"></span>
+      <a href="{{ shop.url }}">Zena. </a> All Rights Reserved.
+    </p>
+  </footer>
+</div>
+<script>
+      function getTimeRemaining(endtime) {
+      var t = Date.parse(endtime) - Date.parse(new Date());
+      var seconds = Math.floor((t / 1000) % 60);
+      var minutes = Math.floor((t / 1000 / 60) % 60);
+      var hours = Math.floor((t / (1000 * 60 * 60)) % 24);
+      var days = Math.floor(t / (1000 * 60 * 60 * 24));
+
+      return {
+        total: t,
+        days: days,
+        hours: hours,
+        minutes: minutes,
+        seconds: seconds,
+      };
+    }
+
+    function initializeClock(className) {
+      var clocks = document.getElementsByClassName(className);
+      Array.prototype.forEach.call(clocks, function (clock) {
+        var endtime = clock.dataset.endtime;
+
+        var daysSpan = clock.querySelector(".days");
+        var hoursSpan = clock.querySelector(".hours");
+        var minutesSpan = clock.querySelector(".minutes");
+        var secondsSpan = clock.querySelector(".seconds");
+
+        function updateClock() {
+          var t = getTimeRemaining(endtime);
+
+          daysSpan.innerHTML = t.days;
+          hoursSpan.innerHTML = ("0" + t.hours).slice(-2);
+          minutesSpan.innerHTML = ("0" + t.minutes).slice(-2);
+          secondsSpan.innerHTML = ("0" + t.seconds).slice(-2);
+
+          if (t.total <= 0) {
+            clearInterval(timeinterval);
+          }
+        }
+
+        updateClock();
+        var timeinterval = setInterval(updateClock, 1000);
+      });
+    }
+
+    initializeClock("clockdiv");
+
+    const currentYear = new Date().getFullYear();
+  document.getElementById('current-year-2').textContent = currentYear;
+</script>
+{% schema %}
+{
+  "name": "Maintenance",
+  "settings": [
+     {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Section Badge Text",
+      "default": "Badge"
+    },
+    {
+      "type": "color",
+      "id": "badge_color",
+      "label": "Badge Color"
+    },
+    {
+      "type": "color",
+      "id": "badge_bg",
+      "label": "Badge Background Color"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section Title",
+      "default": "Title"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title Color"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Section Subtitle",
+      "default": "Subtitle"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Subtitle Color"
+    },
+
+
+    {
+      "type": "text",
+      "id": "link",
+      "label": "Button Text",
+      "default": "Link Text"
+    },
+    {
+      "type": "url",
+      "id": "link_url",
+      "label": "Link Url",
+      "info": "Add a URL to redirect when the button is clicked."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Maintenance"
+    }
+  ]
+}
+{% endschema %}

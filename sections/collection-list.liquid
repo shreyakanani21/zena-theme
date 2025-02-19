@@ -1,0 +1,172 @@
+<section class="section-space {% if settings.breadcrumb %}pt-0{% endif %}">
+  <div class="custom-container container collections-page">
+    {% paginate collections by section.settings.collections_per_page %}
+      <div class="row gy-4 collections-paginate-grid" data-next-url="{{paginate.next.url}}">
+        <!-- Collections Loop -->
+        {% for collection in collections %}
+          <div class="col-lg-3 col-md-4 col-sm-6 col-12 text-center">
+            <div class="blog-main">
+              <div class="blog-box ratio_55">
+                <a class="blog-img" href="{{ collection.url }}">
+                  {% if collection.image %}
+                    <img
+                      class="img-fluid blur-up lazyload"
+                      src="{{ collection.image.src | img_url: 'master' }}"
+                      alt="{{ collection.title }}"
+                    >
+                  {% else %}
+                    <!-- Pseudo-random placeholder selection -->
+                    {% assign placeholder_number = forloop.index | modulo: 6 | plus: 1 %}
+                    {{ 'collection-' | append: placeholder_number | placeholder_svg_tag }}
+                  {% endif %}
+                </a>
+              </div>
+              <div class="blog-txt">
+                <a href="{{ collection.url }}">
+                  <h5>
+                    {{ collection.title }}
+                  </h5>
+                </a>
+                <br>
+                <div class="link-hover-anim underline">
+                  <a
+                    class=" btn_underline link-strong link-strong-unhovered"
+                    href="{{ collection.url }}"
+                    >Shop Now
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+      {%- if paginate.pages > 1 -%}
+        {% if section.settings.pagination_type == 'numbered' %}
+          {% render 'pagination', paginate: paginate %}
+        {% elsif section.settings.pagination_type == 'load-more' %}
+          <div class="load-buttons d-flex align-items-center justify-content-center pt-4">
+            <button class="load-more-btn btn btn_black">Load more</button>
+            <div class="load-more-spinner"></div>
+          </div>
+        {% elsif section.settings.pagination_type == 'infinite-scroll' %}
+          <div class="load-buttons d-flex align-items-center justify-content-center pt-4">
+            <div class="load-more-spinner" id="collections-infinite-scroll-trigger"></div>
+          </div>
+        {% endif %}
+      {%- endif -%}
+    {% endpaginate %}
+  </div>
+</section>
+
+<script>
+
+  document.addEventListener('DOMContentLoaded', function() {
+    let productsWrapper = document.querySelector('.collections-paginate-grid');
+    let nextUrl = productsWrapper.getAttribute('data-next-url');
+    let loading = false;
+
+    function loadMoreProducts() {
+      if (!nextUrl || loading) return;
+
+      loading = true;
+      document.querySelector('#collections-infinite-scroll-trigger').style.display = 'block';
+
+      fetch(nextUrl)
+        .then(response => response.text())
+        .then(data => {
+          let parser = new DOMParser();
+          let doc = parser.parseFromString(data, 'text/html');
+          let newProducts = doc.querySelector('.collections-paginate-grid');
+
+          if (newProducts) {
+            productsWrapper.insertAdjacentHTML('beforeend', newProducts.innerHTML);
+            nextUrl = newProducts.getAttribute('data-next-url');
+
+            if (!nextUrl) {
+              document.querySelector('#collections-infinite-scroll-trigger').style.display = 'none';
+            }
+          } else {
+            // Hide loader if no new products are found
+            document.querySelector('#collections-infinite-scroll-trigger').style.display = 'none';
+          }
+        })
+        .catch(error => console.error('Error fetching more products:', error))
+        .finally(() => {
+          loading = false;
+        });
+    }
+
+    function checkScroll() {
+      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
+        loadMoreProducts();
+      }
+    }
+
+    window.addEventListener('scroll', checkScroll);
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Collections List",
+  "settings": [
+    {
+    "type": "header",
+    "content": "Pagination Setting"
+  },
+  {
+    "type": "select",
+    "id": "pagination_type",
+    "label": "Pagination Type",
+    "options": [
+      { "value": "numbered", "label": "Numbered Pagination" },
+      { "value": "load-more", "label": "Load More Button" },
+      { "value": "infinite-scroll", "label": "Infinite Scroll" }
+    ],
+    "default": "numbered"
+  },
+  {
+    "type": "range",
+    "id": "collections_per_page",
+    "min": 4,
+    "max": 36,
+    "step": 1,
+    "default": 4,
+    "label": "Collections Per Page"
+  }
+  ],
+  "presets": [
+    {
+      "name": "Collections List"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+  .collections-page .blog-img > svg{
+    width: 100%;
+    transition: all .4s ease-in-out;
+    overflow: hidden;
+        height: 300px;
+  }
+  .dark .collections-page .blog-img > svg{
+    filter: invert(1);
+  }
+  .collections-page .blog-main:hover svg{
+    scale: 1.1;
+  }
+  .collections-page .blog-main .blog-box .blog-img{
+    max-height: 350px;
+    width: 100%;
+  }
+  .collections-page .blog-main{
+    border: 1px solid rgba(var(--border), 1);
+    border-radius: 0;
+    margin: 0;
+  }
+  .collections-page .blog-main .blog-box .blog-img:after{
+    backdrop-filter: blur(0);
+    border-radius: 50%;
+  }
+{% endstylesheet %}

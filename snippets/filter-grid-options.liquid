@@ -1,0 +1,65 @@
+{{ 'component-facets.css' | asset_url | stylesheet_tag }}
+{{ 'left-Sidebar.css' | asset_url | stylesheet_tag }}
+
+<ul class="filter-option-grid grid-button ">
+  <li class="nav-item d-none d-md-flex">
+    <button class="nav-link  btn-outline-secondary grid-toggle" data-grid="2">
+      {% render 'icon-grid' %}
+    </button>
+  </li>
+  <li class="nav-item d-none d-md-flex">
+    <button class="nav-link  btn-outline-secondary grid-toggle" data-grid="3">
+      {% render 'icon-grid-3' %}
+    </button>
+  </li>
+  <li class="nav-item d-none d-lg-flex">
+    <button
+      class="nav-link active  btn-outline-secondary grid-toggle"
+      data-grid="4"
+    >
+      {% render 'icon-grid-4' %}
+    </button>
+  </li>
+  <li class="nav-item d-none d-md-flex">
+    <button class="nav-link  btn-outline-secondary grid-toggle" data-grid="list">
+      {% render 'icon-grid-list' %}
+    </button>
+  </li>
+</ul>
+
+<style>
+  .filter-option-grid {
+    align-items: center;
+    display: flex;
+    gap: 5px;
+  }
+
+  /* .filter-option-grid .nav-item .nav-link {
+    align-items: center;
+    background-color: transparent;
+    border: 1px solid #0d6efd;
+    border-radius: 0;
+    display: flex;
+    height: 36px;
+    justify-content: center;
+    transition: all 0.4s ease-in-out;
+    width: 36px;
+  }
+
+  .filter-option-grid .nav-item .nav-link svg {
+    height: 28px;
+    transition: all 0.4s ease-in-out;
+    width: 28px;
+    stroke: #0d6efd;
+    color: #0d6efd;
+  }
+
+  .filter-option-grid .nav-item .nav-link.active {
+    background-color: #0d6efd;
+  }
+
+  .filter-option-grid .nav-item .nav-link.active svg {
+    stroke: #fff;
+    color: #fff;
+  } */
+</style>

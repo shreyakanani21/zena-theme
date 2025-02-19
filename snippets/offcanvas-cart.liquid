@@ -1,0 +1,623 @@
+<div
+  class="offcanvas offcanvas-end shopping-details"
+  id="offcanvasRight"
+  tabindex="-1"
+  aria-labelledby="offcanvasRightLabel"
+>
+  <div class="offcanvas-header justify-content-between">
+    <h4 class="offcanvas-title" id="offcanvasRightLabel">Shopping Bag</h4>
+    <button
+      class="btn-close m-0"
+      type="button"
+      data-bs-dismiss="offcanvas"
+      aria-label="Close"
+    ></button>
+  </div>
+  <div class="offcanvas-body theme-scrollbar">
+    <div class="shipping-content">
+      <div class="progress-text">
+        <span id="progress-symbol">
+          <img src="{{ 'shipping-bag.png' | asset_url }}" alt="Sales" class="for-light">
+          <img
+            src="https://cdn.shopify.com/s/files/1/0714/3728/7637/files/shipping.png?v=1738843661"
+            alt="Sales"
+            class="for-dark"
+          >
+        </span>
+        <p id="footerText">
+          Free Shipping on Orders Over Rs. 2903.00
+          <span id="remaining-amount"> Rs. </span>
+        </p>
+      </div>
+      <div class="footer-range-slider cart-progress" id="footer-range-slider">
+        <div
+          class="progress"
+          role="progressbar"
+          aria-label="Animated striped example"
+          aria-valuenow="46"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        >
+          <div
+            class="progress-bar progress-bar-striped progress-bar-animated theme-default d-flex"
+            id="progress-bar"
+            style="width: 46%"
+          ></div>
+        </div>
+      </div>
+    </div>
+    <div class="offcanvas-empty">
+      <div class="empty-container">
+        <div class="empty-content">
+          <img
+            src="https://cdn.shopify.com/s/files/1/0714/3728/7637/files/cart-empty_ly-1.gif?v=1739169709"
+            class="empty-img for-light"
+          >
+          <img
+            class="empty-img for-dark"
+            src="https://cdn.shopify.com/s/files/1/0714/3728/7637/files/cart-empty-dark_ly-1.gif?v=1739172259"
+          >
+          <h3>Your Wishlist is empty.</h3>
+          <a href="/collections/all" class="btn btn_solid d-block">Continue Shopping</a>
+        </div>
+      </div>
+    </div>
+    <ul class="offcanvas-cart">
+      <!-- Cart items will be dynamically injected here -->
+    </ul>
+    <div id="dynamic-content" class="dynamic-box">
+      <p>Select an option above</p>
+    </div>
+  </div>
+  <div class="extra-options">
+    <button class="option-btn" id="note-btn">
+      <span class="icon">{% render 'note-icon' %}</span> Note
+    </button>
+    <button class="option-btn active" id="shipping-btn">
+      <span class="icon">{% render 'shipping-icon' %}</span> Shipping
+    </button>
+    <button class="option-btn" id="gift-btn">
+      <span class="icon">{% render 'gift-icon' %}</span> Add Gift
+    </button>
+    <button class="option-btn" id="coupon-btn">
+      <span class="icon">{% render 'coupon-icon' %}</span> Coupon
+    </button>
+  </div>
+  <div class="offcanvas-footer">
+    <div class="price-box">
+      <h6>Subtotal :</h6>
+      <p id="cart-total">$ 0.00</p>
+    </div>
+    <div class="shipping-box">
+      <h6>Shipping Charges</h6>
+      <p>Free Shipping</p>
+    </div>
+    <div class="tax-box">
+      <h6>EST Taxe</h6>
+      <p id="cart-total">$ 0.00</p>
+    </div>
+    <div class="grand-total-price">
+      <div class="price-box">
+        <h6>Grand Total:</h6>
+        <p id="grand-total">$ 0.00</p>
+      </div>
+      <input
+        class="custom-chk me-2"
+        id="register-agree-terms-checkbox"
+        type="checkbox"
+        name="terms"
+      >
+      <label for="register-agree-terms-checkbox" class="price-checkbox">
+        <span class="svg-wrapper">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            class="icon icon-checkmark"
+            viewBox="0 0 12 9"
+          >
+            <path fill="currentColor" fill-rule="evenodd" d="M11.35.643a.5.5 0 0 1 .006.707l-6.77 6.886a.5.5 0 0 1-.719-.006L.638 4.845a.5.5 0 1 1 .724-.69l2.872 3.011 6.41-6.517a.5.5 0 0 1 .707-.006z" clip-rule="evenodd"></path>
+          </svg>
+        </span>
+        I agree with <span>Terms</span> and <span>Privacy</span>
+      </label>
+      <!--
+        <label class="price-checkbox">
+          <input type="checkbox" id="agree-check">
+          <span>I agree with the<a>terms and conditions</a></span>
+        </label>
+      -->
+    </div>
+    <div class="cart-button">
+      <a class="btn btn_solid" href="/cart"> View Cart</a>
+      <a class="btn btn_solid" href="/checkout">Checkout</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Function to show loader
+  function showLoader() {
+    const cartList = document.querySelector('.offcanvas-cart');
+    const emptyCartElement = document.querySelector('.offcanvas-empty');
+    cartList.innerHTML = '<div class="loader-container"><div class="loader"></div></div>'; // Add loader to cart list
+    emptyCartElement.style.display = 'none'; // Hide empty cart message while loading
+    cartList.style.display = 'block'; // Ensure cart list is visible for loader
+  }
+
+  // Function to hide loader
+  function hideLoader() {
+    const loader = document.querySelector('.offcanvas-cart .loader-container');
+    if (loader) loader.remove(); // Remove loader
+  }
+
+  // Function to show empty cart message
+  function showEmptyCartMessage() {
+    const emptyCartElement = document.querySelector('.offcanvas-empty');
+    const cartList = document.querySelector('.offcanvas-cart');
+    emptyCartElement.style.display = 'block'; // Ensure empty cart message is visible
+    cartList.style.display = 'none'; // Hide cart items
+  }
+
+  // Function to hide empty cart message
+  function hideEmptyCartMessage() {
+    const emptyCartElement = document.querySelector('.offcanvas-empty');
+    const cartList = document.querySelector('.offcanvas-cart');
+    emptyCartElement.style.display = 'none'; // Hide empty cart message
+    cartList.style.display = 'block'; // Show cart items
+  }
+
+  // Function to hide cart items explicitly
+  function hideCartItems() {
+    const cartList = document.querySelector('.offcanvas-cart');
+    cartList.style.display = 'none'; // Hide cart items list
+  }
+
+  // Fetch cart with loader and empty cart message
+  function fetchCart() {
+    showLoader(); // Show loader while fetching
+
+    fetch('/cart.js')
+      .then(response => response.json())
+      .then(data => {
+        hideLoader(); // Hide loader once data is fetched
+        const hasItems = data.item_count > 0;
+        console.log("Has Items:", hasItems);
+        
+        if (!hasItems) {
+          showEmptyCartMessage();
+          hideCartItems(); 
+        } else {
+          hideEmptyCartMessage(); 
+          renderCartItems(data.items);
+        }
+
+        // Update other cart details
+        updateCartTotal(data.total_price); // Update total price
+        updateFooterProgressBar(data.total_price); // Update progress bar
+        updateCartCount(data.item_count); // Update cart item count
+      })
+      .catch(error => {
+        hideLoader(); // Hide loader on error
+        console.warn('Error fetching cart:', error);
+      });
+  }
+
+  // Function to render cart items
+  function renderCartItems(items) {
+    const cartList = document.querySelector('.offcanvas-cart');
+    cartList.innerHTML = ''; // Clear existing cart
+
+    items.forEach(item => {
+      const isQuantityOne = item.quantity === 1;
+      const productHTML = `
+        <li data-product-id="${item.id}">
+          <a href="${item.url}">
+            <img src="${item.image}" alt="${item.title}">
+          </a>
+          <div>
+            <h6 class="mb-0">${item.title}</h6>
+            <p>
+              <span>Rs.${(item.price / 100)}</span>
+              <span class="btn-cart">
+                Total: Rs.
+                <span class="btn-cart__total" id="total-${item.id}">
+                  ${(item.final_line_price / 100)}
+                </span>
+              </span>
+            </p>
+            <div class="btn-containter">
+              <div class="btn-control">
+                <button class="btn-control__remove ${isQuantityOne ? 'disabled' : ''}" data-id="${item.id}">−</button>
+                <div class="btn-control__quantity" id="quantity-${item.id}">${item.quantity}</div>
+                <button class="btn-control__add" data-id="${item.id}">+</button>
+              </div>
+            </div>
+          </div>
+          <div class="cart-delet-icon">
+          <i class="iconsax delete-icon" data-id="${item.id}" data-icon="trash">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M21 5.97998C17.67 5.64998 14.32 5.47998 10.98 5.47998C9 5.47998 7.02 5.57998 5.04 5.77998L3 5.97998" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M8.5 4.97L8.72 3.66C8.88 2.71 9 2 10.69 2H13.31C15 2 15.13 2.75 15.28 3.67L15.5 4.97" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M18.85 9.14001L18.2 19.21C18.09 20.78 18 22 15.21 22H8.79002C6.00002 22 5.91002 20.78 5.80002 19.21L5.15002 9.14001" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M10.33 16.5H13.66" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M9.5 12.5H14.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </i></div>
+        </li>
+      `;
+      cartList.insertAdjacentHTML('beforeend', productHTML);
+    });
+
+    attachQuantityListeners();
+  }
+
+  // Function to update cart total price
+  function updateCartTotal(totalPrice) {
+    const cartTotal = document.querySelector('#cart-total');
+    cartTotal.textContent = `Rs.${(totalPrice / 100).toFixed(2)}`;
+    const grandTotal = document.querySelector('#grand-total');
+    grandTotal.textContent = `Rs.${(totalPrice / 100).toFixed(2)}`;
+    
+  }
+
+  // Function to update footer progress bar and free shipping notice
+  function updateFooterProgressBar(cartTotalPrice) {
+    const freeShippingThreshold = 5000;
+    const remainingAmountElement = document.getElementById('remaining-amount');
+    const progressBarElement = document.getElementById('progress-bar');
+    const footerText = document.getElementById('footerText');
+
+    const remainingAmount = freeShippingThreshold - cartTotalPrice / 100;
+    const progressPercent = Math.min((cartTotalPrice / freeShippingThreshold), 100);
+
+    progressBarElement.style.width = `${progressPercent}%`;
+
+    if (progressPercent >= 100) {
+      footerText.innerHTML = 'Congratulations! Use code <span>FREESHIP</span> for free shipping!';
+      remainingAmountElement.textContent = 'Rs. 0';
+    } else {
+      footerText.innerHTML = `Free Shipping on Orders Over <span id="remaining-amount">Rs. ${remainingAmount.toFixed(2)}</span>`;
+      remainingAmountElement.textContent = `Rs. ${remainingAmount.toFixed(2)}`;
+    }
+  }
+
+  // Function to update cart count
+  function updateCartCount(itemCount) {
+    const cartCountElement = document.getElementById('cart-count');
+    cartCountElement.textContent = itemCount;
+  }
+
+  // Attach quantity listeners
+  function attachQuantityListeners() {
+    document.querySelectorAll('.btn-control__add').forEach(button => {
+      button.addEventListener('click', function () {
+        const productId = this.getAttribute('data-id');
+        changeCartQuantity(productId, 1); // Increase quantity
+      });
+    });
+
+    document.querySelectorAll('.btn-control__remove').forEach(button => {
+      button.addEventListener('click', function () {
+        const productId = this.getAttribute('data-id');
+        changeCartQuantity(productId, -1); // Decrease quantity
+      });
+    });
+
+    document.querySelectorAll('.delete-icon').forEach(button => {
+      button.addEventListener('click', function () {
+        const productId = this.getAttribute('data-id');
+        removeCartItem(productId); // Remove item from cart
+      });
+    });
+  }
+
+  // Function to change cart quantity via AJAX
+  function changeCartQuantity(productId, delta) {
+    const quantityElement = document.querySelector(`#quantity-${productId}`);
+    let newQuantity = parseInt(quantityElement.textContent, 10) + delta;
+
+    if (newQuantity < 1) newQuantity = 1;
+
+    fetch('/cart/change.js', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({
+        id: productId,
+        quantity: newQuantity,
+      }),
+    })
+      .then(response => response.json())
+      .then(() => {
+        fetchCart(); // Refresh cart after quantity change
+      })
+      .catch(error => console.warn('Error updating cart:', error));
+  }
+
+  // Function to remove item from cart via AJAX
+  function removeCartItem(productId) {
+    fetch('/cart/change.js', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({
+        id: productId,
+        quantity: 0, 
+      }),
+    })
+      .then(response => response.json())
+      .then(() => {
+        fetchCart(); 
+      })
+      .catch(error => console.warn('Error removing item:', error));
+  }
+
+  fetchCart();
+
+document.addEventListener("DOMContentLoaded", function () {
+  const noteBtn = document.getElementById("note-btn");
+  const shippingBtn = document.getElementById("shipping-btn");
+  const giftBtn = document.getElementById("gift-btn");
+  const couponBtn = document.getElementById("coupon-btn");
+  const dynamicContent = document.getElementById("dynamic-content");
+
+  function showContent(content) {
+    dynamicContent.innerHTML = content;
+    dynamicContent.style.display = "block"; // Show the content area
+
+    // Check if it's the note section and attach save functionality
+    if (document.getElementById("note-text")) {
+      const noteText = document.getElementById("note-text");
+      const saveNoteBtn = document.getElementById("save-note");
+
+      // Load saved note from localStorage
+      noteText.value = localStorage.getItem("savedNote") || "";
+
+      saveNoteBtn.addEventListener("click", function () {
+        localStorage.setItem("savedNote", noteText.value);
+
+        // Create and show the notification
+        const notification = document.createElement("div");
+        notification.className = "notification";
+        notification.innerText = "Note saved successfully!";
+        document.body.appendChild(notification);
+
+        // Auto hide the notification after 3 seconds
+        setTimeout(function () {
+          notification.remove();
+        }, 3000);
+      });
+    }
+  }
+
+  // Note Click Event
+  noteBtn.addEventListener("click", function () {
+    // Create the content with a Save and Cancel button
+    showContent(`
+      <h4>Add Note</h4>
+      <textarea id="note-text" placeholder="Write your note here..."></textarea>
+      <button id="save-note">Save</button>
+      <button id="cancel-note">Cancel</button>
+    `);
+
+    // Get references to the Save and Cancel buttons
+    const saveNoteBtn = document.getElementById("save-note");
+    const cancelNoteBtn = document.getElementById("cancel-note");
+
+    // Handle Save button click to save the note
+    saveNoteBtn.addEventListener("click", function () {
+      const noteText = document.getElementById("note-text").value;
+      localStorage.setItem("savedNote", noteText); // Save the note to localStorage
+      alert("Note saved successfully!");
+    });
+
+    // Handle Cancel button click to delete the dynamic content box
+    cancelNoteBtn.addEventListener("click", function () {
+      dynamicContent.innerHTML = ''; // Clear the dynamic content area
+    });
+  });
+
+  // Shipping Click Event
+ shippingBtn.addEventListener("click", function () {
+  const dynamicContent = document.getElementById("dynamic-content"); // Ensure dynamic content container
+
+  showContent(`
+    <h4>Shipping Information</h4>
+    <form id="shipping-form">
+      <label for="country">Country:</label>
+      <select id="country">
+        <option value="">Select Country</option>
+        <option value="US">United States</option>
+        <option value="CA">Canada</option>
+        <option value="IN">India</option>
+      </select>
+
+      <label for="state">State/Province:</label>
+      <select id="state">
+        <option value="">Select State/Province</option>
+      </select>
+
+      <label for="zip">Zip Code:</label>
+      <input type="text" id="zip" placeholder="Enter Zip Code" />
+
+      <button type="button" id="submit-shipping">Calculate Shipping</button>
+      <button type="button" id="cancel-note">Cancel</button>
+    </form>
+  `);
+
+  const countrySelect = document.getElementById("country");
+  const stateSelect = document.getElementById("state");
+  const submitButton = document.getElementById("submit-shipping");
+  const cancelNoteBtn = document.getElementById("cancel-note");
+
+  countrySelect.addEventListener("change", function () {
+    const country = countrySelect.value;
+    stateSelect.innerHTML = '<option value="">Select State/Province</option>';
+
+    if (country === "US") {
+      stateSelect.innerHTML += `
+        <option value="California">California</option>
+        <option value="New York">New York</option>
+        <option value="Texas">Texas</option>`;
+    } else if (country === "CA") {
+      stateSelect.innerHTML += `
+        <option value="Ontario">Ontario</option>
+        <option value="Quebec">Quebec</option>
+        <option value="British Columbia">British Columbia</option>`;
+    }
+  });
+
+  submitButton.addEventListener("click", function (event) {
+    event.preventDefault();
+    const country = countrySelect.value;
+    const state = stateSelect.value;
+    const zip = document.getElementById("zip").value;
+
+    if (country && state && zip) {
+      localStorage.setItem("shippingCountry", country);
+      localStorage.setItem("shippingState", state);
+      localStorage.setItem("shippingZip", zip);
+
+      showNotification("Shipping Information saved successfully!", "success");
+    } else {
+      showNotification("Please fill out all fields!", "error");
+    }
+  });
+
+  cancelNoteBtn.addEventListener("click", function () {
+    dynamicContent.innerHTML = ""; // Ensure this element exists in HTML
+  });
+
+  function showNotification(message, type) {
+    const notification = document.createElement("div");
+    notification.className = `notification ${type}`;
+    notification.innerText = message;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.remove(), 3000);
+  }
+});
+
+
+  // Gift Click Event
+giftBtn.addEventListener("click", function () {
+  const newGift = {
+    imageUrl: "https://cdn.shopify.com/s/files/1/0917/8677/2772/files/Gift.png?v=1734067360",
+    name: "Gift Wrapping",
+    price: 10.0,
+  };
+
+  // Show content dynamically
+  showContent(`
+    <h4>Add  Gift</h4>
+    <input type="text" id="gift-message" placeholder="Enter a message for the gift">
+    <button id="add-gift-button">Add Gift</button>
+    <button id="cancel-note">Cancel</button>
+  `);
+
+  const dynamicContent = document.getElementById("dynamic-content"); // Ensure this exists
+
+  // **✅ Event Delegation for Add Gift Button**
+  dynamicContent.addEventListener("click", function (event) {
+    if (event.target && event.target.id === "add-gift-button") {
+      const giftMessage = document.getElementById("gift-message").value;
+
+      // Create gift item
+      const giftItem = document.createElement("li");
+      giftItem.className = "cart-item";
+    // Generate a unique ID for each gift item, e.g., using the current timestamp or a random number
+const uniqueId = `gift-${Date.now()}`;
+
+giftItem.innerHTML = `
+  <div class="gift-product">
+    <img class="img-fluid" src="${newGift.imageUrl}" alt="${newGift.name}">
+    <div class="gift_content">
+      <h6>${newGift.name}</h6>
+      <p class="gift-price">$${newGift.price.toFixed(2)}</p>
+    </div>
+    <div class="gift-delete">
+      <i class="iconsax delete-icon" data-id="${uniqueId}" data-icon="trash">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 5.97998C17.67 5.64998 14.32 5.47998 10.98 5.47998C9 5.47998 7.02 5.57998 5.04 5.77998L3 5.97998" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+          <path d="M8.5 4.97L8.72 3.66C8.88 2.71 9 2 10.69 2H13.31C15 2 15.13 2.75 15.28 3.67L15.5 4.97" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+          <path d="M18.85 9.14001L18.2 19.21C18.09 20.78 18 22 15.21 22H8.79002C6.00002 22 5.91002 20.78 5.80002 19.21L5.15002 9.14001" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+          <path d="M10.33 16.5H13.66" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+          <path d="M9.5 12.5H14.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </i>
+    </div>
+  </div>
+`;
+
+// Now, each gift item has a unique 'data-id' which can be used to target it for deletion
+
+
+      // Append gift item to cart
+      const offcanvasCart = document.querySelector(".offcanvas-cart");
+      if (offcanvasCart) {
+        offcanvasCart.appendChild(giftItem);
+      }
+
+      // Clear input and close modal
+      dynamicContent.innerHTML = ''; 
+      
+      // ✅ Success Notification
+      const notification = document.createElement("div");
+      notification.className = "notification";
+      notification.innerText = "Gift added successfully!";
+      document.body.appendChild(notification);
+
+      setTimeout(() => {
+        notification.remove();
+      }, 3000);
+    }
+  });
+
+  // **✅ Event Delegation for Cancel Button**
+  dynamicContent.addEventListener("click", function (event) {
+    if (event.target && event.target.id === "cancel-note") {
+      dynamicContent.innerHTML = ''; // Close the modal
+    }
+  });
+});
+
+
+
+  // Coupon Click Event
+ couponBtn.addEventListener("click", function () {
+  showContent(`
+    <h4>Apply Coupon</h4>
+    <input type="text" id="coupon-code" placeholder="Enter coupon code">
+    <button id="apply-coupon">Apply</button>
+    <button id="cancel-note">Cancel</button>
+  `);
+
+  const cancelNoteBtn = document.getElementById("cancel-note");
+  const applyCouponBtn = document.getElementById("apply-coupon");
+  const couponCodeInput = document.getElementById("coupon-code");
+
+  // Handle Cancel button click to delete the dynamic content box
+  cancelNoteBtn.addEventListener("click", function () {
+    dynamicContent.innerHTML = ''; // Clear the dynamic content area
+  });
+
+  // Handle Apply button click to process the coupon
+  applyCouponBtn.addEventListener("click", function () {
+    const couponCode = couponCodeInput.value.trim();
+    if (couponCode) {
+      // You can replace this with your actual coupon validation logic
+      alert(`Coupon applied: ${couponCode}`);
+      dynamicContent.innerHTML = ''; // Clear the content after applying the coupon
+    } else {
+      alert("Please enter a valid coupon code.");
+    }
+  });
+});
+
+ 
+
+});
+</script>

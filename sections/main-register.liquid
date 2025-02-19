@@ -1,0 +1,240 @@
+{{ 'customer.css' | asset_url | stylesheet_tag }}
+
+<section class="section-b-space {% if settings.breadcrumb %}pt-0{% endif %} login-bg-img customer register">
+  <div class="custom-container container login-page  {% if section.settings.section_padding == 'top' %}section-t-space{% elsif section.settings.section_padding == 'bottom' %}section-b-space{% elsif section.settings.section_padding == 'both' %}section-space{% endif %}">
+    <div class="row ">
+      <div class="col-12 mx-auto">
+        <div class="log-in-box">
+          <div class="log-in-title">
+            <h4>Create New Account</h4>
+          </div>
+          <div class="login-box">
+            {%- form 'create_customer', novalidate: 'novalidate' -%}
+              {%- if form.errors -%}
+                <div class="form-error-message" role="alert" tabindex="-1" autofocus>
+                  <h2 class="error-heading">
+                    <i class="error-message-icon">
+                      {% render 'icon-error-message' %}
+                    </i>
+                    Please Adjust Following.
+                  </h2>
+                  <ul class="error-list">
+                    {%- for field in form.errors -%}
+                      <li>
+                        {%- if field == 'form' -%}
+                          {{ form.errors.messages[field] }}
+                        {%- else -%}
+                          <a href="#RegisterForm-{{ field }}">
+                            {{ form.errors.translated_fields[field] | capitalize }}: {{ form.errors.messages[field] }}
+                          </a>
+                        {%- endif -%}
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+                </div>
+              {%- endif -%}
+
+              <div class="row g-3">
+                <!-- First Name Field -->
+                <div class="col-12">
+                  <div class="form-floating">
+                    <input
+                      class="form-control"
+                      type="text"
+                      name="customer[first_name]"
+                      id="RegisterForm-FirstName"
+                      {% if form.first_name %}
+                        value="{{ form.first_name }}"
+                      {% endif %}
+                      placeholder="{{ 'customer.register.first_name' | t }}"
+                      autocomplete="given-name"
+                    >
+                    <label for="RegisterForm-FirstName">{{ 'customer.register.first_name' | t }}</label>
+                  </div>
+                </div>
+
+                <!-- Last Name Field -->
+                <div class="col-12">
+                  <div class="form-floating">
+                    <input
+                      class="form-control"
+                      type="text"
+                      name="customer[last_name]"
+                      id="RegisterForm-LastName"
+                      {% if form.last_name %}
+                        value="{{ form.last_name }}"
+                      {% endif %}
+                      placeholder="{{ 'customer.register.last_name' | t }}"
+                      autocomplete="family-name"
+                    >
+                    <label for="RegisterForm-LastName">{{ 'customer.register.last_name' | t }}</label>
+                  </div>
+                </div>
+
+                <!-- Email Field -->
+                <div class="col-12">
+                  <div class="form-floating">
+                    <input
+                      class="form-control"
+                      type="email"
+                      name="customer[email]"
+                      id="RegisterForm-email"
+                      {% if form.email %}
+                        value="{{ form.email }}"
+                      {% endif %}
+                      placeholder="{{ 'customer.register.email' | t }}"
+                      spellcheck="false"
+                      autocapitalize="off"
+                      autocomplete="email"
+                      aria-required="true"
+                      {% if form.errors contains 'email' %}
+                        aria-invalid="true" aria-describedby="RegisterForm-email-error"
+                      {% endif %}
+                    >
+                    <label for="RegisterForm-email">{{ 'customer.register.email' | t }}</label>
+                  </div>
+                  {%- if form.errors contains 'email' -%}
+                    <span id="RegisterForm-email-error" class="form__message">
+                      <i class="error-message-icon"> {% render 'icon-error-message' %} </i>
+                      {{ form.errors.translated_fields.email | capitalize }}
+                      {{ form.errors.messages.email }}.
+                    </span>
+                  {%- endif -%}
+                </div>
+
+                <!-- Password Field -->
+                <div class="col-12">
+                  <div class="form-floating">
+                    <input
+                      class="form-control"
+                      type="password"
+                      name="customer[password]"
+                      id="RegisterForm-password"
+                      placeholder="{{ 'customer.register.password' | t }}"
+                      aria-required="true"
+                      {% if form.errors contains 'password' %}
+                        aria-invalid="true" aria-describedby="RegisterForm-password-error"
+                      {% endif %}
+                    >
+                    <label for="RegisterForm-password">{{ 'customer.register.password' | t }}</label>
+                  </div>
+                  {%- if form.errors contains 'password' -%}
+                    <span id="RegisterForm-password-error" class="form__message">
+                      <i class="error-message-icon">
+                        {% render 'icon-error-message' %}
+                      </i>
+                      {{ form.errors.translated_fields.password | capitalize }}
+                      {{ form.errors.messages.password }}.
+                    </span>
+                  {%- endif -%}
+                </div>
+
+                <!-- Terms & Privacy Checkbox -->
+                <div class="col-12">
+                  <div class="forgot-box">
+                    <div class="forgot-content">
+                      <input
+                        class="custom-chk me-2"
+                        id="register-agree-terms-checkbox"
+                        type="checkbox"
+                        name="terms"
+                      >
+                      <label for="register-agree-terms-checkbox">
+                        <span class="svg-wrapper">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            class="icon icon-checkmark"
+                            viewBox="0 0 12 9"
+                          >
+                            <path fill="currentColor" fill-rule="evenodd" d="M11.35.643a.5.5 0 0 1 .006.707l-6.77 6.886a.5.5 0 0 1-.719-.006L.638 4.845a.5.5 0 1 1 .724-.69l2.872 3.011 6.41-6.517a.5.5 0 0 1 .707-.006z" clip-rule="evenodd"></path>
+                          </svg>
+                        </span>
+                        I agree with <span>Terms</span> and <span>Privacy</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="col-12">
+                  <button class="btn login btn_black sm mt-0" type="submit" aria-label="Submit" id="register_Submit">
+                    {{ 'customer.register.submit' | t }}
+                  </button>
+                </div>
+              </div>
+            {%- endform -%}
+          </div>
+          <div class="sign-up-box">
+            <p>Already have an account?</p>
+            <a href="/account/login">Log In </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  //     document.addEventListener('DOMContentLoaded', () => {
+  //   const agreeCheckbox = document.getElementById('register-agree-terms-checkbox');
+  //   const checkoutButton = document.getElementById('register_Submit');
+
+
+  //   agreeCheckbox.addEventListener('change', () => {
+  //     if (agreeCheckbox.checked) {
+  //       checkoutButton.removeAttribute('disabled');
+  //     } else {
+  //       checkoutButton.setAttribute('disabled', 'true');
+  //     }
+  //   });
+
+  //   checkoutButton.setAttribute('disabled', 'true');
+  // });
+
+   const checkbox = document.getElementById('register-agree-terms-checkbox');
+  const submitButton = document.getElementById('register_Submit');
+
+  // Set initial state
+  submitButton.style.opacity = '0.5';
+  submitButton.disabled = true;
+
+  // Listen for checkbox changes
+  checkbox.addEventListener('change', () => {
+    if (checkbox.checked) {
+      submitButton.disabled = false;
+      submitButton.style.opacity = '1';
+    } else {
+      submitButton.disabled = true;
+      submitButton.style.opacity = '0.5';
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "t:sections.main-register.name",
+  "settings": [
+   {
+      "type": "select",
+      "id": "section_padding",
+      "label": "Section padding",
+      "options": [
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        },
+        {
+          "value": "both",
+          "label": "Top & Bottom"
+        }
+      ],
+      "default": "top"
+    },
+  ]
+}
+{% endschema %}

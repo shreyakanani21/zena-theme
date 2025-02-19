@@ -1,0 +1,223 @@
+<section class="review-section {% if section.settings.section_padding == 'top' %}section-t-space{% elsif section.settings.section_padding == 'bottom' %}section-b-space{% elsif section.settings.section_padding == 'both' %}section-space{% endif %}" data-aos="fade-up" data-aos-duration="700">
+    <div class="{% if section.settings.section_width == 'fluid' %}container-fluid{% else %}custom-container container{% endif %} overflow-hidden">
+        <div class="title">
+            <h2 style="color: {{ section.settings.section_title_color }};text-align:{{ section.settings.title_align }};">
+                {{ section.settings.section_title }}
+            </h2>
+        </div>
+        <div class="review-slider-2 swiper">
+            <div class="swiper-wrapper">
+                {% for block in section.blocks %}
+                <div class="swiper-slide">
+                  {% assign is_even = forloop.index | modulo: 2 %}
+                  <span style="color: {{ section.settings.review_svg_color }};" class="quote-symbol">
+                      {% render 'icon-quote-right' %}
+                  </span>
+                  
+                    <div class="review-block {% if is_even == 0 %}even-block{% endif %}" style="background-color: {{ block.settings.review_bg_color }};">
+                      <div class="review-image">
+                       {% if block.settings.img_1 %}
+                          <img 
+                            class="img-fluid blur-up lazyload"
+                            {% if settings.enable_lazyload %}
+                              data-src="{{ block.settings.img_1 | image_url: width: 150, height: 150 }}"
+                            {% else %}
+                               src="{{ block.settings.img_1 | image_url: width: 150, height: 150 }}"
+                            {% endif %}
+                            alt="Review Image">
+                        {% else %}
+                          {{ 'image' | placeholder_svg_tag: "placeholder-img" }}
+                        {% endif %}
+                      {% if block.settings.img_2 %}
+                        <img 
+                        class="img-fluid blur-up lazyload"
+                        {% if settings.enable_lazyload %}
+                          data-src="{{ block.settings.img_2 | image_url: width: 150, height: 150 }}"
+                        {% else %}
+                           src="{{ block.settings.img_2 | image_url: width: 150, height: 150 }}"
+                        {% endif %}
+                        alt="Collection Banner">
+                        {% else %}
+                          {{ 'image' | placeholder_svg_tag: "placeholder-img" }}
+                        {% endif %}
+                    </div>
+                        <div class="review-content">
+                            <p style="color: {{ section.settings.review_description_color }};">
+                                {{ block.settings.review_description }}
+                            </p>
+                          <div class="review-detail">
+                              <h5 style="color: {{ section.settings.review_name_color }};">
+                             – {{ block.settings.review_name }}
+                            </h5>
+                            <div class="review-rating">
+                              {% for i in (1..5) %}
+                                  {% if i <= block.settings.review_stars %}
+                                      {% render 'icon-review-star', color: section.settings.review_star_color %}
+                                  {% else %}
+                                      {% render 'icon-review-star', color: section.settings.review_nostar_color, filled: section.settings.review_star_color %}
+                                  {% endif %}
+                              {% endfor %}
+                              </div>
+                          </div>                            
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="swiper-round-pagination"></div>
+        </div>
+    </div>
+</section>
+
+{% schema %}
+{
+    "name": "Customer Review 2",
+    "settings": [
+        {
+            "type": "select",
+            "id": "section_width",
+            "label": "Section Width",
+            "options": [
+                {
+                    "value": "fluid",
+                    "label": "Full Width"
+                },
+                {
+                    "value": "normal",
+                    "label": "Standard Width"
+                }
+            ],
+            "default": "fluid"
+        },
+            {
+        "type": "select",
+        "id": "section_padding",
+        "label": "Section Padding",
+        "options": [
+          {
+            "value": "top",
+            "label": "Top"
+          },
+          {
+            "value": "bottom",
+            "label": "Bottom"
+          },
+          {
+            "value": "both",
+            "label": "Top & Bottom"
+          }
+        ],
+        "default": "top"
+      },
+        {
+            "type": "text",
+            "id": "section_title",
+            "label": "Section Title",
+            "default": "Title"
+        },
+        {
+            "type": "color",
+            "id": "section_title_color",
+            "label": "Title Color"
+        },
+        {
+            "type": "select",
+            "id": "title_align",
+            "label": "Title Alignment",
+            "options": [
+                {
+                    "label": "Left",
+                    "value": "left"
+                },
+                {
+                    "label": "Center",
+                    "value": "center"
+                },
+                {
+                    "label": "Right",
+                    "value": "right"
+                }
+            ],
+            "default": "center"
+        },
+        {
+            "type": "header",
+            "content": "Review Card Settings"
+        },
+        {
+            "type": "color",
+            "id": "review_star_color",
+            "label": "Star Color"
+        },
+        {
+            "type": "color",
+            "id": "review_nostar_color",
+            "label": "Empty Star Color"
+        },
+        {
+            "type": "color",
+            "id": "review_description_color",
+            "label": "Description Color"
+        },
+        {
+            "type": "color",
+            "id": "review_name_color",
+            "label": "Name Color"
+        },
+        {
+            "type": "color",
+            "id": "review_svg_color",
+            "label": "Quote Symbol Color"
+        },
+    ],
+    "blocks": [
+        {
+            "type": "review_block",
+            "name": "Review Block",
+            "settings": [
+                {
+                    "type": "color",
+                    "id": "review_bg_color",
+                    "label": "Background Color"
+                },
+                {
+                    "type": "text",
+                    "id": "review_description",
+                    "label": "Review Description",
+                    "default": "Description..."
+                },
+                {
+                    "type": "text",
+                    "id": "review_name",
+                    "label": "Review Name",
+                    "default": "Name"
+                },
+                {
+                    "type": "range",
+                    "id": "review_stars",
+                    "label": "Number of Stars",
+                    "min": 0,
+                    "max": 5,
+                    "step": 1,
+                    "default": 5
+                },
+                {
+                  "type": "image_picker",
+                  "id": "img_1",
+                  "label": "Review Image 1",
+                },
+                {
+                  "type": "image_picker",
+                  "id": "img_2",
+                  "label": "Review Image 2",
+                }
+            ]
+        }
+    ],
+    "presets": [
+        {
+            "name": "Customer Review 2"
+        }
+    ]
+}
+{% endschema %}

@@ -1,0 +1,87 @@
+<div class="circle-container">
+  <span class="rounded-circle">
+    {% render 'icon-play' %}
+  </span>
+  <div class="rotating-text" id="textCircle"></div>
+</div>
+
+<style>
+   .circle-container {
+    --size: 185px;
+    position: relative;
+    width: var(--size);
+    height: var(--size);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+  }
+
+  .rounded-circle {
+    position: absolute;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .rotating-text {
+    position: absolute;
+      top: 7%;
+    left: 187%;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: rotateText 10s linear infinite; /* Adds rotation animation */
+  }
+
+  .rotating-text span {
+    position: absolute;
+    top:0;
+    transform-origin: 50% calc(var(--size) / 2); /* Centers the rotation */
+    font-size: 16px;
+    color: #222;
+        font-weight: 600;
+  }
+
+  @keyframes rotateText {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  @media (max-width: 500px) {
+    .circle-container {
+      --size: 250px;
+    }
+    .rotating-text span {
+      font-size: 14px;
+    }
+  }
+
+  @media (max-width: 350px) {
+    .circle-container {
+      --size: 200px;
+    }
+    .rotating-text span {
+      font-size: 12px;
+    }
+  }
+</style>
+
+<script>
+  const textCircle = document.getElementById("textCircle");
+  const text = "Zena Cosmetic Brand. ".repeat(2); // Repeat text to fill the circle
+  textCircle.innerHTML = text
+    .split("")
+    .map(
+      (char, i) =>
+        `<span style="transform: rotate(${i * 10}deg);">${char}</span>`
+    )
+    .join("");
+</script>

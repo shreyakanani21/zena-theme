@@ -1,0 +1,268 @@
+<header
+  class="{% if section.settings.header_style == 'style-1' %}header-style{% elsif section.settings.header_style == 'style-2' %}header-style-2{% elsif section.settings.header_style == 'style-3' %}header-style-3{% endif %} {% if section.settings.header_sticky_type == 'on-scroll' %}header-sticky-on-scroll{% elsif section.settings.header_sticky_type == 'always' %}header-always-sticky{% elsif section.settings.header_sticky_type == 'none' %}header-always-none{% endif %}"
+  id="home"
+>
+  <div class="main-header">
+    <div class="{% if section.settings.section_width == 'fluid' %}container-fluid{% else %}custom-container container{% endif %}">
+      <div class="row">
+        <div class="col-lg-12">
+          {% if section.settings.header_style == 'style-1' %}
+            {% render 'header-1', section: section %}
+          {% elsif section.settings.header_style == 'style-2' %}
+            {% render 'header-2', section: section %}
+          {% elsif section.settings.header_style == 'style-3' %}
+            {% render 'header-3', section: section %}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+{% render 'offcanvas-menu', blocks: section.blocks %}
+
+{% schema %}
+{
+  "name": "Custom Header",
+  "settings": [
+      {
+        "type": "select",
+        "id": "section_width",
+        "label": "Header width",
+        "options": [
+          {
+            "value": "fluid",
+            "label": "Full Width"
+          },
+          {
+            "value": "normal",
+            "label": "Standard Width"
+          }
+        ],
+        "default": "normal"
+      },
+     {
+    "type": "select",
+    "id": "logo_position",
+    "options": [
+      {
+        "value": "top-left",
+        "label": "Top-left"
+      },
+      {
+        "value": "top-center",
+        "label": "Top-center"
+      },
+      {
+        "value": "middle-left",
+        "label": "Middle-left"
+      },
+      {
+        "value": "middle-center",
+        "label": "Middle-center"
+      }
+    ],
+    "default": "middle-left",
+    "label": "Logo position"
+  },
+  {
+    "type": "select",
+    "id": "header_style",
+    "label": "Header layout style",
+    "options": [
+      {
+        "label": "Header-1",
+        "value": "style-1"
+      },
+      {
+        "label": "Header-2",
+        "value": "style-2"
+      },
+      {
+        "label": "Header-3",
+        "value": "style-3"
+      }
+    ]
+  },
+   {
+      "type": "select",
+      "id": "header_sticky_type",
+      "label": "Sticky header",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "on-scroll",
+          "label": "On Scroll"
+        },
+        {
+          "value": "always",
+          "label": "Always Sticky"
+        }
+      ],
+      "default": "none"
+    },
+      {
+      "type": "header",
+      "content": "Icon on desktop screen "
+    },
+      {
+      "type": "checkbox",
+      "id": "enable_search",
+      "label": "Enable search icon"
+    },
+      {
+      "type": "checkbox",
+      "id": "enable_wishlist",
+      "label": "Enable wishlist icon"
+    },
+      {
+      "type": "checkbox",
+      "id": "enable_cart",
+      "label": "Enable cart icon"
+    },
+      {
+      "type": "checkbox",
+      "id": "enable_user",
+      "label": "Enable user icon"
+    },
+  ],
+  "presets": [
+    {
+      "name": "Custom Header"
+    }
+  ],
+  "blocks": [
+     {
+        "type": "link",
+        "name": "Link Block",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Menu Block Settings"
+          },
+          {
+            "type": "text",
+            "id": "menu_label",
+            "label": "Menu label"
+          },
+          {
+            "type": "url",
+            "id": "link",
+            "label": "Link Url",
+            "info": "For Link menu type"
+          },
+          {
+          "type": "link_list",
+          "id": "menu",
+          "label": "Menu"
+        },
+
+        ]
+      },
+    {
+      "type": "menu_block",
+      "name": "Menu Block",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Menu block settings"
+        },
+        {
+          "type": "text",
+          "id": "menu_label",
+          "label": "Menu label",
+        },
+
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link url",
+        },
+         {
+          "type": "link_list",
+          "id": "menu",
+          "label": "Menu"
+        },
+
+          {
+          "type": "checkbox",
+          "id": "enable_badge",
+          "label": "Enable Menu label Badge"
+        },
+        {
+          "type": "text",
+          "id": "badge_text",
+          "label": "Set Badge Text",
+          "default": "Hot"
+        },
+        {
+          "type": "color",
+          "id": "badge_color",
+          "label": "Set Badge Text Color"
+        },
+        {
+          "type": "color",
+          "id": "badge_background_color",
+          "label": "Set Badge background Color"
+        },
+
+      ]
+    },
+      {
+        "type": "megamenu",
+        "name": "Megamenu block",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Megamenu Settings"
+          },
+          {
+            "type": "text",
+            "id": "menu_label",
+            "label": "Menu label"
+          },
+          {
+            "type": "url",
+            "id": "link",
+            "label": "Link Url",
+            "info": "Link for menu label"
+          },
+            {
+      "type": "text",
+      "id": "menu1-title",
+      "label": "Menu-1 Title"
+    },
+
+          {
+            "type": "link_list",
+            "id": "menu_1",
+            "label": "Menu 1"
+          },
+               {
+      "type": "text",
+      "id": "menu2-title",
+      "label": "Menu-2 Title"
+    },
+          {
+            "type": "link_list",
+            "id": "menu_2",
+            "label": "Menu 2"
+          },
+          {
+            "type": "image_picker",
+            "id": "menu_img",
+            "label": "Menu Image"
+          },
+          {
+  "type": "image_picker",
+  "id": "menu_img_2",
+  "label": "Second Image"
+}
+        ]
+      }
+  ]
+}
+{% endschema %}

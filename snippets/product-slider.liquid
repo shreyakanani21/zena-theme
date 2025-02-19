@@ -1,0 +1,12 @@
+<div class="product-slider">
+  <!-- Main Slider -->
+  <div
+    class="slick main-product-slider"
+  >
+    {% for image in product.images %}
+      <div>
+        <img src="{{ image.src | image_url }}" alt="Product Image" class="img-fluid">
+      </div>
+    {% endfor %}
+  </div>
+</div>

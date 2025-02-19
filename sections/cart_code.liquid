@@ -1,0 +1,86 @@
+{% if settings.add_cart_btn == 'advanced' %}
+  {% for product in collection.products limit:10 %}
+  <script>
+    var selectCallback{{ product.id }} = function(variant, selector){
+      if (variant){
+        console.log(variant.id);
+        var form = jQuery('#' + selector.domIdPrefix).closest('form');
+        for(var i=0,length=variant.options.length; i<length; i++){
+          var radioButton = form.find('.swatch[data-option-index="' + i + '"] :radio[value="' + variant.options[i] +'"]');
+          if(radioButton.size()){
+            radioButton.get(0).checked = true;
+          }
+        }
+      }
+
+      if (variant && variant.available == true){
+        var shop_curr = '{{shop.money_format}}';
+        console.log(shop_curr);
+        // selected a valid variant
+        jQuery('#addtocart_btn_id').removeClass('disabled').removeAttr('disabled');
+        var nnnp = $('.m_price-{{ product.id }}');
+                     nnnp.html(Shopify.formatMoney(variant.price, shop_curr));
+
+        var c_price = $('.product_compare_price-{{ product.id }}');
+
+                        c_price.html(Shopify.formatMoney(variant.compare_at_price, shop_curr));
+        nnnp.removeClass('soldout')
+
+
+      } else{
+        // variant doesn't exist
+        jQuery('#addtocart_btn_id').addClass('disabled').attr('disabled', 'disabled');
+        var message = variant ? "Sold Out" : "Unavailable";
+        var nnnp = $('.m_price-{{ product.id }}');
+                     nnnp.text(message);
+        nnnp.addClass('soldout')
+        var c_price = $('.product_compare_price-{{ product.id }}');
+                        c_price.html('');
+      }
+
+    };
+
+    jQuery(function($){
+      new Shopify.OptionSelectors('productSelect-{{ product.id }}',{
+                                  product: {{ product | json }},
+                                  onVariantSelected: selectCallback{{ product.id }},
+                                  enableHistoryState: false
+                                  });
+
+
+    });
+      // Add label if only one product option and it isn't 'Title'. Could be 'Size'.
+      {% if product.options.size == 1 and product.options.first != 'Title' %}
+      var label_text = '{{ product.options.first | escape }}';
+      $('.selector-wrapper:eq(0)').prepend('<label for="productSelect-option-0">'+label_text+'</label>');
+      {% endif %}
+
+      // Hide selectors if we only have 1 variant and its title contains 'Default'.
+      {% if product.variants.size == 1 and product.variants.first.title contains 'Default' %}
+      $('.selector-wrapper').hide();
+      {% endif %}
+
+      {% unless option_style contains 'dropdown_list' %}
+      $('.selector-wrapper').addClass('hide');
+      {% endunless %}
+
+      {% assign found_one_in_stock = false %}
+      {% for variant in product.variants %}
+      {% if variant.available and found_one_in_stock == false %}
+      {% assign found_one_in_stock = true %}
+      {% for option in product.options %}
+      $('.single-option-selector:eq({{ forloop.index0 }})').val({{ variant.options[forloop.index0] | json }}).trigger('change');
+      {% endfor %}
+      {% endif %}
+      {% endfor %}
+
+  </script>
+  {%- endfor -%}
+{%- endif -%}
+
+{% schema %}
+  {
+    "name": "Section name",
+    "settings": []
+  }
+{% endschema %}

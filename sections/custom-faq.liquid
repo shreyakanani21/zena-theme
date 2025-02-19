@@ -1,0 +1,195 @@
+<section class="{% if section.settings.section_padding == 'top' %}section-t-space{% elsif section.settings.section_padding == 'bottom' %}section-b-space{% elsif section.settings.section_padding == 'both' %}section-space{% endif %}">
+  <div class="faq-section">
+    <div class="faq-wrapper">
+      <div class="{% if section.settings.section_width == 'fluid' %}{% else %}custom-container container{% endif %} h-100">
+        <div class="row {% if section.settings.content_order == 'first' %}flex-row-reverse{% else %}flex-row{% endif %}">
+          <div class="faq-container col-xl-6" data-aos="fade-up" data-aos-duration="700">
+            <div class="title">
+              <h2 style="color: {{ section.settings.section_title_color }}; text-align: {{ section.settings.title_align }};">
+                {{ section.settings.section_title }}
+              </h2>
+              <p>
+                From hydrating skincare to effortless makeup, we’ve got you covered for every step of your beauty
+                journey.
+              </p>
+            </div>
+            <div class="accordion" id="accordionExample">
+              {% for block in section.blocks %}
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <button
+                      class="accordion-button {% if forloop.first %}collapsed{% endif %}"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#collapse{{ forloop.index }}"
+                      aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}"
+                      aria-controls="collapse{{ forloop.index }}"
+                    >
+                      {{ block.settings.question }}
+                    </button>
+                  </h2>
+                  <div
+                    id="collapse{{ forloop.index }}"
+                    class="accordion-collapse collapse {% if forloop.first %}show{% endif %}"
+                    data-bs-parent="#accordionExample"
+                  >
+                    <div class="accordion-body">
+                      {{ block.settings.answer }}
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="faq-image h-100 col-xl-6" data-aos="zoom-in" data-aos-duration="500">
+            <a href="{{ section.settings.url_1 }}" class="h-100">
+              {% if section.settings.image_1 %}
+                <img
+                  class="img-fluid blur-up lazyload"
+                  {% if settings.enable_lazyload %}
+                    data-src="{{ section.settings.image_1 | img_url: 'master' }}"
+                  {% else %}
+                    src="{{ section.settings.image_1 | img_url: 'master' }}"
+                  {% endif %}
+                  alt="Banner"
+                >
+              {% else %}
+                <img
+                  src="{{ 'image.png' | asset_url }}"
+                  class="img-fluid  "
+                  alt="Placeholder Image"
+                >
+              {% endif %}
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "FAQ Accordian",
+  "settings": [
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Section Width",
+      "options": [
+        {
+          "value": "fluid",
+          "label": "Full Width"
+        },
+        {
+          "value": "normal",
+          "label": "Standard Width"
+        }
+      ],
+      "default": "fluid"
+    },
+    {
+      "type": "select",
+      "id": "section_padding",
+      "label": "Section Padding",
+      "options": [
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        },
+        {
+          "value": "both",
+          "label": "Top & Bottom"
+        }
+      ],
+      "default": "top"
+    },
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "Section Title",
+      "default": "Title"
+    },
+    {
+      "type": "color",
+      "id": "section_title_color",
+      "label": "Title Color"
+    },
+    {
+      "type": "select",
+      "id": "title_align",
+      "label": "Title Alignment",
+      "options": [
+        {
+          "label": "Left",
+          "value": "left"
+        },
+        {
+          "label": "Center",
+          "value": "center"
+        },
+        {
+          "label": "Right",
+          "value": "right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_1",
+      "label": "Banner Image"
+    },
+    {
+      "type": "url",
+      "id": "url_1",
+      "label": "Image URL"
+    },
+    {
+      "type": "select",
+      "id": "content_order",
+      "label": "Content Order",
+      "options": [
+        {
+          "label": "First",
+          "value": "first"
+        },
+        {
+          "label": "Second",
+          "value": "second"
+        }
+      ],
+      "default": "second"
+    },
+  ],
+  "blocks": [
+    {
+      "type": "accordion_item",
+      "name": "Accordion Item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "Your Question Here"
+        },
+        {
+          "type": "text",
+          "id": "answer",
+          "label": "Answer",
+          "default": "Your Answer Here"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ Accordian"
+    }
+  ]
+}
+{% endschema %}

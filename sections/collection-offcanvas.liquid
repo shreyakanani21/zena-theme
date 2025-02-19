@@ -1,0 +1,878 @@
+<p id="filter_picker_type" class="d-none">
+  {{ section.settings.filter_type }}
+</p>
+
+{{ 'component-facets.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'facets.js' | asset_url }}" defer="defer"></script>
+
+{%- if collection.products.size > 0 -%}
+  {%- if section.settings.enable_filtering or section.settings.enable_sorting -%}
+    <div
+      class="{% if section.settings.filter_type == 'drawer' %}d-block{% else %}d-xl-none d-block{% endif %} pb-xl-4 pb-3 custom-container container "
+      id="filter-smaller"
+    >
+      <aside
+        aria-labelledby="verticalTitle"
+        class="facets-wrapper{% unless section.settings.enable_filtering %} facets-wrapper--no-filters{% endunless %}"
+        id="main-collection-filters"
+        data-id="{{ section.id }}"
+      >
+        {% render 'facets',
+          results: collection,
+          enable_filtering: section.settings.enable_filtering,
+          enable_sorting: section.settings.enable_sorting,
+          filter_type: section.settings.filter_type,
+          show_number: section.settings.show_number,
+          filter_order: 2
+        %}
+      </aside>
+    </div>
+  {%- endif -%}
+{% endif %}
+
+<section class="section-b-space {% if settings.breadcrumb %}pt-0{% endif %}">
+  {%- paginate collection.products by section.settings.products_per_page -%}
+    <div class="{% if section.settings.filter_type == 'vertical' %} facets-vertical {% endif %}custom-container container collection-offcanvace">
+      <div
+        class="product-grid-container {% if section.settings.filter_type == 'vertical' %}row g-xl-4 g-3 {% if section.settings.collection_position == 'right' %}flex-row-reverse{% else %}flex-row collection-content{% endif %}{% endif %}"
+        id="ProductGridContainer"
+      >
+        {%- if collection.products.size == 0 -%}
+          <div class="custom-container container">
+            <div class="empty-content py-4">
+              <img src="{{ 'empty-cart.gif' | asset_url}}">
+              <h4>No Products Found.</h4>
+              <p>Use fewer filters or <a href="{{ collection.url }}" class="p-0 theme-color"> Remove all</a></p>
+              <a href="https://admin.shopify.com/store/{{ shop.name }}/collections" class="btn btn_black sm">
+                Add Products to Collection
+              </a>
+            </div>
+          </div>
+        {%- else -%}
+          <div
+            class="collection {% if section.settings.filter_type == 'vertical' %}col-xl-9{% endif %}"
+          >
+            <div class="product-container h-100">
+              {%- if section.settings.enable_sorting -%}
+                <div class="facets-content">
+                  <facet-filters-form class="facets facets-vertical-sort" id="sortFilter-larger">
+                    <form class="facets-vertical-form d-flex" id="FacetSortForm" style="gap: 24px;">
+                      <div class="facet-filters sorting caption">
+                        <div class="facet-filters__field">
+                          <h2 class="facet-filters__label caption-large text-body d-sm-flex d-none">
+                            <label for="SortBy">{{ 'products.facets.sort_by_label' | t }}</label>
+                          </h2>
+                          <div class="select">
+                            {%- assign sort_by = collection.sort_by | default: collection.default_sort_by -%}
+                            <select
+                              name="sort_by"
+                              class="facet-filters__sort select__select caption-large"
+                              id="SortBy"
+                              aria-describedby="a11y-refresh-page-message"
+                            >
+                              {%- for option in collection.sort_options -%}
+                                <option
+                                  value="{{ option.value | escape }}"
+                                  {% if option.value == sort_by %}
+                                    selected="selected"
+                                  {% endif %}
+                                >
+                                  {{ option.name | escape }}
+                                </option>
+                              {%- endfor -%}
+                            </select>
+                            {% render 'icon-caret' %}
+                          </div>
+                        </div>
+                      </div>
+                      <div class="d-md-flex d-none" style="gap: 8px;">
+                        {% if section.settings.enable_product_count %}
+                          <div class="product-count-vertical light" role="status">
+                            <h2 class="product-count__text text-body">
+                              <span id="ProductCountDesktop">
+                                {%- if collection.results_count -%}
+                                  {{
+                                    'templates.search.results_with_count'
+                                    | t: terms: collection.terms, count: collection.results_count
+                                  }}
+                                {%- elsif collection.products_count == collection.all_products_count -%}
+                                  {{ 'products.facets.product_count_simple' | t: count: collection.products_count }}
+                                {%- else -%}
+                                  {{
+                                    'products.facets.product_count'
+                                    | t: product_count: collection.products_count, count: collection.all_products_count
+                                  }}
+                                {%- endif -%}
+                              </span>
+                            </h2>
+                            {%- render 'loading-spinner' -%}
+                          </div>
+                        {% endif %}
+                      </div>
+                    </form>
+                  </facet-filters-form>
+                  <div class="grid-button ">
+                    <button class=" btn-outline-secondary grid-toggle" data-layout="grid-1">
+                      <svg id="grid-1" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="4.5" y="15.5" width="23" height="1" rx="0.5"></rect>
+                      </svg>
+                    </button>
+                    <button class=" btn-outline-secondary grid-toggle" data-layout="grid-2">
+                      <svg id="grid-2" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="4.5" y="12.5" width="23" height="1" rx="0.5"></rect>
+                        <rect x="4.5" y="18.5" width="23" height="1" rx="0.5"></rect>
+                      </svg>
+                    </button>
+                    <button class=" btn-outline-secondary grid-toggle" data-layout="grid-3">
+                      <svg id="grid-3" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="4.5" y="15.5" width="23" height="1" rx="0.5"></rect>
+                        <rect x="4.5" y="21.5" width="23" height="1" rx="0.5"></rect>
+                        <rect x="4.5" y="9.5" width="23" height="1" rx="0.5"></rect>
+                      </svg>
+                    </button>
+
+                    <button class=" btn-outline-secondary grid-toggle active" data-layout="grid-4">
+                      <svg id="grid-4" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="4.5" y="12.5" width="23" height="1" rx="0.5"></rect>
+                        <rect x="4.5" y="18.5" width="23" height="1" rx="0.5"></rect>
+                        <path d="M5 6.5H27C27.2761 6.5 27.5 6.72386 27.5 7C27.5 7.27614 27.2761 7.5 27 7.5H5C4.72386 7.5 4.5 7.27614 4.5 7C4.5 6.72386 4.72386 6.5 5 6.5Z"></path>
+                        <rect x="4.5" y="24.5" width="23" height="1" rx="0.5"></rect>
+                      </svg>
+                    </button>
+                    <button class=" btn-outline-secondary grid-toggle" data-layout="list">
+                      <svg id="grid-list" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 9.5H26C26.2761 9.5 26.5 9.72386 26.5 10C26.5 10.2761 26.2761 10.5 26 10.5H10C9.72386 10.5 9.5 10.2761 9.5 10C9.5 9.72386 9.72386 9.5 10 9.5Z"></path>
+                        <rect x="5.5" y="9.5" width="1" height="1" rx="0.5"></rect>
+                        <path d="M10 15.5H26C26.2761 15.5 26.5 15.7239 26.5 16C26.5 16.2761 26.2761 16.5 26 16.5H10C9.72386 16.5 9.5 16.2761 9.5 16C9.5 15.7239 9.72386 15.5 10 15.5Z"></path>
+                        <rect x="5.5" y="15.5" width="1" height="1" rx="0.5"></rect>
+                        <path d="M10 21.5H26C26.2761 21.5 26.5 21.7239 26.5 22C26.5 22.2761 26.2761 22.5 26 22.5H10C9.72386 22.5 9.5 22.2761 9.5 22C9.5 21.7239 9.72386 21.5 10 21.5Z"></path>
+                        <rect x="5.5" y="21.5" width="1" height="1" rx="0.5"></rect>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              {%- endif -%}
+              <!--
+                {%- if section.settings.enable_sorting and section.settings.filter_type == 'vertical' -%}
+                  <div class="facets-content">
+                    <div>
+                      <facet-filters-form class="facets facets-vertical-sort large-small-hide" id="sortFilter-larger">
+                        <form class="facets-vertical-form " id="FacetSortForm" style="gap: 24px;">
+                          <div class="facet-filters sorting caption">
+                            <div class="facet-filters__field">
+                              <h2 class="facet-filters__label caption-large text-body">
+                                <label for="SortBy">{{ 'products.facets.sort_by_label' | t }}</label>
+                              </h2>
+                              <div class="select">
+                                {%- assign sort_by = collection.sort_by | default: collection.default_sort_by -%}
+                                <select
+                                  name="sort_by"
+                                  class="facet-filters__sort select__select caption-large"
+                                  id="SortBy"
+                                  aria-describedby="a11y-refresh-page-message"
+                                >
+                                  {%- for option in collection.sort_options -%}
+                                    <option
+                                      value="{{ option.value | escape }}"
+                                      {% if option.value == sort_by %}
+                                        selected="selected"
+                                      {% endif %}
+                                    >
+                                      {{ option.name | escape }}
+                                    </option>
+                                  {%- endfor -%}
+                                </select>
+                                {% render 'icon-caret' %}
+                              </div>
+                            </div>
+                          </div>
+                        </form>
+                      </facet-filters-form>
+                    </div>
+                    <div class="grid-button ">
+                      <button class=" btn-outline-secondary grid-toggle" data-layout="grid-1">
+                        <svg id="grid-1" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <rect x="4.5" y="15.5" width="23" height="1" rx="0.5"></rect>
+                        </svg>
+                      </button>
+                      <button class=" btn-outline-secondary grid-toggle" data-layout="grid-2">
+                        <svg id="grid-2" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <rect x="4.5" y="12.5" width="23" height="1" rx="0.5"></rect>
+                          <rect x="4.5" y="18.5" width="23" height="1" rx="0.5"></rect>
+                        </svg>
+                      </button>
+                      <button class=" btn-outline-secondary grid-toggle" data-layout="grid-3">
+                        <svg id="grid-3" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <rect x="4.5" y="15.5" width="23" height="1" rx="0.5"></rect>
+                          <rect x="4.5" y="21.5" width="23" height="1" rx="0.5"></rect>
+                          <rect x="4.5" y="9.5" width="23" height="1" rx="0.5"></rect>
+                        </svg>
+                      </button>
+
+                      <button class=" btn-outline-secondary grid-toggle active" data-layout="grid-4">
+                        <svg id="grid-4" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <rect x="4.5" y="12.5" width="23" height="1" rx="0.5"></rect>
+                          <rect x="4.5" y="18.5" width="23" height="1" rx="0.5"></rect>
+                          <path d="M5 6.5H27C27.2761 6.5 27.5 6.72386 27.5 7C27.5 7.27614 27.2761 7.5 27 7.5H5C4.72386 7.5 4.5 7.27614 4.5 7C4.5 6.72386 4.72386 6.5 5 6.5Z"></path>
+                          <rect x="4.5" y="24.5" width="23" height="1" rx="0.5"></rect>
+                        </svg>
+                      </button>
+                      <button class=" btn-outline-secondary grid-toggle" data-layout="list">
+                        <svg id="grid-list" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M10 9.5H26C26.2761 9.5 26.5 9.72386 26.5 10C26.5 10.2761 26.2761 10.5 26 10.5H10C9.72386 10.5 9.5 10.2761 9.5 10C9.5 9.72386 9.72386 9.5 10 9.5Z"></path>
+                          <rect x="5.5" y="9.5" width="1" height="1" rx="0.5"></rect>
+                          <path d="M10 15.5H26C26.2761 15.5 26.5 15.7239 26.5 16C26.5 16.2761 26.2761 16.5 26 16.5H10C9.72386 16.5 9.5 16.2761 9.5 16C9.5 15.7239 9.72386 15.5 10 15.5Z"></path>
+                          <rect x="5.5" y="15.5" width="1" height="1" rx="0.5"></rect>
+                          <path d="M10 21.5H26C26.2761 21.5 26.5 21.7239 26.5 22C26.5 22.2761 26.2761 22.5 26 22.5H10C9.72386 22.5 9.5 22.2761 9.5 22C9.5 21.7239 9.72386 21.5 10 21.5Z"></path>
+                          <rect x="5.5" y="21.5" width="1" height="1" rx="0.5"></rect>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                {%- endif -%}
+              -->
+
+              <div class="grid-paginate-container">
+                <div
+                  id="product-grid"
+                  data-next-url="{{paginate.next.url}}"
+                  data-id="{{ section.id }}"
+                  class="{% if section.settings.grid_layout == 'grid-4' %}row-cols-2 row-cols-md-3 row-cols-lg-4 grid-section view-option row g-3 g-xl-4 product-paginate-grid{% elsif section.settings.grid_layout == 'grid-3' %}row-cols-2 row-cols-sm-3 grid-section view-option row g-3 g-xl-4 product-paginate-grid{% elsif section.settings.grid_layout == 'grid-2' %}row-cols-2 grid-section view-option row g-3 g-xl-4 product-paginate-grid{% elsif section.settings.grid_layout == 'list' %}list-section view-option row g-3 g-xl-4 product-paginate-grid{% endif %}"
+                >
+                  {%- for product in collection.products -%}
+                    {% assign lazy_load = false %}
+                    {%- if forloop.index > 2 -%}
+                      {%- assign lazy_load = true -%}
+                    {%- endif -%}
+                    <div class="col">
+                      <div class="product-box-3">
+                        <div class="img-wrapper">
+                          <div class="label-block">
+                            {% if settings.show_new_tag %}
+                              {%- if latest_product_ids contains product.id -%}
+                                <span
+                                  class="lable-1"
+                                  style="background-color: {{ settings.new_tag_bg_color }}; color: {{ settings.new_tag_text_color }};"
+                                  >NEW</span
+                                >
+                              {%- endif -%}
+                            {% endif %}
+
+                            {% if settings.show_wishlist %}
+                              <a
+                                class="label-2 wishlist-icon add-to-wishlist-btn icon wishlist wishlist-btn"
+                                href="{{ shop.url }}/pages/wishlist"
+                                data-product-handle="{{ product.handle }}"
+                              >
+                                {% render 'iconsax-wishlist' %}
+                              </a>
+                            {% endif %}
+                          </div>
+                          <div class="product-image">
+                            {% if product.images.size > 0 %}
+                              <a class="pro-first" href="{{ product.url }}">
+                                <img
+                                  class="img-fluid blur-up lazyload"
+                                  src="{{ product.images[0] | img_url: 'master' }}"
+                                  alt="{{ product.title }}"
+                                >
+                              </a>
+                            {% endif %}
+                            {% if product.images.size > 1 %}
+                              <a class="pro-sec" href="{{ product.url }}">
+                                <img
+                                  class="img-fluid img-sizing"
+                                  src="{{ product.images[1] | img_url: 'master' }}"
+                                  alt="{{ product.title }}"
+                                >
+                              </a>
+                            {% endif %}
+                          </div>
+                          <a
+                            class="icon wishlist wishlist-btn {% if index == 3 %}filled{% endif %}"
+                            data-product-handle="{{ product.handle }}"
+                          >
+                            {%- render 'icon-heart' %}
+                          </a>
+                          <div class="icon-div">
+                            <a
+                              class="icon add-to-cart-btn"
+                              data-bs-toggle="modal"
+                              data-bs-target="#variant-select"
+                              data-product-handle="{{ product.handle }}"
+                            >
+                              {% render 'icon-cart-bag' %}
+                            </a>
+                            <a
+                              class="icon compare-btn"
+                              data-bs-toggle="modal"
+                              data-bs-target="#compare"
+                              data-product-handle="{{ product.handle }}"
+                            >
+                              <i class="iconsax" icon-name="refresh"></i>
+                            </a>
+                          </div>
+
+                          <div class="button-div">
+                            <button
+                              class="view-btn"
+                              data-bs-toggle="modal"
+                              data-bs-target="#quick-view"
+                              tabindex="0"
+                              data-product-handle="{{ product.handle }}"
+                            >
+                              <i class="iconsax" icon-name="eye"></i> Quick View
+                            </button>
+                          </div>
+                        </div>
+                        <div class="product-detail">
+                          <div class="rating">
+                            <div class="custom-vstar-rating-widget" product-id="{{ product.id }}"></div>
+                          </div>
+                          <a href="{{ product.url }}">
+                            <h6>{{ product.title }}</h6>
+                          </a>
+                          <div class="list-para ">
+                            {{ product.description }}
+                          </div>
+                          {% assign price = product.price | divided_by: 100 %}
+                          {% assign compare_price = product.compare_at_price | divided_by: 100 %}
+                          {% if compare_price > price %}
+                            {% assign discount = compare_price | minus: price %}
+                            {% assign discount_amount = discount | times: 100 %}
+                            {% assign discount_percentage = discount_amount | divided_by: compare_price %}
+                          {% endif %}
+                          {% if settings.enable_login_price %}
+                            {% if customer %}
+                              <p>
+                                {{ product.price | money_with_currency }}
+                                <del> {{ product.compare_at_price | money_with_currency }} </del>
+                                {% if settings.show_sale_tag %}
+                                  {% if discount_percentage > 10 -%}
+                                    <span style="background-color: {{ settings.sale_tag_bg_color }}; color: {{ settings.sale_tag_text_color }};">
+                                      {{ discount_percentage | round }}%
+                                    </span>
+                                  {%- endif %}
+                                {% endif %}
+                              </p>
+                            {% else %}
+                              <p>
+                                <a href="{{ routes.account_login_url }}" class="login-price-link">Login to see price</a>
+                              </p>
+                            {% endif %}
+                          {% else %}
+                            <p>
+                              {{ product.price | money_with_currency }}
+                              <del> {{ product.compare_at_price | money_with_currency }} </del>
+                              {% if settings.show_sale_tag %}
+                                {% if discount_percentage > 10 -%}
+                                  <span style="background-color: {{ settings.sale_tag_bg_color }}; color: {{ settings.sale_tag_text_color }};">
+                                    {{ discount_percentage | round }}%
+                                  </span>
+                                {%- endif %}
+                              {% endif %}
+                            </p>
+                          {% endif %}
+                          <div class="advanced_add_cart">
+                            {% if settings.add_cart_btn == 'advanced' %}
+                              {% if product.available and product.variants.size > 1 %}
+                                <div class="advanced_add_cart">
+                                  <form
+                                    action="/cart/add"
+                                    method="post"
+                                    enctype="multipart/form-data"
+                                  >
+                                    <div class="category-dropdown variant-dropdown">
+                                      <select
+                                        name="id"
+                                        id="productSelect-{{ product.id }}"
+                                        class="variantsList form-select"
+                                      >
+                                        {% for variant in product.variants %}
+                                          {% if variant.available %}
+                                            <option value="{{ variant.id }}">{{ variant.title }}</option>
+                                          {% else %}
+                                            <option disabled="disabled">{{ variant.title }} - Sold Out</option>
+                                          {% endif %}
+                                        {% endfor %}
+                                      </select>
+
+                                      <button type="submit" class="btn btn-submit">Add</button>
+                                    </div>
+                                  </form>
+                                </div>
+                              {% endif %}
+                            {% endif %}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  {%- endfor -%}
+                </div>
+                {%- if paginate.pages > 1 -%}
+                  {% if section.settings.pagination_type == 'numbered' %}
+                    {% render 'pagination', paginate: paginate %}
+                  {% elsif section.settings.pagination_type == 'load-more' %}
+                    <div class="load-buttons d-flex align-items-center justify-content-center pt-4">
+                      <button class="load-more-btn btn btn_black">Load more</button>
+                      <div class="load-more-spinner"></div>
+                    </div>
+                  {% elsif section.settings.pagination_type == 'infinite-scroll' %}
+                    <div class="load-buttons d-flex align-items-center justify-content-center pt-4">
+                      <div class="load-more-spinner" id="infinite-scroll-trigger"></div>
+                    </div>
+                  {% endif %}
+                {%- endif -%}
+              </div>
+            </div>
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  {%- endpaginate -%}
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+      let productsWrapper = document.querySelector('.product-paginate-grid');
+      let nextUrl = productsWrapper.getAttribute('data-next-url');
+      let loading = false;
+
+      function loadMoreProducts() {
+        if (!nextUrl || loading) return;
+
+        loading = true;
+        document.querySelector('#infinite-scroll-trigger').style.display = 'block';
+
+        fetch(nextUrl)
+          .then(response => response.text())
+          .then(data => {
+            let parser = new DOMParser();
+            let doc = parser.parseFromString(data, 'text/html');
+            let newProducts = doc.querySelector('.product-paginate-grid');
+
+            if (newProducts) {
+              productsWrapper.insertAdjacentHTML('beforeend', newProducts.innerHTML);
+              nextUrl = newProducts.getAttribute('data-next-url');
+
+              if (!nextUrl) {
+                document.querySelector('#infinite-scroll-trigger').style.display = 'none';
+              }
+            } else {
+              document.querySelector('#infinite-scroll-trigger').style.display = 'none';
+            }
+          })
+          .catch(error => console.error('Error fetching more products:', error))
+          .finally(() => {
+            loading = false;
+          });
+      }
+
+      function checkScroll() {
+        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
+          loadMoreProducts();
+        }
+      }
+
+      window.addEventListener('scroll', checkScroll);
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+    const gridContainer = document.querySelector('.product-paginate-grid');
+    const buttons = document.querySelectorAll('.grid-toggle');
+
+    buttons.forEach(button => {
+      button.addEventListener('click', function () {
+        const layout = this.dataset.layout;
+
+        // Remove all layout classes
+        gridContainer.classList.remove('row-cols-2', 'row-cols-sm-3', 'row-cols-md-3', 'row-cols-lg-4', 'list-section');
+        gridContainer.classList.remove('grid-2', 'grid-3', 'grid-4');
+
+        // Add the selected layout class
+        if (layout === 'grid-2') {
+          gridContainer.classList.add('row-cols-2', 'grid-2');
+        } else if (layout === 'grid-3') {
+          gridContainer.classList.add('row-cols-2', 'row-cols-sm-3', 'grid-3');
+        } else if (layout === 'grid-4') {
+          gridContainer.classList.add('row-cols-2', 'row-cols-md-3', 'row-cols-lg-4', 'grid-4');
+        } else if (layout === 'list') {
+          gridContainer.classList.add('list-section');
+        }
+
+        // Update active button
+        buttons.forEach(btn => btn.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+  });
+</script>
+{% schema %}
+{
+  "name": "Collection Offcanvas",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Collection Layout Setting"
+    },
+     {
+      "type": "select",
+      "id": "collection_position",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:sections.main-product.settings.media_position.options__1.label"
+        },
+        {
+          "value": "right",
+          "label": "t:sections.main-product.settings.media_position.options__2.label"
+        }
+      ],
+      "default": "left",
+      "label": "Collection Position",
+    },
+    {
+      "type": "select",
+      "id": "collection_width",
+      "label": "Section Width",
+      "options": [
+        {
+          "value": "fluid",
+          "label": "Full Width"
+        },
+        {
+          "value": "normal",
+          "label": "Standard Width"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "collection_alignment",
+      "label": "Collection Content Alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    },
+
+
+    {
+      "type": "header",
+      "content": "Pagination Setting"
+    },
+    {
+      "type": "select",
+      "id": "pagination_type",
+      "label": "Pagination Type",
+      "options": [
+        { "value": "numbered", "label": "Numbered Pagination" },
+        { "value": "load-more", "label": "Load More Button" },
+        { "value": "infinite-scroll", "label": "Infinite Scroll" }
+      ],
+      "default": "numbered"
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 4,
+      "max": 36,
+      "step": 4,
+      "default": 4,
+      "label": "Products Per Page"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 4,
+      "label": "Number Of Columns On Desktop"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.main-collection-product-grid.settings.header__1.content"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_filtering",
+      "default": true,
+      "label": "Enable Filtering",
+      "info": "t:sections.main-collection-product-grid.settings.enable_filtering.info"
+    },
+    {
+      "type": "select",
+      "id": "filter_type",
+      "options": [
+        {
+          "value": "horizontal",
+          "label": "t:sections.main-collection-product-grid.settings.filter_type.options__1.label"
+        },
+        {
+          "value": "vertical",
+          "label": "t:sections.main-collection-product-grid.settings.filter_type.options__2.label"
+        },
+        {
+          "value": "drawer",
+          "label": "t:sections.main-collection-product-grid.settings.filter_type.options__3.label"
+        }
+      ],
+      "default": "horizontal",
+      "label": "Desktop Filter Layout",
+      "info": "t:sections.main-collection-product-grid.settings.filter_type.info"
+    },
+    {
+      "type": "select",
+      "id": "grid_layout",
+      "label": "Collection Grid Layout",
+      "options": [
+        {
+          "value": "grid-2",
+          "label": "Grid-2"
+        },
+        {
+          "value": "grid-3",
+          "label": "Grid-3"
+        },
+        {
+          "value": "grid-4",
+          "label": "Grid-4"
+        },
+        {
+          "value": "list",
+          "label": "List"
+        }
+      ],
+      "default": "grid-4"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sorting",
+      "default": true,
+      "label": "Enable Sorting"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_product_count",
+      "label": "Show Product Count"
+    },
+    {
+      "type": "range",
+      "id": "show_number",
+      "label": "Number Of Filter Options",
+      "max": 12,
+      "min": 1,
+      "step": 1,
+      "default": 6
+    },
+    {
+      "type": "header",
+      "content": "Informative Accordian"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_accordion",
+      "label": "Enable Accordion",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Accordion Heading",
+      "default": "Shipping & Delivery"
+    },
+    {
+      "type": "text",
+      "id": "item_1_title",
+      "label": "First Item Title",
+      "default": "Title"
+    },
+    {
+      "type": "textarea",
+      "id": "item_1_description",
+      "label": "First Item Description",
+      "default": "Description"
+    },
+    {
+      "type": "text",
+      "id": "item_1_icon",
+      "label": "First Item Icon",
+      "default": "truck-fast"
+    },
+    {
+      "type": "text",
+      "id": "item_2_title",
+      "label": "Second Item Title",
+      "default": "Title"
+    },
+    {
+      "type": "textarea",
+      "id": "item_2_description",
+      "label": "Second Item Description",
+      "default": "Description"
+    },
+    {
+      "type": "text",
+      "id": "item_2_icon",
+      "label": "Second Item Icon",
+      "default": "headphones"
+    },
+    {
+      "type": "text",
+      "id": "item_3_title",
+      "label": "Third Item Title",
+      "default": "Title"
+    },
+    {
+      "type": "textarea",
+      "id": "item_3_description",
+      "label": "Third Item Description",
+      "default": "Description"
+    },
+    {
+      "type": "text",
+      "id": "item_3_icon",
+      "label": "Third Item Icon",
+      "default": "exchange"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#333333"
+    }
+  ],
+   "presets": [
+    {
+      "name": "Collection Offcanvas"
+    }
+  ],
+}
+{% endschema %}
+{% stylesheet %}
+      nav.pagination{
+        justify-content: center;
+      }
+      nav.pagination .pagination__list {
+        flex-wrap: nowrap;
+      }
+      .product-container .product-image{
+        position: relative;
+        width: 100%;
+        padding-bottom: 113.485%;
+        overflow: hidden;
+      }
+
+      .product-container .product-image img{
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .collection-images-slide .slick-slide{
+        margin: 0 10px;
+      }
+
+  .section-skeleton {
+    background-color: #eeeeee;
+    min-height: 100px;
+    width: 100%;
+    position: relative;
+    z-index: 10;
+    animation: skeleton-loading 1.5s infinite;
+    border-radius: 6px;
+  }
+
+  @keyframes skeleton-loading {
+    0% {
+      background-color: #eeeeee;
+    }
+    50% {
+      background-color: #f8f8f8;
+    }
+    100% {
+      background-color: #eeeeee;
+    }
+  }
+
+  .skeleton-header {
+    height: 50px;
+    margin-bottom: 10px;
+  }
+
+  .skeleton-body {
+    height: 50px;
+  }
+
+  .actual-section {
+    display: none;
+  }
+
+  .section-wrapper.loaded .actual-section {
+    display: block;
+  }
+
+  .section-wrapper.loaded .section-skeleton {
+    display: none;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+    $(document).ready(function () {
+    $('.collection-images-slide').slick();
+
+    function checkImagesLoaded() {
+      var images = $('.fashion-box img');
+      var loadedCount = 0;
+
+      images.each(function () {
+        if (this.complete) {
+          loadedCount++;
+        } else {
+          $(this).on('load', function () {
+            loadedCount++;
+            if (loadedCount === images.length) {
+              handleContentLoading();
+            }
+          });
+        }
+      });
+
+      if (loadedCount === images.length) {
+        handleContentLoading();
+      }
+    }
+
+    function handleContentLoading() {
+      setTimeout(function () {
+        showActualContent();
+      }, 5000);
+    }
+
+    function showActualContent() {
+      $('.section-wrapper').addClass('loaded');
+    }
+
+    checkImagesLoaded();
+  });
+{% endjavascript %}

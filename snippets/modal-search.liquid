@@ -1,0 +1,198 @@
+<div
+  class="offcanvas offcanvas-top search-details"
+  tabindex="-1"
+  aria-modal="true"
+  role="dialog"
+  id="offcanvasTop"
+  aria-labelledby="offcanvasTopLabel"
+>
+  <div class="offcanvas-header">
+    <button
+      class="btn-close"
+      type="button"
+      data-bs-dismiss="offcanvas"
+      aria-label="Close"
+    ></button>
+  </div>
+  <div class="modal-content">
+    <div class="search-header">
+      <h3 class="heading-title" style="color: {{ settings.search_title_color }};">{{ settings.search_title }}</h3>
+      <input type="text" placeholder="Search for products...">
+      <a><i class="iconsax" icon-name="search-normal-1"></i></a>
+      <div class="trending-section">
+        <div class="collection-container">
+          <div class="collection-list">
+            <h4>Quick Search:</h4>
+            <button class="collection-item">
+              <a href="https://zena-demo.myshopify.com/collections/collection-left-sidebar">Brush</a>
+            </button>
+            <button class="collection-item">
+              <a href="https://zena-demo.myshopify.com/collections/collection-left-sidebar">Lipstick</a>
+            </button>
+            <button class="collection-item">
+              <a href="https://zena-demo.myshopify.com/collections/collection-left-sidebar">Oil Lip</a>
+            </button>
+          </div>
+          <div class="products-container">
+            <!-- Related products will be dynamically loaded here -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="product-result-heading" class="d-none">
+      <h3>Popular Products</h3>
+    </div>
+    <div class="col search-result-item">
+      <h4>Popular Products</h4>
+      <div class="searchSlider ratio_square-2 preemptive-search row">
+        {% if settings.search_collection %}
+          {% assign collection_handle = settings.search_collection %}
+          {% assign collection = collections[collection_handle] %}
+          {% if collection.products.size > 0 %}
+            {% for product in collection.products %}
+              <div class="product-box-6 col-lg-2 col-md-4 col-12">
+                <div class="img-wrapper">
+                  <div class="product-image">
+                    <a href="{{ product.url }}">
+                      <img
+                        class="img-fluid"
+                        src="{{ product.featured_image | img_url: 'master' }}"
+                        alt="{{ product.title }}"
+                      >
+                    </a>
+                  </div>
+                </div>
+                <div class="product-detail">
+                  <div>
+                    <a href="{{ product.url }}">
+                      <h6>{{ product.title }}</h6>
+                    </a>
+                    {% if settings.enable_login_price %}
+                      {% if customer %}
+                        <p>{{ product.price | money }}</p>
+                      {% endif %}
+                    {% else %}
+                      <p>{{ product.price | money }}</p>
+                    {% endif %}
+                    <div class="rating">
+                      <div class="custom-vstar-rating-widget" product-id="{{ product.id }}"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          {% else %}
+            <p>No products found in the selected collection.</p>
+          {% endif %}
+        {% else %}
+          <p>Please select a collection from the theme editor.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div id="product-result" class="row"></div>
+  </div>
+</div>
+
+<script>
+  document.querySelector('.search-header input').addEventListener('input', function () {
+    const query = this.value.trim();
+
+    // Clear any existing search suggestions
+    document.querySelectorAll('.search-result-item').forEach(el => el.remove());
+    document.getElementById('product-result-heading').classList.add('d-none');
+
+    if (query.length >= 3) { 
+        fetch(`/search/suggest.json?q=${query}&resources[type]=product&resources[limit]=10`)
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
+            .then(data => {
+                const products = data.resources.results.products;
+
+                // Display products in the result section
+                displayProducts(products);
+            })
+            .catch(error => {
+                console.error('Error fetching search results:', error);
+            });
+    }
+});
+
+function displayProducts(products) {
+    const productResult = document.getElementById('product-result');
+    const productResultHeading = document.getElementById('product-result-heading');
+
+    // Clear any existing results
+    productResult.innerHTML = '';
+
+    if (products.length > 0) {
+        productResultHeading.classList.remove('d-none');
+        products.forEach(product => {
+            const productHtml = `
+            <div class="col-2 search-result-item">
+                <div class="product-box-6">
+                    <div class="img-wrapper">
+                        <div class="product-image">
+                            <a href="${product.url}">
+                                <img src="${product.image}" class="img-fluid" alt="${product.title}" />
+                            </a>
+                        </div>
+                    </div>
+                    <div class="product-detail">
+                        <a href="${product.url}">
+                            <h6>${product.title}</h6>
+                        </a>
+                        <p>${getCurrentCurrencySymbol()}${product.price}</p>
+                    </div>
+                </div>
+            </div>`;
+            productResult.innerHTML += productHtml;
+        });
+    } else {
+        productResult.innerHTML = `<p>No products found matching your search query.</p>`;
+    }
+}
+
+// Helper function to get current currency symbol
+function getCurrentCurrencySymbol() {
+    // Replace with your logic to fetch the correct currency symbol
+    return '$';
+}
+</script>
+
+<style>
+    .search-details .product-image{
+      position: relative;
+      width: 100%;
+      /* padding-bottom: 100%; */
+      overflow: hidden;
+    }
+    .search-details .product-image img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* Ensures the image covers the area */
+    }
+    .search-details .rating{
+      display: block;
+    }
+    .search-result-item {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+
+    .search-details .slick-slide {
+      margin: 0 12px;
+  }
+
+  .search-details .slick-list {
+      margin: 0 -12px;
+  }
+</style>

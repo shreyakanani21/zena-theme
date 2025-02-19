@@ -1,0 +1,251 @@
+<section
+  class="product-review-section {% if section.settings.section_padding == 'top' %}section-t-space{% elsif section.settings.section_padding == 'bottom' %}section-b-space{% elsif section.settings.section_padding == 'both' %}section-space{% endif %}"
+  data-aos="fade-up"
+  data-aos-duration="600"
+  data-aos-delay="100"
+>
+  <div class="{% if section.settings.section_width == 'fluid' %}container-fluid{% else %}custom-container container{% endif %}">
+    <div class="reviews-box">
+      <div class="banner-image">
+        {% if section.settings.banner_img %}
+          <img
+            class="img-fluid blur-up lazyload"
+            {% if settings.enable_lazyload %}
+              data-src="{{ section.settings.banner_img | image_url }}"
+            {% else %}
+              src="{{ section.settings.banner_img | image_url }}"
+            {% endif %}
+            alt="Banner"
+          >
+        {% else %}
+          {{ 'product-2' | placeholder_svg_tag }}
+        {% endif %}
+      </div>
+      <div class="review-container">
+        <div class="review">
+          <div class="review-info">
+            <div class="review-content">
+              <h3 style="{{ section.settings.review_title_color }}">
+                {{ section.settings.review_title }}
+              </h3>
+              <p style="{{ section.settings.review_description_color }}">
+                {{ section.settings.review_description }}
+              </p>
+              <div class="review-rating">
+                <div class="customer">
+                  <img
+                    src="https://cdn.shopify.com/s/files/1/0714/3728/7637/files/customer-6.png?v=1730115354"
+                    class="img-fluid"
+                  >
+                  <img
+                    src="https://cdn.shopify.com/s/files/1/0714/3728/7637/files/customer-5.png?v=1730115354"
+                    class="img-fluid"
+                  >
+                  <img
+                    src="https://cdn.shopify.com/s/files/1/0714/3728/7637/files/customer-7.png?v=1730115354"
+                    class="img-fluid"
+                  >
+                  <img
+                    src="https://cdn.shopify.com/s/files/1/0714/3728/7637/files/customer-1.png?v=1729934662"
+                    class="img-fluid"
+                  >
+                </div>
+                <div>
+                  <div class="rating">
+                    {% for i in (1..5) %}
+                      {% if i <= section.settings.review_stars %}
+                        {% render 'icon-review-star', color: section.settings.review_star_color %}
+                      {% else %}
+                        {% render 'icon-review-star',
+                          color: section.settings.review_nostar_color,
+                          filled: section.settings.review_star_color
+                        %}
+                      {% endif %}
+                    {% endfor %}
+                    <span>
+                      {{ section.settings.review_stars }}
+                    </span>
+                  </div>
+                  <div class="review-count">
+                    <p>From 100+ <span>Reviews</span></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="review-product-variant d-xl-block d-lg-none d-md-block d-none">
+              {% if section.settings.product_banner_img %}
+                <img
+                  class="img-fluid blur-up lazyload"
+                  {% if settings.enable_lazyload %}
+                    data-src="{{ section.settings.product_banner_img | image_url }}"
+                  {% else %}
+                    src="{{ section.settings.product_banner_img | image_url }}"
+                  {% endif %}
+                  alt="Banner"
+                >
+              {% else %}
+                {{ 'product-4' | placeholder_svg_tag }}
+              {% endif %}
+              <ul class="color-variant">
+                {% assign color_patterns = shop.metaobjects['shopify--color-pattern'].values %}
+
+                {% assign review_product = section.settings.review_product %}
+                {% for option in review_product.options_with_values %}
+                  {% if option.name == 'Color' %}
+                    {% for value in option.values %}
+                      {% assign matching_color = color_patterns | where: 'label', value | first %}
+
+                      {% if matching_color %}
+                        <li
+                          style="background-color: {{ matching_color.color.value }};"
+                          class="variant-option"
+                        ></li>
+                      {% endif %}
+                    {% endfor %}
+                  {% endif %}
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+          <div class="swiper review-product-slider review-product">
+            {% assign product = section.settings.review_product %}
+            <div class="swiper-wrapper">
+              {% for variant in product.variants %}
+                <div class="swiper-slide">
+                  <div class="product">
+                    {% assign color_option_index = product.options | index_of: 'Color' %}
+                    {% if color_option_index != -1 %}
+                      <img class="img-fluid" src="{{ variant.featured_image | image_url }}" alt="{{ variant.title }}">
+                      <div class="product-details">
+                        <h6>
+                          {{ variant.title }}
+                          {{ product.title }}
+                        </h6>
+                        <p>
+                          {{ variant.price | money_without_trailing_zeros }}
+                          {% if variant.compare_at_price > variant.price %}
+                            <del>{{ variant.compare_at_price | money_without_trailing_zeros }}</del>
+                          {% endif %}
+                        </p>
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+            <div class="swiper-round-pagination"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Product Review",
+  "settings": [
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Section Width",
+      "options": [
+        {
+          "value": "fluid",
+          "label": "Full Width"
+        },
+        {
+          "value": "normal",
+          "label": "Standard Width"
+        }
+      ],
+      "default": "fluid"
+    },
+          {
+      "type": "select",
+      "id": "section_padding",
+      "label": "Section Padding",
+      "options": [
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        },
+        {
+          "value": "both",
+          "label": "Top & Bottom"
+        }
+      ],
+      "default": "top"
+    },
+    {
+    "type": "image_picker",
+    "id": "banner_img",
+    "label": "Banner Image",
+    },
+    {
+     "type": "header",
+     "content": "Review Settings"
+   },
+    {
+      "type": "text",
+      "id": "review_title",
+      "label": "Review Title",
+      "default": "Title"
+    },
+    {
+      "type": "text",
+      "id": "review_description",
+      "label": "Review Description",
+      "default": "Description..."
+    },
+    {
+    "type": "image_picker",
+    "id": "product_banner_img",
+    "label": "Product Banner Image",
+    },
+    {
+      "type": "range",
+      "id": "review_stars",
+      "label": "Number of Stars",
+      "min": 0,
+      "max": 5,
+      "step": 0.5,
+      "default": 3.5
+    },
+    {
+      "type": "product",
+      "id": "review_product",
+      "label": "Review Product"
+    },
+    {
+          "type": "color",
+          "id": "review_star_color",
+          "label": "Rating Color"
+      },
+      {
+          "type": "color",
+          "id": "review_nostar_color",
+          "label": "Empty rating Color"
+      },
+      {
+          "type": "color",
+          "id": "review_title_color",
+          "label": "Title Color"
+      },
+      {
+          "type": "color",
+          "id": "review_description_color",
+          "label": "Description Color"
+      },
+  ],
+  "presets": [
+    {
+      "name": "Product Review"
+    }
+  ]
+}
+{% endschema %}

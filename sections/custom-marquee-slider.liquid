@@ -1,0 +1,126 @@
+<section
+  class="marquee-section"
+  style="background-color: {{ section.settings.marquee_bg_color }};border-top:{{ section.settings.marquee_border }}px solid {{ section.settings.marquee_border_color }}; border-bottom:{{ section.settings.marquee_border }}px solid {{ section.settings.marquee_border_color }};"
+>
+  <div class="{% if section.settings.section_width == 'fluid' %}container-fluid{% else %}custom-container container{% endif %}">
+    <div class="marquee-slider">
+      <div
+        class="marquee-wrapper  {% if section.settings.pause_on_hover %}pause{% endif %}"
+        style="animation-direction: {{ section.settings.direction }};"
+      >
+        {% for block in section.blocks %}
+          <div
+            class="marquee-block "
+          >
+            <a href="{{ block.settings.marquee_url }}" style="color: {{ block.settings.marquee_text_color }};">
+              {{ block.settings.marquee_text }}
+            </a>
+          </div>
+        {% endfor %}
+        {% for block in section.blocks %}
+          <div
+            class="marquee-block  {% if block.settings.pause_on_hover %}pause{% endif %}"
+            style="animation-direction: {{ block.settings.direction }};"
+          >
+            <a href="{{ block.settings.marquee_url }}" style="color: {{ block.settings.marquee_text_color }};">
+              {{ block.settings.marquee_text }}
+            </a>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Marquee Slide",
+  "settings": [
+    {
+    "type": "select",
+    "id": "section_width",
+    "label": "Section Width",
+    "options": [
+      {
+        "value": "fluid",
+        "label": "Full Width"
+      },
+      {
+        "value": "normal",
+        "label": "Standard Width"
+      }
+    ],
+    "default": "fluid"
+  },
+  {
+    "type": "color",
+    "id": "marquee_bg_color",
+    "label": "Background Color",
+  },
+  {
+    "type": "range",
+    "id": "marquee_border",
+    "label": "Border Width",
+    "default": 1,
+    "min": 0,
+    "max": 5,
+    "step": 1
+  },
+  {
+    "type": "color",
+    "id": "marquee_border_color",
+    "label": "Border Color",
+  },
+
+  {
+    "type": "select",
+    "id": "direction",
+    "options": [
+        {
+        "value": "normal",
+        "label": "Right To Left"
+        },
+        {
+        "value": "reverse",
+        "label": "Left To Right"
+        }
+    ],
+      "label": "Direction"
+  },
+  {
+    "type": "checkbox",
+    "id": "pause_on_hover",
+    "label": "Pause On Hover"
+  }
+  ],
+  "blocks": [
+    {
+      "type": "marquee_block",
+      "name": "Marquee Block",
+      "settings": [
+        {
+          "type": "text",
+          "id": "marquee_text",
+          "label": "Marquee Text",
+          "default": "Marquee"
+        },
+        {
+          "type": "url",
+          "id": "marquee_url",
+          "label": "Redirecting Url"
+        },
+         {
+    "type": "color",
+    "id": "marquee_text_color",
+    "label": "Text Color",
+  },
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Marquee Slide"
+    }
+  ]
+}
+{% endschema %}

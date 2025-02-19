@@ -1,0 +1,24 @@
+{{ 'component-facets.css' | asset_url | stylesheet_tag }}
+{{ 'left-Sidebar.css' | asset_url | stylesheet_tag }}
+
+<div class="facet-filters__field">
+  <h2 class="facet-filters__label caption-large text-body">
+    <label for="SortBy">Sort by:</label>
+  </h2>
+  <div class="select">
+    <select id="sort-by" class="facet-filters__sort select__select caption-large">
+      {% assign sort_by = collection.sort_by | default: collection.default_sort_by %}
+
+      {% for option in collection.sort_options %}
+        <option
+          value="{{ option.value }}"
+          {% if option.value == sort_by %}
+            selected="selected"
+          {% endif %}
+        >
+          {{ option.name }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+</div>

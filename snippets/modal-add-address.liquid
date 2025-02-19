@@ -1,0 +1,175 @@
+<!-- Add Address Modal -->
+<div
+  class="reviews-modal modal theme-modal fade"
+  id="add-address"
+  tabindex="-1"
+  aria-labelledby="addAddressLabel"
+>
+  <div class="modal-dialog modal-md modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>{{ 'customer.addresses.add_new' | t }}</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body pt-0">
+        {%- form 'customer_address', customer.new_address, aria-labelledby: 'addAddressLabel' -%}
+          <div class="row g-3">
+            <div class="col-6">
+              <div class="form-group">
+                <label class="form-label">{{ 'customer.addresses.first_name' | t }}</label>
+                <input
+                  class="form-control"
+                  type="text"
+                  id="AddressFirstNameNew"
+                  name="address[first_name]"
+                  placeholder="{{ 'customer.addresses.first_name' | t }}"
+                  required
+                >
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group">
+                <label class="form-label">{{ 'customer.addresses.last_name' | t }}</label>
+                <input
+                  class="form-control"
+                  type="text"
+                  id="AddressLastNameNew"
+                  name="address[last_name]"
+                  placeholder="{{ 'customer.addresses.last_name' | t }}"
+                  required
+                >
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="form-group">
+                <label class="form-label">Address</label>
+                <input
+                  class="form-control"
+                  type="text"
+                  id="AddressAddress1New"
+                  name="address[address1]"
+                  placeholder="{{ 'customer.addresses.address1' | t }}"
+                  required
+                >
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group">
+                <label class="form-label">{{ 'customer.addresses.city' | t }}</label>
+                <input
+                  class="form-control"
+                  type="text"
+                  id="AddressCityNew"
+                  name="address[city]"
+                  placeholder="{{ 'customer.addresses.city' | t }}"
+                  required
+                >
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group">
+                <label class="form-label">{{ 'customer.addresses.province' | t }}</label>
+                <input
+                  class="form-control"
+                  type="text"
+                  id="AddressProvinceNew"
+                  name="address[province]"
+                  placeholder="{{ 'customer.addresses.province' | t }}"
+                  required
+                >
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="form-group">
+                <label class="form-label">{{ 'customer.addresses.country' | t }}</label>
+                <select id="AddressCountryNew" name="address[country]" class="form-select" required>
+                  {{ all_country_option_tags }}
+                </select>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group">
+                <label class="form-label">{{ 'customer.addresses.zip' | t }}</label>
+                <input
+                  class="form-control"
+                  type="text"
+                  id="AddressZipNew"
+                  name="address[zip]"
+                  pattern="^\d+(\.\d+)?$"
+                  placeholder="{{ 'customer.addresses.zip' | t }}"
+                  required
+                >
+                <span>Numeric values only*</span>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group">
+                <label class="form-label">{{ 'customer.addresses.phone' | t }}</label>
+                <input
+                  class="form-control"
+                  type="tel"
+                  id="AddressPhoneNew"
+                  name="address[phone]"
+                  pattern="^\d+(\.\d+)?$"
+                  placeholder="{{ 'customer.addresses.phone' | t }}"
+                >
+                <span>Numeric values only*</span>
+              </div>
+            </div>
+          </div>
+          <div class="modal-button-group pt-4">
+            <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-submit">{{ 'customer.addresses.add' | t }}</button>
+          </div>
+        {%- endform -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+   const selectElement = document.getElementById('AddressCountryNew');
+  const firstOption = selectElement.options[0];
+  firstOption.style.display = 'none';
+
+  for (let option of selectElement.options) {
+    if (option.value.toLowerCase() === 'united states') {
+      option.selected = true;
+      break;
+    }
+  }
+
+  const countrySelect = document.getElementById('AddressCountryNew');
+  const provinceInput = document.getElementById('AddressProvinceNew');
+
+  function updateProvinces() {
+    const selectedOption = countrySelect.options[countrySelect.selectedIndex];
+    const provincesData = selectedOption.getAttribute('data-provinces');
+
+    if (provincesData) {
+      const provinces = JSON.parse(provincesData);
+      populateProvince(provinces);
+    } else {
+      provinceInput.value = '';
+    }
+  }
+
+  function populateProvince(provinces) {
+    provinceInput.innerHTML = '';
+
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.textContent = 'Select a province';
+    provinceInput.appendChild(defaultOption);
+
+    provinces.forEach(function(province) {
+      const option = document.createElement('option');
+      option.value = province[0];
+      option.textContent = province[1];
+      provinceInput.appendChild(option);
+    });
+  }
+
+  countrySelect.addEventListener('change', updateProvinces);
+  updateProvinces();
+</script>

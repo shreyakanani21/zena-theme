@@ -1,0 +1,151 @@
+<div
+  class="modal fade theme-modal"
+  id="add-address"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-fullscreen-sm-down">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add a new address</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        {% form 'customer_address', customer.new_address %}
+          <div class="row g-4">
+            <div class="col-xxl-6">
+              <div class="form-floating theme-form-floating">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="AddressFirstNameNew"
+                  name="address[first_name]"
+                  value="{{ form.first_name }}"
+                  required
+                >
+                <label for="AddressFirstNameNew">First Name</label>
+              </div>
+            </div>
+
+            <div class="col-xxl-6">
+              <div class="form-floating theme-form-floating">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="AddressLastNameNew"
+                  name="address[last_name]"
+                  value="{{ form.last_name }}"
+                  required
+                >
+                <label for="AddressLastNameNew">Last Name</label>
+              </div>
+            </div>
+
+            <div class="col-xxl-6">
+              <div class="form-floating theme-form-floating">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="AddressCompanyNew"
+                  name="address[company]"
+                  value="{{ form.company }}"
+                >
+                <label for="AddressCompanyNew">Company</label>
+              </div>
+            </div>
+
+            <div class="col-xxl-6">
+              <div class="form-floating theme-form-floating">
+                <input
+                  class="form-control"
+                  type="number"
+                  value="{{ form.phone }}"
+                  name="address[phone]"
+                  id="AddressPhoneNew"
+                  pattern="[0-9\-]*"
+                  required
+                >
+                <label for="AddressPhoneNew">Mobile Number</label>
+              </div>
+            </div>
+
+            <div class="col-12">
+              <div class="form-floating theme-form-floating">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="AddressAddress1New"
+                  name="address[address1]"
+                  value="{{ form.address1 }}"
+                  required
+                >
+                <label for="AddressAddress1New">Add Address</label>
+              </div>
+            </div>
+
+            <div class="col-12">
+              <div class="form-floating theme-form-floating">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="AddressAddress2New"
+                  name="address[address2]"
+                  value="{{ form.address2 }}"
+                >
+                <label for="AddressAddress2New">Add Address 2</label>
+              </div>
+            </div>
+
+            <div class="col-xxl-4">
+              <div class="form-floating theme-form-floating">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="AddressCityNew"
+                  name="address[city]"
+                  value="{{ form.city }}"
+                  required
+                >
+                <label for="AddressCityNew">City</label>
+              </div>
+            </div>
+
+            <div class="col-xxl-4">
+              <div class="form-floating theme-form-floating">
+                <select
+                  class="form-select"
+                  id="AddressCountryNew"
+                  name="address[country]"
+                  data-default="{{ form.country }}"
+                  required
+                >
+                  {{ all_country_option_tags }}
+                </select>
+                <label for="AddressCountryNew">Country</label>
+              </div>
+            </div>
+
+            <div class="col-xxl-4">
+              <div class="form-floating theme-form-floating">
+                <input
+                  type="number"
+                  class="form-control"
+                  id="AddressZipNew"
+                  name="address[zip]"
+                  value="{{ form.zip }}"
+                  required
+                >
+                <label for="AddressZipNew">Pin Code</label>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn_outline  btn-md " data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn  btn_solid btn-md  ">Save changes</button>
+            </div>
+          </div>
+        {% endform %}
+      </div>
+    </div>
+  </div>
+</div>

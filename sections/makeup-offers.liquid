@@ -1,0 +1,76 @@
+<section class="makeup-offers-section">
+  <div class="makeup-offers-container">
+    <div class="salon-offers-content">
+      <h1 style="color:{{ section.settings.title-color }};">{{ section.settings.title }}</h1>
+      <h3 style="color:{{ section.settings.subtitle-color }};">{{ section.settings['sub-title'] }}</h3>
+      <p style="color:{{ section.settings.description-color }};">
+        {{ section.settings.description }}
+      </p>
+      <button
+        class="btn btn_black"
+        style="color: {{ section.settings.banner_link_color }};  background-color: {{ section.settings.banner_link_bgcolor }};"
+      >
+        {{ section.settings.banner_link }}
+      </button>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Makeup offers",
+  "settings": [
+      {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+      {
+          "type": "color",
+          "id": "title-color",
+          "label": "Title Color"
+        },
+     {
+          "type": "text",
+          "id": "sub-title",
+          "label": "Sub Title"
+        },
+     {
+          "type": "color",
+          "id": "subtitle-color",
+          "label": "Sub Title Color"
+        },
+    {
+          "type": "text",
+          "id": "description",
+          "label": "Description"
+        },
+      {
+          "type": "color",
+          "id": "description-color",
+          "label": "Description Color"
+        },
+     {
+    "type": "text",
+    "id": "banner_link",
+    "label": "Banner Button Text",
+    "default": "Button"
+  },
+  {
+    "type": "color",
+    "id": "banner_link_color",
+    "label": "Text Color",
+  },
+     {
+          "type": "color",
+          "id": "banner_link_bgcolor",
+          "label": "Button Background Color"
+        },
+  ],
+    "presets": [
+  {
+    "name": "Makeup offers",
+  }
+]
+}
+{% endschema %}

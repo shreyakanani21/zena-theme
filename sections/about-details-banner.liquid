@@ -1,0 +1,209 @@
+<section class="information-banner">
+  <div class="custom-container">
+    <div class="row gy-4">
+      {% for block in section.blocks %}
+        <div class="col-12">
+          <div class="card  {% if block.settings.content_order == 'first' %}flex-row-reverse{% else %}flex-row{% endif %}">
+            <div class="image-wrapper">
+              <div class="image-background {{ block.settings.background_color }}"></div>
+              {% if block.settings.image %}
+                <img
+                  class="img-fluid"
+                  src="{{ block.settings.image | image_url: width: 600 }}"
+                  alt="image"
+                >
+              {% else %}
+                <img
+                  src="{{ 'image.png' | asset_url }}"
+                  class="img-fluid  "
+                  alt="Placeholder Image"
+                >
+              {% endif %}
+            </div>
+            <div class="content-wrapper content-alignment {{ block.settings.desktop_content_alignment }}">
+              <h2>{{ block.settings.title }}</h2>
+              <p>{{ block.settings.description }}</p>
+              <button
+                class="btn_solid"
+                style="color: {{ block.settings.banner_link_color }};  background-color: {{ block.settings.banner_link_bgcolor }};"
+              >
+                {{ block.settings.banner_link }}
+              </button>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "About Banner Detail",
+  "settings": [],
+   "blocks": [
+    {
+      "type": "left_image",
+      "name": "Left Image Card",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description"
+        },
+        {
+          "type": "color",
+          "id": "background_color",
+          "label": "Background Color"
+        },
+         {
+    "type": "text",
+    "id": "banner_link",
+    "label": "Banner Button Text",
+    "default": "Button"
+  },
+  {
+    "type": "color",
+    "id": "banner_link_color",
+    "label": "Text Color",
+  },
+     {
+          "type": "color",
+          "id": "banner_link_bgcolor",
+          "label": "Button Background Color"
+        },
+         {
+      "type": "select",
+      "id": "content_order",
+      "label": "Content Order",
+      "options": [
+        {
+          "label": "First",
+          "value": "first"
+        },
+        {
+          "label": "Second",
+          "value": "second"
+        }
+      ],
+      "default": "second"
+    },
+        {
+      "type": "select",
+      "id": "desktop_content_alignment",
+      "options": [{
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "right",
+      "label": "Content Alignment"
+    },
+      ]
+    },
+    {
+      "type": "right_image",
+      "name": "Right Image Card",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description"
+        },
+
+        {
+          "type": "color",
+          "id": "background_color",
+          "label": "Background Color"
+        },
+         {
+    "type": "text",
+    "id": "banner_link",
+    "label": "Banner Button Text",
+    "default": "Button"
+  },
+  {
+    "type": "color",
+    "id": "banner_link_color",
+    "label": "Text Color",
+  },
+     {
+          "type": "color",
+          "id": "banner_link_bgcolor",
+          "label": "Button Background Color"
+        },
+         {
+      "type": "select",
+      "id": "content_order",
+      "label": "Content Order",
+      "options": [
+        {
+          "label": "First",
+          "value": "first"
+        },
+        {
+          "label": "Second",
+          "value": "second"
+        }
+      ],
+      "default": "second"
+    },
+         {
+      "type": "select",
+      "id": "desktop_content_alignment",
+      "options": [{
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "right",
+      "label": "Content Alignment"
+    },
+      ]
+    }
+  ],
+    "presets": [
+  {
+    "name": "About Banner Detail"
+  }
+],
+}
+{% endschema %}

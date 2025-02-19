@@ -1,0 +1,90 @@
+{% assign product = product-info %}
+<div class="product-card product-card-2">
+  <div class="img-wrapper">
+    {% assign price = product.price | divided_by: 100 %}
+    {% assign compare_price = product.compare_at_price | divided_by: 100 %}
+    {% if compare_price > price %}
+      {% assign discount = compare_price | minus: price %}
+      {% assign discount_amount = discount | times: 100 %}
+      {% assign discount_percentage = discount_amount | divided_by: compare_price %}
+    {% endif %}
+    {% if discount_percentage >= 20 %}
+      <span class="discount">{{ discount_percentage | round }}%Off</span>
+    {% endif %}
+
+    {% if product.variants.size > 1 %}
+        <div id="swiper-{{ product.id }}" class="swiper variant-container">
+          <div class="swiper-wrapper">
+            {% for variant in product.variants %}
+            <div class="swiper-slide">
+              <a href="{{ product.url }}">
+                <img
+                  alt="{{ product.title }} {{ variant.title }}"
+                  class="img-fluid blur-up lazyload current-product-img"
+                  {% if settings.enable_lazyload %}
+                    data-src="{{ variant.featured_image | image_url }}"
+                  {% else %}
+                    src="{{ variant.featured_image | image_url }}"
+                  {% endif %}
+                />
+              </a>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% else %}
+        <a href="{{ product.url }}">
+          <img
+            alt="{{ product.title }}"
+            class="img-fluid blur-up lazyload current-product-img"
+            {% if settings.enable_lazyload %}
+              data-src="{{ product.featured_image | image_url }}"
+            {% else %}
+              src="{{ product.featured_image | image_url }}"
+            {% endif %}
+          />
+        </a>
+      {% endif %}
+    
+    <a class="wishlist {% if forloop.index == 3 %}filled{% endif %}">
+        {% render 'icon-heart' %}
+      </a>
+    <div class="icon-div">
+      <a class="icon">
+        {% render 'icon-cart-bag' %}
+      </a>
+      <a class="icon">
+        <i class="iconsax" icon-name="refresh"></i>
+      </a>
+    </div>
+    
+  <div class="button-div">
+    <ul class="color-variant">
+        {% assign color_patterns = shop.metaobjects['shopify--color-pattern'].values %}    
+      
+        {% for option in product.options_with_values %}
+          {% if option.name == 'Color' %}
+            {% for value in option.values %}
+              {% assign matching_color = color_patterns | where: 'label', value | first %}
+  
+              {% if matching_color %}
+                <li
+                  style="background-color: {{ matching_color.color.value }};"
+                  class="variant-option"
+                  onclick="changeSlide({{ forloop.index0 }}, {{ product.id }})"
+                >
+                </li>
+              {% endif %}
+  
+            {% endfor %}
+          {% endif %}
+        {% endfor %}
+    </ul>
+    <button class="view-btn">
+                    <i class="iconsax" icon-name="eye"></i> Quick View
+                  </button>
+  </div>
+  </div>
+  <a href="{{ product.url }}"><h5>{{ product.title }}</h5></a>
+  <p>{{ product.price | money_without_trailing_zeros }} <del>{{ product.compare_at_price | money_without_trailing_zeros }}</del> </p>
+</div>

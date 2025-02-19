@@ -1,0 +1,147 @@
+{% unless settings.shipping_calculator == 'Disabled' %}
+  <div id="shipping-calculator" class="shipping-container">
+    <h5 class="mb-3">{{ settings.shipping_calculator_heading | default: 'Get shipping estimates' }}</h5>
+
+    <div class="form-row row g-3">
+      <div class="col-lg-12">
+        <label for="address_country" class="label--hidden">Country</label>
+        <select
+          class="form-control"
+          id="address_country"
+          name="address[country]"
+          data-default="{% if shop.customer_accounts_enabled and customer %}{{ customer.default_address.country }}{% elsif settings.shipping_calculator_default_country != '' %}{{ settings.shipping_calculator_default_country }}{% endif %}"
+        >
+          {{ country_option_tags }}
+        </select>
+      </div>
+      <div class="col-lg-12" id="address_province_container">
+        <label for="address_province" class="label--hidden" id="address_province_label">Province</label>
+        <select
+          class="form-control"
+          id="address_province"
+          name="address[province]"
+          data-default="{% if shop.customer_accounts_enabled and customer and customer.default_address.province != '' %}{{ customer.default_address.province }}{% endif %}"
+        ></select>
+      </div>
+      <div class="col-lg-12">
+        <label for="address_zip" class="label--hidden">Zip/Postal Code</label>
+        <input
+          class="form-control"
+          type="text"
+          placeholder="Postal Code / Zip"
+          id="address_zip"
+          name="address[zip]"
+          {% if shop.customer_accounts_enabled and customer %}
+            value="{{ customer.default_address.zip }}"
+          {% endif %}
+        >
+      </div>
+
+      <div class="col-lg-12 button-group ">
+        <button type="button" class="btn btn_outline proceed-btn get-rates">
+          {{ settings.shipping_calculator_submit_button_label | default: 'Estimate' }}
+        </button>
+      </div>
+    </div>
+    <div id="wrapper-response" class="pt-2"></div>
+  </div>
+
+  <script id="shipping-calculator-response-template" type="text/template">
+    <p id="shipping-rates-feedback" <% if (success) { %> class="success" <% } else { %> class="error" <% } %>>
+    <% if (success) { %>
+      <% if (rates.length > 1) { %>
+      There are <%- rates.length %> shipping rates available for <%- address %>, starting at <%= rates[0].price %>.
+      <% } else if (rates.length == 1) { %>
+      There is one shipping rate available for <%- address %>.
+      <% } else { %>
+      We do not ship to this destination.
+      <% } %>
+    <% } else { %>
+      <%- errorFeedback %>
+    <% } %>
+    </p>
+    <ul id="shipping-rates">
+      <% for (var i=0; i<rates.length; i++) { %>
+      <li><%- rates[i].name %> at <%= rates[i].price %></li>
+      <% } %>
+    </ul>
+  </script>
+
+  <script
+    src="https://code.jquery.com/jquery-3.7.1.min.js"
+    integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+    crossorigin="anonymous"
+  ></script>
+  {{ '//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js' | script_tag }}
+  {{ 'shopify_common.js' | shopify_asset_url | script_tag }}
+  {{ 'jquery.cart.min.js' | asset_url | script_tag }}
+
+  <script type="text/javascript">
+    Shopify.Cart.ShippingCalculator.show( {
+      submitButton: {{ settings.shipping_calculator_submit_button_label | default: 'Calculate shipping' | json }},
+      submitButtonDisabled: {{ settings.shipping_calculator_submit_button_label_disabled | default: 'Calculating...' | json }}{% if customer %},
+      customerIsLoggedIn: true{% endif %},
+      moneyFormat: {{ shop.money_with_currency_format | json }}
+    } );
+  </script>
+{% endunless %}
+
+<style>
+    .shipping-container{
+        margin-top: 17px;
+    border-top: 1px solid #5b5a5a40;
+    background-color: rgba(var(--box-background), 1);
+    padding-top: 19px;
+    }
+  .shipping-container h5{
+    font-size: 18px;
+  }
+    .shipping-container .btn_outline{
+      background-color: transparent;
+      border: 1px solid rgba(var(--theme-default), 1);
+      color: rgba(var(--theme-default), 1);
+      padding: 12px 20px;
+      transition: all .4s ease-in-out;
+      border-radius: 0;
+      font-size: 16px;
+          width: 100%;
+          margin-bottom: 20px;
+    }
+
+    .shipping-container .btn_outline:hover {
+    background-color: rgba(var(--theme-default), 1);
+    color: rgba(var(--white), 1);
+  }
+  .shipping-container .label--hidden{
+        font-size: 15px;
+    margin-bottom: 6px;
+  }
+  .shipping-container .form-row  .form-control:focus{
+    box-shadow:none;
+        border-color: rgba(var(--theme-default), 1);
+  }
+  #wrapper-response{
+    margin-bottom: 17px;
+  }
+  #wrapper-response .error{
+         color: rgba(var(--theme-default), 1);
+    font-size: 15px;
+  }
+  #wrapper-response #shipping-rates-feedback{
+      padding: 13px;
+    background: #b96d6d17;
+  }
+
+  #wrapper-response .success{
+             color: #b96d6d;
+    font-size: 16px;
+  }
+   #wrapper-response #shipping-rates li{
+        font-size: 16px;
+    color: #b96d6d;
+   }
+    #wrapper-response #shipping-rates{
+        padding: 0 14px 11px;
+    background: #b96d6d17;
+  }
+</style>

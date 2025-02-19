@@ -1,0 +1,98 @@
+{% assign full_product_url = shop.url | append: product.url %}
+<div
+  class="modal theme-modal fade social-modal"
+  id="social-box"
+  tabindex="-1"
+  role="dialog"
+  {% if settings.enable_share_modal == false %}
+    style="display: none;"
+  {% endif %}
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="mb-0">{{ settings.share_modal_title }}</h4>
+        <button
+          class="btn-close"
+          type="button"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <div class="d-flex">
+          <input
+            id="product-link"
+            class="form-field form-field--input"
+            type="text"
+            value="{{ full_product_url }}"
+            readonly
+          >
+          <button id="copy-button" class="btn btn_outline sm lh-1" onclick="copyLink()">
+            <i id="copy-icon" class="fa-solid fa-copy"></i>
+          </button>
+        </div>
+        <div class="social-icon">
+          <h6>{{ settings.share_label }}</h6>
+          <ul>
+            {% if settings.facebook_link %}
+              <li>
+                <a href="{{ settings.facebook_link }}" target="_blank">
+                  <i class="fa-brands fa-facebook-f"></i>
+                </a>
+              </li>
+            {% endif %}
+            {% if settings.pinterest_link %}
+              <li>
+                <a href="{{ settings.pinterest_link }}" target="_blank">
+                  <i class="fa-brands fa-pinterest-p"></i>
+                </a>
+              </li>
+            {% endif %}
+            {% if settings.twitter_link %}
+              <li>
+                <a href="{{ settings.twitter_link }}" target="_blank">
+                  <i class="fa-brands fa-x-twitter"></i>
+                </a>
+              </li>
+            {% endif %}
+            {% if settings.instagram_link %}
+              <li>
+                <a href="{{ settings.instagram_link }}" target="_blank">
+                  <i class="fa-brands fa-instagram"></i>
+                </a>
+              </li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function copyLink() {
+    var copyText = document.getElementById("product-link");
+
+    copyText.select();
+    copyText.setSelectionRange(0, 99999);
+    document.execCommand("copy");
+
+    copyText.value = "Link Copied";
+
+    var copyButton = document.getElementById("copy-button");
+    var copyIcon = document.getElementById("copy-icon");
+
+    copyButton.innerHTML = '<i class="fa-solid fa-check"></i>';
+  }
+
+  var modal = document.getElementById('social-box');
+  modal.addEventListener('hidden.bs.modal', function () {
+    var copyText = document.getElementById("product-link");
+    var copyButton = document.getElementById("copy-button");
+
+    copyText.value = "{{ full_product_url }}";
+
+    copyButton.innerHTML = '<i id="copy-icon" class="fa-solid fa-copy"></i>';
+  });
+</script>

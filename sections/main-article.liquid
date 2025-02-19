@@ -1,0 +1,450 @@
+<div class="section-space{% if settings.breadcrumb %} pt-0{% endif %}">
+  <div class="main-blog custom-container container blog-page">
+    <div class="">
+      <div class="row g-4 ">
+        <div class="col-xl-3 col-lg-4">
+          <div class="blog-sidebar">
+            <div class="row gy-4">
+              <div class="col-12">
+                <div class="sidebar-box">
+                  <div class="sidebar-title">
+                    <h5>Categories</h5>
+                  </div>
+                  <ul class="categories">
+                    {%- assign categories_count = '' -%}
+                    {%- assign categories_list = '' -%}
+
+                    {%- for article in blog.articles -%}
+                      {%- assign category = article.metafields.custom.category -%}
+
+                      {%- if categories_list contains category -%}
+                        {%- continue -%}
+                        {# Skip if the category is already processed #}
+                      {%- else -%}
+                        {%- assign categories_list = categories_list | append: category | append: ',' -%}
+                      {%- endif -%}
+                    {%- endfor -%}
+
+                    {%- assign categories_array = categories_list | split: ',' -%}
+
+                    {%- for category in categories_array -%}
+                      {%- unless category == '' -%}
+                        {%- assign count = 0 -%}
+
+                        {%- for article in blog.articles -%}
+                          {%- if article.metafields.custom.category == category -%}
+                            {%- assign count = count | plus: 1 -%}
+                          {%- endif -%}
+                        {%- endfor -%}
+
+                        <li>
+                          <p>
+                            {{ category }}
+                            <span>{{ count }}</span>
+                          </p>
+                        </li>
+                      {%- endunless -%}
+                    {%- endfor -%}
+                  </ul>
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="sidebar-box">
+                  <div class="sidebar-title">
+                    <h5>Top Post</h5>
+                  </div>
+                  <ul class="top-post">
+                    {%- for article in blog.articles limit: 3 -%}
+                      <li>
+                        <img class="img-fluid" src="{{ article.image.src | img_url: 'master' }}" alt="">
+                        <div>
+                          <a href="{{ article.url }}">
+                            <h6>
+                              {{ article.title }}
+                            </h6>
+                          </a>
+                          <p>
+                            {{ article.published_at | date: '%B %d, %Y' }}
+                          </p>
+                        </div>
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="sidebar-box">
+                  <div class="sidebar-title">
+                    <h5>Popular Tags</h5>
+                  </div>
+                  <ul class="popular-tag">
+                    {%- for tag in blog.all_tags -%}
+                      <li>
+                        <p>
+                          <a href="{{ shop.url }}/blogs/{{ blog.handle }}/tagged/{{ tag }}">{{ tag }}</a>
+                        </p>
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="sidebar-box">
+                  <div class="sidebar-title">
+                    <h5>Follow Us</h5>
+                  </div>
+                  <ul class="social-icon">
+                    {% if section.settings.enable_facebook == true %}
+                      <li>
+                        <a href="https://www.facebook.com/" target="_blank">
+                          <div class="icon"><i class="fa-brands fa-facebook-f"></i></div>
+                          <h6>Facebook</h6>
+                        </a>
+                      </li>
+                    {% endif %}
+                    {% if section.settings.enable_instagram == true %}
+                      <li>
+                        <a href="https://www.instagram.com/" target="_blank">
+                          <div class="icon"><i class="fa-brands fa-instagram"> </i></div>
+                          <h6>Instagram</h6>
+                        </a>
+                      </li>
+                    {% endif %}
+                    {% if section.settings.enable_twitter == true %}
+                      <li>
+                        <a href="https://twitter.com/" target="_blank">
+                          <div class="icon"><i class="fa-brands fa-x-twitter"></i></div>
+                          <h6>Twitter</h6>
+                        </a>
+                      </li>
+                    {% endif %}
+                    {% if section.settings.enable_youtube == true %}
+                      <li>
+                        <a href="https://www.youtube.com/" target="_blank">
+                          <div class="icon"><i class="fa-brands fa-youtube"></i></div>
+                          <h6>Youtube</h6>
+                        </a>
+                      </li>
+                    {% endif %}
+                    {% if section.settings.enable_whatsapp == true %}
+                      <li>
+                        <a href="https://www.whatsapp.com/" target="_blank">
+                          <div class="icon"><i class="fa-brands fa-whatsapp"></i></div>
+                          <h6>Whatsapp</h6>
+                        </a>
+                      </li>
+                    {% endif %}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-9 col-lg-8 ratio50_2">
+          <div class="row gy-4 sticky">
+            <article class="article-template blog-main-box blog-details">
+              <div class="blog-content pb-4">
+                {%- for block in section.blocks -%}
+                  {%- case block.type -%}
+                    {%- when '@app' -%}
+                      <div class="">
+                        {% render block %}
+                      </div>
+                    {%- when 'featured_image' -%}
+                      {%- if article.image -%}
+                        <div>
+                          <div class="blog-img" {{ block.shopify_attributes }}>
+                            <img
+                              class="img-fluid bg-img"
+                              src="{{ article.image | img_url: 'master' }}"
+                              alt="{{ article.image.alt | escape }}"
+                            >
+                            <!-- Blog image -->
+                          </div>
+                        </div>
+                      {%- endif -%}
+
+                    {%- when 'title' -%}
+                      <div class="blog-title">
+                        {% if block.settings.blog_show_date or block.settings.blog_show_author %}
+                          <span class="blog-date">
+                            {% if block.settings.blog_show_date -%}
+                              {{- article.published_at | time_tag: format: 'date' -}}
+                            {%- endif %}
+                            {% if block.settings.blog_show_date and block.settings.blog_show_author %}
+                              ,
+                            {% endif %}
+                            {% if block.settings.blog_show_author -%}
+                              By: {{ article.author }}
+                            {%- endif %}
+                          </span>
+                        {% endif %}
+                        <a href="{{ article.url }}">
+                          <h4>{{ article.title | escape }}</h4>
+                        </a>
+                      </div>
+
+                    {%- when 'content' -%}
+                      <div class="blog-article">
+                        {{ article.content }}
+                        <!-- Blog content -->
+                      </div>
+                  {%- endcase -%}
+                {%- endfor -%}
+              </div>
+
+              <div class=" d-flex justify-content-center">
+                <a href="{{ blog.url }}" class="back-to-blog btn btn_outline ">
+                  {% render 'icon-arrow' %}
+                  Back to {{ blog.title }}
+                </a>
+              </div>
+              <div class="blog-content">
+                {%- if blog.comments_enabled? -%}
+                  {%- if article.comments_count > 0 -%}
+                    {% paginate article.comments by 5 %}
+                      <div class="comments-box">
+                        <h5>Comments</h5>
+                        <ul class="theme-scrollbar">
+                          {%- for comment in article.comments -%}
+                            <li>
+                              <div class="comment-items">
+                                <div class="user-img">
+                                  <img
+                                    src="https://cdn.shopify.com/s/files/1/0714/3728/7637/files/user-light.png?v=1738740424"
+                                    alt="Default User Avatar"
+                                    class="img-fluid for-light"
+                                  >
+                                  <img
+                                    src="https://cdn.shopify.com/s/files/1/0714/3728/7637/files/user-dark.png?v=1738740520"
+                                    alt="Default User Avatar"
+                                    class="img-fluid for-dark"
+                                  >
+                                </div>
+
+                                <div class="user_content">
+                                  <div class="user-info">
+                                    <div class="d-flex justify-content-between gap-3">
+                                      <h6>
+                                        <i class="iconsax" data-icon="user-1">{% render 'icon-user' %}</i>
+                                        {{ comment.author }}
+                                      </h6>
+                                      <span>
+                                        <i class="iconsax" data-icon="clock"></i>
+                                        {{ comment.created_at | date: '%b %d, %Y' }}
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <p>
+                                    {{ comment.content }}
+                                  </p>
+                                </div>
+                              </div>
+                            </li>
+                          {%- endfor -%}
+                        </ul>
+                      </div>
+                    {% endpaginate %}
+                  {%- endif -%}
+                  {% form 'new_comment', article %}
+                    {%- liquid
+                      assign post_message = 'blogs.article.success'
+                      if blog.moderated? and comment.status == 'unapproved'
+                        assign post_message = 'blogs.article.success_moderated'
+                      endif
+                    -%}
+
+                    <h5 class="pt-3">Leave a Comment</h5>
+
+                    {%- if form.errors -%}
+                      <div class="alert alert-danger" role="alert">
+                        <p class="form-status caption-large text-body" tabindex="-1" autofocus>
+                          {{ 'templates.contact.form.error_heading' | t }}
+                        </p>
+                        <ul class="form-status-list caption-large">
+                          {%- for field in form.errors -%}
+                            <li>
+                              <a href="#CommentForm-{{ field }}" class="link">
+                                {%- if form.errors.translated_fields[field] contains 'author' -%}
+                                  {{ 'blogs.article.name' | t }}
+                                {%- elsif form.errors.translated_fields[field] contains 'body' -%}
+                                  {{ 'blogs.article.message' | t }}
+                                {%- else -%}
+                                  {{ form.errors.translated_fields[field] }}
+                                {%- endif -%}
+                                {{ form.errors.messages[field] }}
+                              </a>
+                            </li>
+                          {%- endfor -%}
+                        </ul>
+                      </div>
+                    {%- elsif form.posted_successfully? -%}
+                      <div class="alert alert-success" role="status">
+                        <p class="form-status text-success" tabindex="-1" autofocus>
+                          {{ post_message | t }}
+                        </p>
+                      </div>
+                    {%- endif -%}
+
+                    <div class="row gy-3 message-box">
+                      <div class="col-sm-6">
+                        <label class="form-label" for="CommentForm-author">Full Name</label>
+                        <input
+                          class="form-control"
+                          type="text"
+                          name="comment[author]"
+                          id="CommentForm-author"
+                          value="{{ form.author }}"
+                          placeholder="Enter your Name"
+
+                          aria-required="true"
+                          {% if form.errors contains 'author' %}
+                            aria-invalid="true"
+                            aria-describedby="CommentForm-author-error"
+                          {% endif %}
+                        >
+                        {%- if form.errors contains 'author' -%}
+                          <small id="CommentForm-author-error" class="text-danger"> Name can't be blank </small>
+                        {%- endif -%}
+                      </div>
+
+                      <div class="col-sm-6">
+                        <label class="form-label" for="CommentForm-email">Email address</label>
+                        <input
+                          class="form-control"
+                          type="email"
+                          name="comment[email]"
+                          id="CommentForm-email"
+                          value="{{ form.email }}"
+
+                          aria-required="true"
+                          {% if form.errors contains 'email' %}
+                            aria-invalid="true"
+                            aria-describedby="CommentForm-email-error"
+                          {% endif %}
+                        >
+                        {%- if form.errors contains 'email' -%}
+                          <small id="CommentForm-email-error" class="text-danger">
+                            Email cannot be empty and must be properly formatted
+                          </small>
+                        {%- endif -%}
+                      </div>
+
+                      <div class="col-12">
+                        <label class="form-label" for="CommentForm-body">Message</label>
+                        <textarea
+                          class="form-control"
+                          name="comment[body]"
+                          id="CommentForm-body"
+                          rows="6"
+                          placeholder="Enter Your Message"
+
+                          aria-required="true"
+                          {% if form.errors contains 'body' %}
+                            aria-invalid="true"
+                            aria-describedby="CommentForm-body-error"
+                          {% endif %}
+                        >{{ form.body }}</textarea>
+                        {%- if form.errors contains 'body' -%}
+                          <small id="CommentForm-body-error" class="text-danger"> Message can't be blank </small>
+                        {%- endif -%}
+                      </div>
+
+                      {%- if blog.moderated? -%}
+                        <div class="col-12">
+                          <p class="article-template__comment-warning caption">{{ 'blogs.article.moderated' | t }}</p>
+                        </div>
+                      {%- endif -%}
+
+                      <div class="col-12">
+                        <button class="btn btn_black  sm" type="submit">Post Comment</button>
+                      </div>
+                    </div>
+                  {% endform %}
+                {%- endif -%}
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="application/ld+json">
+  {{ article | structured_data }}
+</script>
+
+{% schema %}
+{
+  "name": "t:sections.main-article.name",
+  "tag": "section",
+  "class": "section",
+  "blocks": [
+    {
+      "type": "@app"
+    },
+    {
+      "type": "featured_image",
+      "name": "t:sections.main-article.blocks.featured_image.name",
+      "limit": 1,
+    },
+    {
+      "type": "title",
+      "name": "t:sections.main-article.blocks.title.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "blog_show_date",
+          "default": true,
+          "label": "t:sections.main-article.blocks.title.settings.blog_show_date.label"
+        },
+        {
+          "type": "checkbox",
+          "id": "blog_show_author",
+          "default": false,
+          "label": "t:sections.main-article.blocks.title.settings.blog_show_author.label"
+        }
+      ]
+    },
+    {
+      "type": "content",
+      "name": "t:sections.main-article.blocks.content.name",
+      "limit": 1
+    },
+  ],
+  "settings": [
+    {
+      "type": "header",
+      "content": "Social Media Icons"
+    },
+     {
+      "type": "checkbox",
+      "id": "enable_facebook",
+      "label": "Facebook Icon"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_instagram",
+      "label": "Instagram Icon"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_twitter",
+      "label": "Twitter Icon"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_youtube",
+      "label": "Youtube Icon"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_whatsapp",
+      "label": "Whatsapp Icon"
+    },
+
+  ]
+}
+{% endschema %}

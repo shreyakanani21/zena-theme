@@ -1,0 +1,569 @@
+<section class="section-b-space pt-0">
+  <div class="main-blog custom-container container blog-page">
+    <div class="blog-search-content">
+      <div class="row gy-4">
+        <div class="col-12 m-auto">
+          <div class="title-1">
+            <h3 class="text-center">Search For Blogs</h3>
+          </div>
+        </div>
+
+        <div class="col-lg-5 col-sm-8 m-auto">
+          <div>
+            <form id="search-form" class="main-search-box">
+              <div>
+                <input
+                  type="search"
+                  id="search-input"
+                  placeholder="Search Here..."
+                  name="q"
+                >
+                <i class="iconsax" data-icon="search-normal-2"></i>
+              </div>
+              <button class="btn btn_black sm" type="submit">Search</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="col-12">
+          <div id="search-results" class="row ratio1_3 gy-4 search-item row-cols-lg-4 row-cols-md-3 row-cols-2"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-b-space pt-0">
+  <div class="main-blog custom-container container blog-page">
+    <div class="">
+      <div class="row g-4 {% if section.settings.blog_position == 'left' %}flex-row-reverse {% elsif section.settings.blog_position == 'right' %}flex-row {% endif %}">
+        {% if blog.articles_count > 0 %}
+          {%- paginate blog.articles by 4 -%}
+            <div class="{% if section.settings.blog_position == 'none' %}col-12 {% else %}col-xl-9 col-lg-8{% endif %}{% if section.settings.blog_layout == 'grid' %} ratio50_2 {% else %} ratio2_3 {% endif %} ">
+              <div
+                class="row gy-4 sticky product-paginate-grid mb-5"
+                data-next-url="{{paginate.next.url}}"
+              >
+                {%- for article in blog.articles -%}
+                  {% if section.settings.blog_layout == 'grid' %}
+                    <div class="col-xl-4 col-sm-6">
+                      <div class="blog-main-box">
+                        <div>
+                          <div class="blog-img">
+                            <img
+                              class="img-fluid bg-img"
+                              src="{{ article.image.src | img_url: 'master' }}"
+                              alt="{{ article.title }}"
+                            >
+                          </div>
+                        </div>
+                        <div class="blog-content">
+                          {% if section.settings.enable_date -%}
+                            <div class="date-content">
+                              <span class="blog-date"> {{ article.published_at | date: '%B %d, %Y' }} </span>
+                              <div class="d-flex align-items-center gap-2">
+                                <span class="px-2">|</span>
+                                {% if section.settings.enable_author %}
+                                  <img
+                                    class="img-fluid"
+                                    src="{{ 'user.webp' | asset_url }}"
+                                    alt="{{ article.author }}"
+                                  >
+
+                                  <h6>by {{ article.author }}</h6>
+                                {% endif %}
+                              </div>
+                            </div>
+                          {%- endif %}
+                          <a
+                            href="{{ article.url }}"
+                          >
+                            <h4>{{ article.title }}</h4>
+                          </a>
+                          <p class="blog-excerpt">{{ article.excerpt }}</p>
+                          <div class="share-box">
+                            <a href="{{ article.url }}"> Read More..</a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  {% else %}
+                    <div class="col-12">
+                      <div class="blog-main-box blog-list">
+                        <div class="list-img">
+                          <div class="blog-img">
+                            <img
+                              class="img-fluid bg-img"
+                              src="{{ article.image.src | img_url: 'master' }}"
+                              alt="{{ article.title }}"
+                            >
+                          </div>
+                        </div>
+                        <div class="blog-content">
+                          {% if section.settings.enable_date -%}
+                            <div class="date-content">
+                              <span class="blog-date"> {{ article.published_at | date: '%B %d, %Y' }} </span>
+                              <span class="px-2">|</span>
+                              <div class="d-flex align-items-center gap-2">
+                                {% if section.settings.enable_author %}
+                                  <img
+                                    class="img-fluid"
+                                    src="{{ 'user.webp' | asset_url }}"
+                                    alt="{{ article.author }}"
+                                  >
+
+                                  <h6>by {{ article.author }}</h6>
+                                {% endif %}
+                              </div>
+                            </div>
+                          {%- endif %}
+                          <a href="{{ article.url }}">
+                            <h4>{{ article.title }}</h4>
+                          </a>
+                          <p class="blog-excerpt">{{ article.excerpt }}</p>
+                          <div class="share-box">
+                            <a href="{{ article.url }}"> Read More..</a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  {% endif %}
+                {%- endfor -%}
+                {%- if paginate.pages > 1 -%}
+                  {% if section.settings.pagination_type == 'numbered' %}
+                    {% render 'pagination', paginate: paginate %}
+                  {% elsif section.settings.pagination_type == 'load-more' %}
+                    <div class="pt-5 d-flex load-buttons justify-content-center">
+                      <button class="load-more-btn btn btn_black">Load more</button>
+                      <div class="load-more-spinner"></div>
+                    </div>
+                  {% elsif section.settings.pagination_type == 'infinite-scroll' %}
+                    <div class="pt-5 d-flex load-buttons justify-content-center">
+                      <div class="load-more-spinner" id="infinite-scroll-trigger"></div>
+                    </div>
+                  {% endif %}
+                {%- endif -%}
+              </div>
+            </div>
+          {%- endpaginate -%}
+          <div class="{% if section.settings.blog_position == 'none' %} d-none {% else %} col-xl-3 col-lg-4{% endif %}">
+            <div class="blog-sidebar">
+              <div class="row gy-4">
+                <div class="col-12">
+                  <div class="sidebar-box pt-0">
+                    <div class="sidebar-title">
+                      <h5>Categories</h5>
+                    </div>
+                    <ul class="categories">
+                      {%- assign categories_count = '' -%}
+                      {%- assign categories_list = '' -%}
+
+                      {%- for article in blog.articles -%}
+                        {%- assign category = article.metafields.custom.category -%}
+
+                        {%- if categories_list contains category -%}
+                          {%- continue -%}
+                          {# Skip if the category is already processed #}
+                        {%- else -%}
+                          {%- assign categories_list = categories_list | append: category | append: ',' -%}
+                        {%- endif -%}
+                      {%- endfor -%}
+
+                      {%- assign categories_array = categories_list | split: ',' -%}
+
+                      {%- for category in categories_array -%}
+                        {%- unless category == '' -%}
+                          {%- assign count = 0 -%}
+
+                          {%- for article in blog.articles -%}
+                            {%- if article.metafields.custom.category == category -%}
+                              {%- assign count = count | plus: 1 -%}
+                            {%- endif -%}
+                          {%- endfor -%}
+
+                          <li>
+                            <p>
+                              {{ category }}
+                              <span>{{ count }}</span>
+                            </p>
+                          </li>
+                        {%- endunless -%}
+                      {%- endfor -%}
+                    </ul>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="sidebar-box">
+                    <div class="sidebar-title">
+                      <h5>Top Post</h5>
+                    </div>
+                    <ul class="top-post">
+                      {%- for article in blog.articles limit: 3 -%}
+                        <li>
+                          <img
+                            class="img-fluid"
+                            src="{{ article.image.src | img_url: 'master' }}"
+                            alt="{{ article.title }}"
+                          >
+                          <div>
+                            <a href="{{ article.url }}">
+                              <h6>
+                                {{ article.title }}
+                              </h6>
+                            </a>
+                            <p>
+                              {{ article.published_at | date: '%B %d, %Y' }}
+                            </p>
+                          </div>
+                        </li>
+                      {%- endfor -%}
+                    </ul>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="sidebar-box">
+                    <div class="sidebar-title">
+                      <h5>Popular Tags</h5>
+                    </div>
+                    <ul class="popular-tag">
+                      {%- for tag in blog.all_tags -%}
+                        <li>
+                          <p>
+                            <a href="{{ shop.url }}/blogs/{{ blog.handle }}/tagged/{{ tag }}">{{ tag }}</a>
+                          </p>
+                        </li>
+                      {%- endfor -%}
+                    </ul>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="sidebar-box">
+                    <div class="sidebar-title">
+                      <h5>Follow Us</h5>
+                    </div>
+                    <ul class="social-icon">
+                      {% if section.settings.enable_facebook == true %}
+                        <li>
+                          <a href="{{ section.settings.facebook_url }}" target="_blank">
+                            <div class="icon"><i class="fa-brands fa-facebook-f"></i></div>
+                            <h6>Facebook</h6>
+                          </a>
+                        </li>
+                      {% endif %}
+                      {% if section.settings.enable_instagram == true %}
+                        <li>
+                          <a href="{{ section.settings.instagram_url }}" target="_blank">
+                            <div class="icon"><i class="fa-brands fa-instagram"> </i></div>
+                            <h6>Instagram</h6>
+                          </a>
+                        </li>
+                      {% endif %}
+                      {% if section.settings.enable_twitter == true %}
+                        <li>
+                          <a href="{{ section.settings.twitter_url }}" target="_blank">
+                            <div class="icon"><i class="fa-brands fa-x-twitter"></i></div>
+                            <h6>Twitter</h6>
+                          </a>
+                        </li>
+                      {% endif %}
+                      {% if section.settings.enable_youtube == true %}
+                        <li>
+                          <a href="{{ section.settings.youtube_url }}" target="_blank">
+                            <div class="icon"><i class="fa-brands fa-youtube"></i></div>
+                            <h6>Youtube</h6>
+                          </a>
+                        </li>
+                      {% endif %}
+                      {% if section.settings.enable_whatsapp == true %}
+                        <li>
+                          <a href="{{ section.settings.whatsapp_url }}" target="_blank">
+                            <div class="icon"><i class="fa-brands fa-whatsapp"></i></div>
+                            <h6>Whatsapp</h6>
+                          </a>
+                        </li>
+                      {% endif %}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% else %}
+          <div class="empty-content">
+            <img src="{{ 'empty-cart.gif' | asset_url }}">
+            <h4>No Articles Found.</h4>
+            <p>Add new articles to blog post</p>
+            <a href="https://admin.shopify.com/store/{{ shop.name }}/articles/new" class="btn btn_black sm">
+              Go to Blog Posts
+            </a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.getElementById('search-form').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent form submission
+
+    const query = document.getElementById('search-input').value;
+
+    // Fetch blog articles using Shopify Predictive Search API
+    fetch(`/search/suggest.json?q=${encodeURIComponent(query)}&resources[type]=article&resources[limit]=10`)
+      .then(response => response.json())
+      .then(data => {
+        // Process the search results
+        const resultsContainer = document.getElementById('search-results');
+        resultsContainer.innerHTML = ''; // Clear previous results
+
+        const results = data.resources.results.articles;
+
+        if (results.length > 0) {
+          // Loop through the blog posts and create HTML for each
+          results.forEach(article => {
+            const articleHTML = `
+              <div class="col-12">
+                <div class="blog-main-box">
+                  <div class="">
+                    <div class="blog-img">
+                      <img class="img-fluid bg-img" src="${article.image}" alt="${article.title}">
+                    </div>
+                  </div>
+                  <div class="blog-content">
+                    <span>${new Date(article.published_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                    <a href="${article.url}">
+                      <h4>${article.title}</h4>
+                    </a>
+                    <p class="blog-excerpt">${article.excerpt}</p>
+                    <div class="share-box">
+                      <div class="d-flex align-items-center gap-2">
+                        <img class="img-fluid" src="{{ 'user.webp' | asset_url }}" alt="Author Image" width="30">
+                        <h6>by ${article.author}</h6>
+                      </div>
+                      <a href="${article.url}"> Read More..</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `;
+
+            resultsContainer.innerHTML += articleHTML; // Append each article to results container
+          });
+        } else {
+          resultsContainer.innerHTML = '<p>No blog posts found for your search.</p>';
+        }
+      })
+      .catch(error => {
+        console.error("Error fetching blog posts:", error);
+        const resultsContainer = document.getElementById('search-results');
+        resultsContainer.innerHTML = '<p>Something went wrong while fetching blog posts.</p>';
+      });
+  });
+
+    $(document).ready(function(){
+      let productsOnPage = $('.product-paginate-grid')
+      let nextUrl = productsOnPage.attr('data-next-url')
+      let loadMoreBtn = $('.load-more-btn');
+      let loadMoreSpinner = $('.load-more-spinner');
+      $('.load-more-btn').click(function(e){
+      e.preventDefault();
+      loadMoreBtn.hide()
+      loadMoreSpinner.show()
+      $.ajax({
+        url: nextUrl,
+        type: "GET",
+        dataType: "html",
+        success: function(nextPage){
+          loadMoreSpinner.hide();
+          let newProducts = $(nextPage).find('.product-paginate-grid')
+          productsOnPage.append(newProducts.html());
+          let newUrl = newProducts.attr('data-next-url');
+          nextUrl = newUrl
+          if(newUrl){
+            loadMoreBtn.show();
+          }
+        }
+      })
+      })
+    })
+  document.addEventListener('DOMContentLoaded', function() {
+    let productsWrapper = document.querySelector('.product-paginate-grid');
+    let nextUrl = productsWrapper.getAttribute('data-next-url');
+    let loading = false;
+
+    function loadMoreProducts() {
+      if (!nextUrl || loading) return;
+
+      loading = true;
+      document.querySelector('#infinite-scroll-trigger').style.display = 'block';
+
+      fetch(nextUrl)
+        .then(response => response.text())
+        .then(data => {
+          let parser = new DOMParser();
+          let doc = parser.parseFromString(data, 'text/html');
+          let newProducts = doc.querySelector('.product-paginate-grid');
+
+          if (newProducts) {
+            productsWrapper.insertAdjacentHTML('beforeend', newProducts.innerHTML);
+            nextUrl = newProducts.getAttribute('data-next-url');
+
+            if (!nextUrl) {
+              document.querySelector('#infinite-scroll-trigger').style.display = 'none';
+            }
+          } else {
+            // Hide loader if no new products are found
+            document.querySelector('#infinite-scroll-trigger').style.display = 'none';
+          }
+        })
+        .catch(error => console.error('Error fetching more products:', error))
+        .finally(() => {
+          loading = false;
+        });
+    }
+
+    function checkScroll() {
+      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
+        loadMoreProducts();
+      }
+    }
+
+    window.addEventListener('scroll', checkScroll);
+  });
+</script>
+
+{% schema %}
+{
+  "name": "t:sections.main-blog.name",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Blog Layout Setting"
+    },
+     {
+      "type": "select",
+      "id": "blog_position",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left Sidebar"
+        },
+        {
+          "value": "right",
+          "label": "Right Sidebar"
+        },
+        {
+          "value": "none",
+          "label": "No Sidebar"
+        }
+
+      ],
+      "default": "left",
+      "label": "Blog Sidebar Position",
+    },
+     {
+      "type": "select",
+      "id": "blog_layout",
+      "options": [
+        {
+          "value": "grid",
+          "label": "Grid"
+        },
+        {
+          "value": "list",
+          "label": "List"
+        }
+      ],
+      "default": "list",
+      "label": "Blog Style",
+    },
+    {
+      "type": "header",
+      "content": "Pagination Setting"
+    },
+    {
+      "type": "select",
+      "id": "pagination_type",
+      "label": "Pagination Type",
+      "options": [
+        { "value": "numbered", "label": "Numbered Pagination" },
+        { "value": "load-more", "label": "Load More Button" },
+        { "value": "infinite-scroll", "label": "Infinite Scroll" }
+      ],
+      "default": "numbered"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.main-blog.settings.header.content"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_date",
+      "label": "Show Blog Date",
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_author",
+      "label": "Show Blog Author",
+    },
+    {
+      "type": "header",
+      "content": "Social Media Icons"
+    },
+     {
+      "type": "checkbox",
+      "id": "enable_facebook",
+      "label": "Show Facebook Icon"
+    },
+    {
+      "type": "url",
+      "id": "facebook_url",
+      "label": "Facebook URL"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_instagram",
+      "label": "Show Instagram Icon"
+    },
+    {
+      "type": "url",
+      "id": "instagram_url",
+      "label": "Instagram URL"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_twitter",
+      "label": "Show Twitter Icon"
+    },
+    {
+      "type": "url",
+      "id": "twitter_url",
+      "label": "Twitter URL"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_youtube",
+      "label": "Show Youtube Icon"
+    },
+    {
+      "type": "url",
+      "id": "youtube_url",
+      "label": "Youtube URL"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_whatsapp",
+      "label": "Show Whatsapp Icon"
+    },
+    {
+      "type": "url",
+      "id": "whatsapp_url",
+      "label": "Whatsapp URL"
+    },
+
+  ],
+}
+{% endschema %}

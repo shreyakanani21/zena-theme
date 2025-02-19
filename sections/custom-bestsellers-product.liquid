@@ -1,0 +1,196 @@
+<section
+  class="{% if section.settings.section_padding == 'top' %}section-t-space{% elsif section.settings.section_padding == 'bottom' %}section-b-space{% elsif section.settings.section_padding == 'both' %}section-space{% endif %} {% if section.settings.bg %}light-bg{% endif %} product-card-section"
+  style="background-color: {{ section.settings.background }};"
+>
+  <div class="{% if section.settings.section_width == 'fluid' %}container-fluid{% else %}custom-container container{% endif %}">
+    <div class="title">
+      <h2 style="color: {{ section.settings.section_title_color }};text-align:{{ section.settings.title_align }};">
+        {{ section.settings.section_title }}
+      </h2>
+    </div>
+    <div
+      class="{% if settings.card_style == 'style-1' %}row{% else %}row row-cols-xxl-5 row-cols-xl-4 row-cols-md-3 row-cols-xs-2 row-cols-1{% endif %} g-4 gy-5"
+      data-aos="fade-left"
+      data-aos-duration="1200"
+    >
+      {% if section.settings.featured_collection %}
+        {% assign featured_collection = collections[section.settings.featured_collection] %}
+        {% assign sort = section.settings.collection_sort %}
+
+        {% case sort %}
+          {% when 'title-ascending' %}
+            {% assign sorted_products = featured_collection.products | sort: 'title' %}
+          {% when 'title-descending' %}
+            {% assign sorted_products = featured_collection.products | sort: 'title' | reverse %}
+          {% when 'price-ascending' %}
+            {% assign sorted_products = featured_collection.products | sort: 'price' %}
+          {% when 'price-descending' %}
+            {% assign sorted_products = featured_collection.products | sort: 'price' | reverse %}
+          {% when 'created-ascending' %}
+            {% assign sorted_products = featured_collection.products | sort: 'created_at' %}
+          {% when 'created-descending' %}
+            {% assign sorted_products = featured_collection.products | sort: 'created_at' | reverse %}
+          {% else %}
+            {% assign sorted_products = featured_collection.products %}
+        {% endcase %}
+
+        {% if sorted_products.size > 0 %}
+          {% for product in sorted_products limit: section.settings.product_limit %}
+            <div class="{% if settings.card_style == 'style-1' %}col-xxl-3 col-lg-4 col-6 col-xs-12{% else %}col product-col{% endif %} ">
+              {% if settings.card_style == 'style-1' %}
+                {% render 'product-card-1', product-info: product, index-info: forloop.index %}
+              {% elsif settings.card_style == 'style-2' %}
+                {% render 'product-card-2', product-info: product %}
+              {% elsif settings.card_style == 'style-3' %}
+                {% render 'product-card-3', product-info: product %}
+              {% endif %}
+            </div>
+          {% endfor %}
+        {% else %}
+          <p>No products found in this collection.</p>
+        {% endif %}
+      {% else %}
+        <p>Please select a collection to feature products.</p>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Bestsellers Products",
+  "settings": [
+     {
+      "type": "color",
+      "id": "background",
+      "label": "Background Color"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Section Width",
+      "options": [
+        {
+          "value": "fluid",
+          "label": "Full Width"
+        },
+        {
+          "value": "normal",
+          "label": "Standard Width"
+        }
+      ],
+      "default": "normal"
+    },
+    {
+      "type": "select",
+      "id": "section_padding",
+      "label": "Section Padding",
+      "options": [
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        },
+        {
+          "value": "both",
+          "label": "Top & Bottom"
+        }
+      ],
+      "default": "top"
+    },
+    {
+      "type": "checkbox",
+      "id": "bg",
+      "label": "Enable Box Background"
+    },
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "Section Title",
+      "default": "Title"
+    },
+    {
+      "type": "color",
+      "id": "section_title_color",
+      "label": "Title Color"
+    },
+    {
+    "type": "select",
+    "id": "title_align",
+    "label": "Title Alignment",
+    "options": [
+      {
+        "label": "Left",
+        "value": "left"
+      },
+      {
+        "label": "Center",
+        "value": "center"
+      },
+      {
+        "label": "Right",
+        "value": "right"
+      }
+    ],
+    "default": "center"
+  },
+    {
+      "type": "collection",
+      "id": "featured_collection",
+      "label": "Bestsellers Collection"
+    },
+    {
+      "type": "range",
+      "id": "product_limit",
+      "label": "Number Of Products",
+      "max": 10,
+      "min": 4,
+      "step": 1,
+      "default": 4
+    },
+    {
+    "type": "select",
+    "id": "collection_sort",
+    "label": "Sort Products By",
+    "options": [
+      {
+        "value": "title-ascending",
+        "label": "Title: A-Z"
+      },
+      {
+        "value": "title-descending",
+        "label": "Title: Z-A"
+      },
+      {
+        "value": "price-ascending",
+        "label": "Price: Low to High"
+      },
+      {
+        "value": "price-descending",
+        "label": "Price: High to Low"
+      },
+      {
+        "value": "created-ascending",
+        "label": "Date: Oldest to Newest"
+      },
+      {
+        "value": "created-descending",
+        "label": "Date: Newest to Oldest"
+      },
+      {
+        "value": "none",
+        "label": "None"
+      }
+    ]
+  },
+  ],
+  "presets": [
+    {
+      "name": "Bestsellers Products"
+    }
+  ]
+}
+{% endschema %}

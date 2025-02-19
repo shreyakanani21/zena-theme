@@ -1,0 +1,417 @@
+<section class="section-space{% if settings.breadcrumb %} pt-0{% endif %} portfolio-section">
+  <div class="{% if section.settings.section_width == 'fluid' %}custom-container{% else %} container{% endif %} product-contain">
+    <div class="row">
+      <div class="col-12">
+        <div class="theme-tab-2">
+          <ul class="nav nav-tabs tab-scrollbar" role="tablist">
+            <!-- "All" Tab -->
+            <li class="nav-item" role="presentation">
+              <a
+                class="nav-link active"
+                data-bs-toggle="tab"
+                data-bs-target="#tab-all"
+                role="tab"
+                aria-controls="tab-all"
+                aria-selected="true"
+              >
+                <h6>All</h6>
+              </a>
+            </li>
+            <li class="nav-item" role="presentation">
+              <a
+                class="nav-link "
+                data-bs-toggle="tab"
+                data-bs-target="#tab-lipstick"
+                role="tab"
+                aria-controls="tab-lipstick"
+                aria-selected="true"
+              >
+                <h6>Lipstick</h6>
+              </a>
+            </li>
+            <li class="nav-item" role="presentation">
+              <a
+                class="nav-link "
+                data-bs-toggle="tab"
+                data-bs-target="#tab-oil-lip"
+                role="tab"
+                aria-controls="tab-oil-lip"
+                aria-selected="true"
+              >
+                <h6>Oil Lip</h6>
+              </a>
+            </li>
+            <li class="nav-item" role="presentation">
+              <a
+                class="nav-link "
+                data-bs-toggle="tab"
+                data-bs-target="#tab-brush"
+                role="tab"
+                aria-controls="tab-brush"
+                aria-selected="true"
+              >
+                <h6>Brush</h6>
+              </a>
+            </li>
+
+            <!-- Dynamic Tabs -->
+            {% for block in section.blocks %}
+              <li class="nav-item" role="presentation">
+                <a
+                  class="nav-link"
+                  data-bs-toggle="tab"
+                  data-bs-target="#tab-{{ block.id }}"
+                  role="tab"
+                  aria-controls="tab-{{ block.id }}"
+                  aria-selected="false"
+                >
+                  <h6>{{ block.settings.tab_title }}</h6>
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <div class="tab-content">
+          <!-- "All" Tab Content -->
+          <div
+            class="tab-pane fade active show"
+            id="tab-all"
+            role="tabpanel"
+            tabindex="0"
+          >
+            <div class="row g-4 ratio_square-2 justify-content-center mt-4">
+              {% for product in collections['related-product'].products limit: section.settings.tab_limit %}
+                <div class="col-xxl-3 col-md-4 col-12">
+                  <div class="product-box-2">
+                    <div class="img-wrapper">
+                      <div class="product-image">
+                        <a
+                          href="{{ product.featured_image | image_url }}"
+                          class="lightbox-trigger"
+                          data-title="{{ product.title }}"
+                        >
+                          <img
+                            class="bg-img blur-up"
+                            src="{{ product.featured_image | image_url }}"
+                            alt="{{ product.title }}"
+                          >
+                        </a>
+                      </div>
+                    </div>
+                    <a href="{{ product.url }}">
+                      <h6 class="mt-2 mb-0">{{ product.title }}</h6>
+                    </a>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+          <div
+            class="tab-pane fade "
+            id="tab-lipstick"
+            role="tabpanel"
+            tabindex="0"
+          >
+            <div class="row g-4 ratio_square-2 justify-content-center mt-4">
+              {% for product in collections.lipstick.products limit: section.settings.tab_limit %}
+                <div class="col-xxl-3 col-md-4 col-12">
+                  <div class="product-box-2">
+                    <div class="img-wrapper">
+                      <div class="product-image">
+                        <a
+                          href="{{ product.featured_image | image_url }}"
+                          class="lightbox-trigger"
+                          data-title="{{ product.title }}"
+                        >
+                          <img
+                            class="bg-img blur-up"
+                            src="{{ product.featured_image | image_url }}"
+                            alt="{{ product.title }}"
+                          >
+                        </a>
+                      </div>
+                    </div>
+                    <a href="{{ product.url }}">
+                      <h6 class="mt-2 mb-0">{{ product.title }}</h6>
+                    </a>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+          <div
+            class="tab-pane fade "
+            id="tab-oil-lip"
+            role="tabpanel"
+            tabindex="0"
+          >
+            <div class="row g-4 ratio_square-2 justify-content-center mt-4">
+              {% for product in collections['oil-serum'].products limit: section.settings.tab_limit %}
+                <div class="col-xxl-3 col-md-4 col-12">
+                  <div class="product-box-2">
+                    <div class="img-wrapper">
+                      <div class="product-image">
+                        <a
+                          href="{{ product.featured_image | image_url }}"
+                          class="lightbox-trigger"
+                          data-title="{{ product.title }}"
+                        >
+                          <img
+                            class="bg-img blur-up"
+                            src="{{ product.featured_image | image_url }}"
+                            alt="{{ product.title }}"
+                          >
+                        </a>
+                      </div>
+                    </div>
+                    <a href="{{ product.url }}">
+                      <h6 class="mt-2 mb-0">{{ product.title }}</h6>
+                    </a>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+          <div
+            class="tab-pane fade "
+            id="tab-brush"
+            role="tabpanel"
+            tabindex="0"
+          >
+            <div class="row g-4 ratio_square-2 justify-content-center mt-4">
+              {% for product in collections.brush.products limit: section.settings.tab_limit %}
+                <div class="col-xxl-3 col-md-4 col-12">
+                  <div class="product-box-2">
+                    <div class="img-wrapper">
+                      <div class="product-image">
+                        <a
+                          href="{{ product.featured_image | image_url }}"
+                          class="lightbox-trigger"
+                          data-title="{{ product.title }}"
+                        >
+                          <img
+                            class="bg-img blur-up"
+                            src="{{ product.featured_image | image_url }}"
+                            alt="{{ product.title }}"
+                          >
+                        </a>
+                      </div>
+                    </div>
+                    <a href="{{ product.url }}">
+                      <h6 class="mt-2 mb-0">{{ product.title }}</h6>
+                    </a>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- Dynamic Tabs Content -->
+          {% for block in section.blocks %}
+            <div
+              class="tab-pane fade"
+              id="tab-{{ block.id }}"
+              role="tabpanel"
+              tabindex="0"
+            >
+              <div class="row g-4 ratio_square-2 justify-content-center">
+                {% for product in collections['collection-left-sidebar'].products limit: section.settings.tab_limit %}
+                  {% if product.tags contains block.settings.tab_title %}
+                    <div class="col-xxl-3 col-md-4 col-12">
+                      <div class="product-box-2">
+                        <div class="img-wrapper">
+                          <div class="product-image">
+                            <a
+                              href="{{ product.featured_image | image_url }}"
+                              class="lightbox-trigger"
+                              data-title="{{ product.title }}"
+                            >
+                              <img
+                                class="bg-img blur-up"
+                                src="{{ product.featured_image | image_url }}"
+                                alt="{{ product.title }}"
+                              >
+                            </a>
+                          </div>
+                        </div>
+                        <a href="{{ product.url }}">
+                          <h6 class="mt-2 mb-0">{{ product.title }}</h6>
+                        </a>
+                      </div>
+                    </div>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lightbox Overlay -->
+  <div id="lightbox-overlay" style="display:none;" class="lightbox-overlay">
+    <div class="lightbox-close" onclick="closeLightbox()">
+      <i class="fa-solid fa-xmark"></i>
+    </div>
+    <button class="lightbox-nav prev" onclick="navigateLightbox(-1)">&#10094;</button>
+    <img id="lightbox-image" src="" alt="" style="max-width: 90%; max-height: 90%; display: block;">
+    <button class="lightbox-nav next" onclick="navigateLightbox(1)">&#10095;</button>
+  </div>
+</section>
+
+<style>
+    #lightbox-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1150;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .lightbox-overlay .lightbox-close svg {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    font-size: 20px;
+    font-weight: bold;
+    color: rgba(var(--white), 1);
+    cursor: pointer;
+  }
+
+  .lightbox-overlay .lightbox-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    color: rgba(var(--white), 0.7);
+    font-size: 24px;
+    padding: 10px;
+    cursor: pointer;
+    z-index: 1100;
+  }
+
+  .lightbox-overlay .lightbox-nav.prev {
+    left: 10px;
+  }
+
+  .lightbox-overlay .lightbox-nav.next {
+    right: 10px;
+  }
+
+  .lightbox-overlay.lightbox-nav:hover {
+    color: rgba(var(--white), 1);
+  }
+
+  .portfolio-section .theme-tab-2 .nav li a h6{
+    font-size: 18px;
+        margin: 0;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Portfolio",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Portfolio Section Settings"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Section Width",
+      "options": [
+        { "value": "fluid", "label": "Full Width" },
+        { "value": "normal", "label": "Standard Width" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "tab_limit",
+      "label": "Set Number Of Products",
+      "info": "Specify Maximum No. of Products to be Displayed. Range: {1,8}",
+      "min": 1,
+      "max": 20,
+      "step": 1,
+      "default": 10
+    }
+  ],
+  "presets": [
+    { "name": "Portfolio" }
+  ],
+  "blocks": [
+    {
+      "type": "tab_block",
+      "name": "Tab Block",
+      "settings": [
+        {
+          "type": "text",
+          "id": "tab_title",
+          "label": "Tab Title"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const overlay = document.getElementById('lightbox-overlay');
+    const lightboxImage = document.getElementById('lightbox-image');
+    let lightboxTriggers = [];
+    let currentIndex = -1;
+
+    const updateLightboxTriggers = () => {
+      const activeTab = document.querySelector('.tab-pane.active');
+      lightboxTriggers = Array.from(activeTab.querySelectorAll('.lightbox-trigger'));
+    };
+
+    const updateLightbox = (imageUrl) => {
+      lightboxImage.src = imageUrl;
+    };
+
+    const navigateLightbox = (direction) => {
+      currentIndex += direction;
+      if (currentIndex < 0) currentIndex = lightboxTriggers.length - 1;
+      if (currentIndex >= lightboxTriggers.length) currentIndex = 0;
+
+      const nextImageUrl = lightboxTriggers[currentIndex].getAttribute('href');
+      updateLightbox(nextImageUrl);
+    };
+
+    window.navigateLightbox = navigateLightbox;
+    window.closeLightbox = () => {
+      overlay.style.display = 'none';
+      lightboxImage.src = '';
+      currentIndex = -1;
+    };
+
+    document.querySelectorAll('.nav-link').forEach((tabLink) => {
+      tabLink.addEventListener('click', () => {
+        setTimeout(updateLightboxTriggers, 300);
+      });
+    });
+
+    document.body.addEventListener('click', (e) => {
+      if (e.target.matches('.lightbox-trigger')) {
+        e.preventDefault();
+        updateLightboxTriggers();
+        const imageUrl = e.target.getAttribute('href');
+        currentIndex = lightboxTriggers.indexOf(e.target);
+        updateLightbox(imageUrl);
+        overlay.style.display = 'flex';
+      }
+    });
+  });
+</script>

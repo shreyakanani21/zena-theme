@@ -1,0 +1,57 @@
+  <a href="{{ section.settings.url_1 }}" class="image-container" style="background-color: #f0f0f0;"> <!-- Placeholder color -->
+              <img
+                  class="lazyload"
+                  data-src="{{ section.settings.img_1 | image_url }}"
+                  alt="{{ product.title }}"
+                  loading="lazy"
+              />
+          </a>
+
+          document.addEventListener("DOMContentLoaded", function () {
+    const lazyImages = document.querySelectorAll(".lazyload");
+
+    if ("IntersectionObserver" in window) {
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    img.src = img.dataset.src;
+                    img.onload = () => img.classList.add("lazyloaded");
+                    observer.unobserve(img);
+                }
+            });
+        });
+
+        lazyImages.forEach(image => imageObserver.observe(image));
+    } else {
+        // Fallback for browsers that don't support IntersectionObserver
+        lazyImages.forEach(img => {
+            img.src = img.dataset.src;
+            img.onload = () => img.classList.add("lazyloaded");
+        });
+    }
+});
+
+a.image-container {
+    display: block;
+    width: 100%;
+    height: 100%; 
+    background-color: rgba(var(--box-background), 0.5); /* Light gray placeholder */
+    position: relative;
+    text-align: center; /* Center image inside container */
+    overflow: hidden;
+}
+
+/* Lazy-loaded image starts with 0 opacity */
+.lazyload {
+    opacity: 0;
+    transition: opacity 2s ease;
+    width: 100%;
+    height: 100%; /* Ensure image fills the container */
+    object-fit: cover; /* Keeps the image aspect ratio while covering the area */
+}
+
+/* After image loads, make it visible */
+.lazyloaded {
+    opacity: 1;
+}

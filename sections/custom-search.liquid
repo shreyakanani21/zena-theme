@@ -1,0 +1,191 @@
+<section class="section-space {% if settings.breadcrumb %}pt-0{% endif %} search-section">
+  <div class="custom-container container">
+    <div class="row gy-4">
+      <div class="col-12 m-auto">
+        <div class="title-1">
+          <h3 class="text-center">Search For Products</h3>
+        </div>
+      </div>
+
+      <!-- Search Form -->
+      <div class="col-lg-5 col-sm-8 m-auto">
+        <div>
+          <form action="{{ routes.search_url }}" class="main-search-box">
+            <div>
+              <input
+                type="search"
+                placeholder="Search Here..."
+                name="q"
+                value="{{ search.terms | escape }}"
+              >
+              <i class="iconsax" data-icon="search-normal-2"></i>
+            </div>
+            <button class="btn btn_black sm" type="submit">Search</button>
+          </form>
+        </div>
+      </div>
+      {%- assign all_latest_products = collections.frontpage.products | sort: 'created_at' | reverse -%}
+
+      {%- assign latest_product_ids = '' -%}
+      {%- for latest_product in all_latest_products limit: 3 -%}
+        {%- assign latest_product_ids = latest_product_ids | append: latest_product.id | append: ',' -%}
+      {%- endfor -%}
+      <!-- Search Results -->
+      <div class="col-12">
+        <div class="row ratio1_3 gy-4 search-item row-cols-lg-4 row-cols-md-3 row-cols-2 mt-4">
+          {% if search.results.size > 0 %}
+            {% for item in search.results %}
+              {% if item.object_type == 'product' %}
+                <div class="col-lg-3 col-md-4 col-12">
+                  <div class="product-box-3">
+                    <div class="img-wrapper">
+                      <div class="label-block">
+                        {%- if latest_product_ids contains product.id -%}
+                          <span class="lable-1">NEW</span>
+                        {%- endif -%}
+                        <a
+                          class="icon wishlist wishlist-btn {% if item == customer.wishlist_items.first.id %}filled{% endif %}"
+                          data-product-handle="{{ item.handle }}"
+                          data-product-id="{{ item.id }}"
+                        >
+                          {% render 'icon-heart' %}
+                        </a>
+                      </div>
+                      <div class="product-image">
+                        {% if item.images.size > 0 %}
+                          <a class="pro-first" href="{{ item.url }}">
+                            <img
+                              class="img-fluid"
+                              src="{{ item.images[0] | img_url: 'master' }}"
+                              alt="{{ item.title }}"
+                            >
+                          </a>
+                        {% endif %}
+                        {% if item.images.size > 1 %}
+                          <a class="pro-sec" href="{{ item.url }}">
+                            <img
+                              class="img-fluid img-sizing"
+                              src="{{ item.images[1] | img_url: 'master' }}"
+                              alt="{{ item.title }}"
+                            >
+                          </a>
+                        {% endif %}
+                      </div>
+                      <div class="button-div">
+                        <button
+                          class="btn btn_solid"
+                          data-bs-toggle="modal"
+                          data-bs-target="#quick-view"
+                          tabindex="0"
+                          data-product-handle="{{ item.handle }}"
+                        >
+                          <i class="iconsax" icon-name="eye"></i> Quick View
+                        </button>
+                        <button
+                          class="btn btn_solid"
+                          data-bs-toggle="modal"
+                          data-bs-target="#variant-select"
+                          data-product-handle="{{ item.handle }}"
+                        >
+                          {% render 'icon-shopping-bag' %} Add to Cart
+                        </button>
+                      </div>
+                    </div>
+                    <div class="product-detail">
+                      <div class="rating">
+                        <div class="custom-vstar-rating-widget" product-id="{{item.id}}"></div>
+                      </div>
+                      <a href="{{ item.url }}">
+                        <h6>{{ item.title | highlight: search.terms }}</h6>
+                      </a>
+                      <div class="list-para d-none">
+                        <p class="list-per">{{ item.description }}</p>
+                      </div>
+                      {% assign price = item.price | divided_by: 100 %}
+                      {% assign compare_price = item.compare_at_price | divided_by: 100 %}
+                      {% if compare_price > price %}
+                        {% assign discount = compare_price | minus: price %}
+                        {% assign discount_amount = discount | times: 100 %}
+                        {% assign discount_percentage = discount_amount | divided_by: compare_price %}
+                      {% endif %}
+                      {% if settings.enable_login_price %}
+                        {% if customer %}
+                          <p>
+                            ₹{{ price }}
+                            <del>₹{{ compare_price }}</del>
+                            <span>{{ discount_percentage | round }}% Off</span>
+                          </p>
+                        {% else %}
+                          <p>
+                            <a href="{{ routes.account_login_url }}" class="login-price-link">Login to see price</a>
+                          </p>
+                        {% endif %}
+                      {% else %}
+                        <p>
+                          ₹{{ price }}
+                          <del>₹{{ compare_price }}</del>
+                          <span>{{ discount_percentage | round }}% Off</span>
+                        </p>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+            {% endfor %}
+          {% else %}
+
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+    document.querySelectorAll('.wishlist-icon').forEach((el) => {
+    el.addEventListener('click', function() {
+      const productHandle = this.getAttribute('data-product-handle');
+      const productId = this.getAttribute('data-product-id');
+
+      // Toggle the 'filled' class based on current state
+      this.classList.toggle('filled');
+
+      // You would typically make an AJAX request to add/remove the product from the wishlist
+      // Example:
+      // fetch('/wishlist/add', {
+      //   method: 'POST',
+      //   body: JSON.stringify({ handle: productHandle, id: productId }),
+      //   headers: { 'Content-Type': 'application/json' }
+      // });
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Search",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Search"
+    }
+  ]
+}
+{% endschema %}
+{% stylesheet %}
+  .search-item .product-image{
+    position: relative;
+    width: 100%;
+    padding-bottom: 113.7%;
+    overflow: hidden;
+  }
+
+  .search-item .product-image img{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+{% endstylesheet %}

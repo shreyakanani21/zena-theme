@@ -1,0 +1,403 @@
+/*========================
+    Tap to Top 
+==========================*/
+window.addEventListener('scroll', function () {
+    var tapTopElement = document.querySelector('.tap-top');
+    if (window.scrollY > 600) {
+        tapTopElement.classList.add('top');
+    } else {
+        tapTopElement.classList.remove('top');
+    }
+});
+
+var tapTopElement = document.querySelector('.tap-top');
+tapTopElement.addEventListener('click', function () {
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    return false;
+});
+
+/*========================
+    Animate on scroll
+==========================*/
+// document.addEventListener("DOMContentLoaded", function () {
+//    AOS.init();
+// });
+
+/*========================
+    Sticky navbar 
+==========================*/
+
+
+
+
+/*========================
+    footer year 
+==========================*/
+// const currentYear = new Date().getFullYear();
+// document.getElementById('current-year').innerHTML = currentYear;
+
+const currentYear = new Date().getFullYear();
+const currentYearElement = document.getElementById('current-year');
+
+if (currentYearElement) {
+  currentYearElement.innerHTML = currentYear;
+}
+
+/*========================
+    Footer Accordian
+==========================*/
+const footerButton = document.querySelectorAll(".footer-content h4");
+const showNav = document.querySelector(".nav");
+for (var i = 0; i < footerButton.length; ++i) {
+    footerButton[i].addEventListener('click', function () {
+        this.parentNode.classList.toggle('open');
+    })
+}
+
+/*========================
+    Lazyloading
+==========================*/
+document.addEventListener("DOMContentLoaded", function () {
+    const lazyImages = document.querySelectorAll("img.lazyload");
+
+    if ("IntersectionObserver" in window) {
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+
+                    if (!img.src) {
+                        img.src = img.dataset.src;
+                    }
+
+                    img.onload = () => {
+                        img.classList.add("lazyloaded");
+                    };
+
+                    observer.unobserve(img);
+                }
+            });
+        }, {
+            rootMargin: "0px 0px 0px 0px",
+            threshold: 1.0
+        });
+
+        lazyImages.forEach(image => imageObserver.observe(image));
+    } else {
+        lazyImages.forEach(img => {
+            img.src = img.dataset.src;
+            img.onload = () => img.classList.add("lazyloaded");
+        });
+    }
+});
+
+
+/*========================
+    news letter
+==========================*/
+
+document.addEventListener('DOMContentLoaded', function () {
+  const swatches = document.querySelectorAll('.swatch');
+  const mainSlides = document.querySelectorAll('.main-slider .swiper-slide');
+  const thumbnailSlides = document.querySelectorAll('.thumbnail-slider .swiper-slide');
+
+  swatches.forEach(swatch => {
+    swatch.addEventListener('click', function () {
+      const selectedValue = this.dataset.value;
+
+      // Update Main Slider
+      mainSlides.forEach(slide => {
+        if (slide.dataset.value === selectedValue) {
+          slide.classList.add('active');
+        } else {
+          slide.classList.remove('active');
+        }
+      });
+
+      // Update Thumbnail Slider
+      thumbnailSlides.forEach(slide => {
+        if (slide.dataset.value === selectedValue) {
+          slide.classList.add('active');
+        } else {
+          slide.classList.remove('active');
+        }
+      });
+    });
+  });
+});
+
+/*========================
+    grid buttons
+==========================*/
+ document.addEventListener('DOMContentLoaded', function () {
+    const gridContainer = document.querySelector('.product-paginate-grid');
+    const buttons = document.querySelectorAll('.grid-toggle');
+
+    buttons.forEach(button => {
+      button.addEventListener('click', function () {
+        const layout = this.dataset.layout;
+
+        // Remove all layout classes
+        gridContainer.classList.remove('row-cols-2',  'row-cols-sm-2',  'row-cols-sm-3', 'row-cols-md-3', 'row-cols-xl-4', 'row-cols-xl-1',  'list-section');
+        gridContainer.classList.remove('grid-1', 'grid-2', 'grid-3', 'grid-4');
+
+        // Add the selected layout class
+        if (layout === 'grid-2') {
+          gridContainer.classList.add('row-cols-2', 'row-cols-sm-2', 'grid-2');
+        } else if (layout === 'grid-3') {
+          gridContainer.classList.add('row-cols-2', 'row-cols-sm-3', 'grid-3');
+        } else if (layout === 'grid-4') {
+          gridContainer.classList.add('row-cols-2', 'row-cols-md-3', 'row-cols-xl-4', 'grid-4');
+        } else if (layout === 'grid-1') {
+          gridContainer.classList.add('row-cols-1', 'row-cols-md-1', 'row-cols-xl-1', 'grid-1');
+        } else if (layout === 'list') {
+          gridContainer.classList.add('list-section');
+        }
+
+        // Update active button
+        buttons.forEach(btn => btn.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+  });
+
+/*=====================
+   user-dashboard profile change js
+   ==========================*/
+function readURL(uploader) {
+    $('.update_img').attr('src',
+        window.URL.createObjectURL(uploader.files[0]));
+};
+
+
+/*=====================
+   User Dashboard Left Sidebar Show Js
+   ==========================*/
+$(".left-dashboard-show").click(function () {
+    $(".bg-overlay, .dashboard-left-sidebar").addClass("show");
+});
+$(".close-button, .bg-overlay, .user-nav-pills .nav-item .nav-link").click(function () {
+    $(".bg-overlay, .dashboard-left-sidebar").removeClass("show");
+});
+
+/*=====================
+   Wishlist badge 
+   ==========================*/
+document.addEventListener("DOMContentLoaded", () => {
+  const wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+
+  const wishlistBadge = document.getElementById("wishlist-badge");
+  if (wishlistBadge) {
+    wishlistBadge.textContent = wishlist.length;
+  }
+});
+
+/*=====================
+  Order history badge 
+   ==========================*/
+document.addEventListener("DOMContentLoaded", () => {
+  let orderCount = 0; 
+
+  const mockOrderHistory = JSON.parse(localStorage.getItem("orderHistory")) || [];
+  orderCount = mockOrderHistory.length;
+
+  const orderHistoryBadge = document.getElementById("order-history-badge");
+  if (orderHistoryBadge) {
+    orderHistoryBadge.textContent = orderCount;
+  }
+});
+
+/*=====================
+  Address badge 
+   ==========================*/
+  document.addEventListener('DOMContentLoaded', function () {
+  var addressBoxes = document.querySelectorAll('.address-box');
+
+  var addressBadge = document.getElementById('address-badge');
+
+  if (addressBadge && addressBoxes.length > 0) {
+    addressBadge.textContent = addressBoxes.length;
+  } else if (addressBadge) {
+    addressBadge.textContent = 0;
+  }
+});
+
+/*=====================
+   countdown time
+   ==========================*/
+document.addEventListener("DOMContentLoaded", function () {
+  // Function to initialize countdown timers
+  function initializeCountdown() {
+    const countdownElements = document.querySelectorAll(".clockdiv");
+
+    countdownElements.forEach(function (clock) {
+      const endtime = clock.getAttribute("data-endtime");
+      if (!endtime) return;
+
+      const endDate = new Date(endtime).getTime();
+
+      function updateClock() {
+        const now = new Date().getTime();
+        const timeRemaining = endDate - now;
+
+        if (timeRemaining <= 0) {
+          clearInterval(intervalId); // Stop the timer when time runs out
+          clock.innerHTML = "<li>Time's Up!</li>";
+          return;
+        }
+
+        const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+        const hours = Math.floor(
+          (timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+        );
+        const minutes = Math.floor(
+          (timeRemaining % (1000 * 60 * 60)) / (1000 * 60)
+        );
+        const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+        clock.querySelector(".days").textContent = days;
+        clock.querySelector(".hours").textContent = hours.toString().padStart(2, "0");
+        clock.querySelector(".minutes").textContent = minutes.toString().padStart(2, "0");
+        clock.querySelector(".seconds").textContent = seconds.toString().padStart(2, "0");
+      }
+
+      // Update clock every second
+      const intervalId = setInterval(updateClock, 1000);
+      updateClock(); // Run immediately to avoid delay
+    });
+  }
+
+  initializeCountdown();
+});
+
+
+/*=====================
+   product pagination
+   ==========================*/
+  $(document).ready(function(){
+      let productsOnPage = $('.product-paginate-grid')
+      let nextUrl = productsOnPage.attr('data-next-url')
+      let loadMoreBtn = $('.load-more-btn');
+      let loadMoreSpinner = $('.load-more-spinner');
+      $('.load-more-btn').click(function(e){
+      e.preventDefault();
+      loadMoreBtn.hide()
+      loadMoreSpinner.show()
+      $.ajax({
+        url: nextUrl,
+        type: "GET",
+        dataType: "html",
+        success: function(nextPage){
+          loadMoreSpinner.hide();
+          let newProducts = $(nextPage).find('.product-paginate-grid')
+          productsOnPage.append(newProducts.html());
+          let newUrl = newProducts.attr('data-next-url');
+          nextUrl = newUrl
+          if(newUrl){
+            loadMoreBtn.show();
+          }
+        }
+      })
+      })
+    })
+
+/*=====================
+   product visiter
+   ==========================*/
+document.addEventListener("DOMContentLoaded", function () {
+    function updateVisitorCount() {
+        let visitorCountElement = document.getElementById("visitor-count");
+
+        if (visitorCountElement) {
+            let randomVisitors = Math.floor(Math.random() * (50 - 10 + 1)) + 10; // Corrected Random Formula
+            visitorCountElement.textContent = `${randomVisitors} people are viewing this right now`;
+        } 
+        // Removed console.warn() to avoid warnings.
+    }
+
+    function updateInventoryStatus() {
+        const inventoryElement = document.getElementById("inventory-status");
+
+        if (inventoryElement) {
+            inventoryElement.textContent = "Only 3 items left in stock!";
+        } 
+    }
+
+    // Call functions initially
+    updateVisitorCount();
+    updateInventoryStatus();
+
+    // Update visitor count every 5 seconds
+    setInterval(updateVisitorCount, 5000);
+});
+
+/*=====================
+   footer scribe
+   ==========================*/
+document.addEventListener("DOMContentLoaded", function () {
+    const notification = document.createElement("div");
+    notification.id = "notification";
+    notification.style.position = "fixed";
+    notification.style.top = "20px";
+    notification.style.right = "20px";
+    notification.style.background = "transparent";
+    notification.style.color = "#b96d6d";
+    notification.style.padding = "10px 20px";
+    notification.style.borderRadius = "0";
+    notification.style.display = "none";
+   notification.style.border = "1px solid #b96d6d";
+    document.body.appendChild(notification);
+
+    function showNotification(message) {
+        notification.textContent = message;
+        notification.style.display = "block";
+
+        setTimeout(() => {
+            notification.style.display = "none";
+        }, 3000);
+    }
+
+  console.log(document.querySelector('#subscribe-btn'));
+
+    document.getElementById("subscribe-btn").addEventListener("click", function () {
+        let email = document.getElementById("email-input").value.trim();
+
+        if (email === "") {
+            showNotification("Please enter an email address.");
+            return;
+        }
+
+        showNotification("Subscribed successfully with: " + email);
+
+        document.getElementById("email-input").value = "";
+    });
+});
+
+
+document.addEventListener("DOMContentLoaded", function () {
+  const dynamicContent = document.getElementById("dynamic-content");
+  const offcanvasCart = document.querySelector(".offcanvas-cart");
+
+  if (dynamicContent && offcanvasCart) {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === "style") {
+          if (dynamicContent.style.display === "block" || dynamicContent.style.visibility === "visible") {
+           
+            offcanvasCart.style.opacity = "0.5";
+          } else {
+            offcanvasCart.style.opacity = "1";
+          }
+        }
+      });
+    });
+
+    observer.observe(dynamicContent, { attributes: true });
+
+    if (dynamicContent.style.display === "none") {
+      offcanvasCart.style.opacity = "1";
+    }
+  }
+});
+

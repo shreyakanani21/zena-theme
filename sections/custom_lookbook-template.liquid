@@ -1,0 +1,477 @@
+<!-- section start -->
+{% if section.settings.enabled %}
+  <section class="lookbook section-space{% if settings.breadcrumb %} pt-0{% endif %}">
+    <div class="container">
+      <div class="row g-4 text-center">
+        {% for block in section.blocks %}
+          <div class="{% if section.settings.lookbook_grid == '2' %}col-xl-6{% else %} col-xl-4{% endif %}">
+            <div class="lookbook-block">
+              {% assign block_image = block.settings.image %}
+              <img
+                src="{{ block_image | img_url: 'original' }}"
+                class="img-fluid lookbook-image"
+                alt="{{ block_image.alt }}"
+              >
+              {% for i in (1..4) %}
+                {% assign pro = 'product_' | append: i %}
+                {% assign product_key = block.settings[pro] %}
+                {% assign product_ = all_products[product_key] %}
+
+                {% assign set = 'setposition_' | append: i %}
+                {% assign set_now = block.settings[set] %}
+                {% assign pos = 'position_' | append: i %}
+                {% assign fix_pos = block.settings[pos] %}
+                {% if fix_pos == '' and fix_pos != 'right' %}{% assign fix_pos = 'left' %}{% endif %}
+
+                {% if product_key != '' %}
+                  <div class="lookbook-dot dot{{i}}" style="{{set_now}}">
+                    <span>{{ i }}</span>
+                    <a href="{{ product_.url }}" target="_blank">
+                      <div class="dot-showbox pos_{{ fix_pos }}">
+                        {% assign block_image = product_ %}
+                        {% assign img_url = block_image | image_url | replace: '_1x1.', '_{width}x.' %}
+                        <div class="dot-showbox-image">
+                          <img
+                            src="{{ product_ | img_url: 'medium' }}"
+                            data-src="{{ img_url }}"
+                            data-widths="[157, 270, 303, 370, 377, 670, 570, 720, 900, 1080, 1296, 1512, 1728, 2048]"
+                            data-aspectratio="{{ block_image.aspect_ratio }}"
+                            data-sizes="auto"
+                            class="img-fluid"
+                            alt="{{ product_.title | split: '|' | first }}"
+                          >
+                        </div>
+                        <div class="dot-info">
+                          {% assign data_title = product_.title | split: '|' | first %}
+                          {% assign data_json = product_.title | split: '|' | last %}
+                          <p>
+                            {{ data_title | truncatewords: 10 }}
+                          </p>
+                          {% if settings.enable_login_price %}
+                            {% if customer %}
+                              <p>{{ product_.price | money }}</p>
+                            {% else %}
+                              <p>
+                                <a href="{{ routes.account_login_url }}" class="login-price-link">Login to see price</a>
+                              </p>
+                            {% endif %}
+                          {% else %}
+                            <p>{{ product_.price | money }}</p>
+                          {% endif %}
+                        </div>
+                      </div>
+                    </a>
+                  </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+{% endif %}
+<!-- Section ends -->
+
+{% schema %}
+{
+   "name":"Loobook",
+   "settings":[
+      {
+         "type":"checkbox",
+         "id":"enabled",
+         "default":true,
+         "label":"Enabled "
+      },
+      {
+         "type":"select",
+         "id":"lookbook_grid",
+         "label":"Lookbook Column Grid",
+         "options":[
+            {
+               "value":"2",
+               "label":"2"
+            },
+            {
+               "value":"3",
+               "label":"3"
+            }
+         ],
+         "default":"2"
+      }
+   ],
+   "blocks":[
+      {
+         "type":"Image",
+         "name":"Add slide",
+         "settings":[
+            {
+               "type":"image_picker",
+               "id":"image",
+               "label":"Lookbook Image"
+            },
+            {
+               "type": "header",
+               "content": "----- Product 1 -----"
+            },
+            {
+               "type": "product",
+               "id": "product_1",
+               "label": "Product"
+            },
+            {
+               "type": "text",
+               "id": "setposition_1",
+               "label": "Set Position For Dot",
+			   "default": "top:22%; left:45%;",
+			   "info": "top:22%; left:45%;"
+            },
+            {
+               "type": "radio",
+               "id": "position_1",
+               "label": "Set ToolTop Position",
+               "options": [
+					{
+						"value": "left",
+						"label": "Left"
+					},
+					{
+						"value": "right",
+						"label": "Right"
+					},
+					{
+						"value": "top",
+						"label": "Top"
+					},
+					{
+						"value": "bottom",
+						"label": "Bottom"
+					}
+				]
+            },
+            {
+               "type": "header",
+               "content": "----- Product 2 -----"
+            },
+            {
+               "type": "product",
+               "id": "product_2",
+               "label": "Product"
+            },
+            {
+               "type": "text",
+               "id": "setposition_2",
+               "label": "Set Position For Dot",
+			   "default": "top:22%; left:45%;"
+            },
+            {
+               "type": "radio",
+               "id": "position_2",
+               "label": "Set ToolTop Position",
+               "options": [
+					{
+						"value": "left",
+						"label": "Left"
+					},
+					{
+						"value": "right",
+						"label": "Right"
+					},
+					{
+						"value": "top",
+						"label": "Top"
+					},
+					{
+						"value": "bottom",
+						"label": "Bottom"
+					}
+				]
+            },
+            {
+               "type": "header",
+               "content": "----- Product 3 -----"
+            },
+            {
+               "type": "product",
+               "id": "product_3",
+               "label": "Product"
+            },
+            {
+               "type": "text",
+               "id": "setposition_3",
+               "label": "Set Position For Dot",
+			   "default": "top:22%; left:45%;"
+            },
+            {
+               "type": "radio",
+               "id": "position_3",
+               "label": "Set ToolTop Position",
+               "options": [
+					{
+						"value": "left",
+						"label": "Left"
+					},
+					{
+						"value": "right",
+						"label": "Right"
+					},
+					{
+						"value": "top",
+						"label": "Top"
+					},
+					{
+						"value": "bottom",
+						"label": "Bottom"
+					}
+				]
+            },
+            {
+               "type": "header",
+               "content": "----- Product 4 -----"
+            },
+            {
+               "type": "product",
+               "id": "product_4",
+               "label": "Product"
+            },
+            {
+               "type": "text",
+               "id": "setposition_4",
+               "label": "Set Position For Dot",
+			   "default": "top:22%; left:45%;"
+            },
+            {
+               "type": "radio",
+               "id": "position_4",
+               "label": "Set ToolTop Position",
+               "options": [
+					{
+						"value": "left",
+						"label": "Left"
+					},
+					{
+						"value": "right",
+						"label": "Right"
+					},
+					{
+						"value": "top",
+						"label": "Top"
+					},
+					{
+						"value": "bottom",
+						"label": "Bottom"
+					}
+				]
+            }
+         ]
+      }
+   ],
+  "presets": [
+    {
+      "name": "Lookbook"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+  .lookbook .lookbook-block {
+  	 position: relative;
+  }
+  .dark .lookbook .lookbook-block .lookbook-dot{
+    background-color: rgba(var(--white), 1);
+  }
+   .lookbook .lookbook-block .lookbook-dot {
+  	 cursor: pointer;
+  	 position: absolute;
+  	 z-index: 1;
+  	 width: 29px;
+  	 height: 29px;
+  	 line-height: 30px;
+  	 border-radius: 50%;
+  	 -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  	 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  	 -webkit-transition: all 0.3s ease;
+  	 transition: all 0.3s ease;
+  	 top: 50%;
+  	 left: 12%;
+  	 background-color: white;
+  }
+   .lookbook .lookbook-block .lookbook-dot.dot2 {
+  	 top: 70%;
+  	 left: 27%;
+  }
+   .lookbook .lookbook-block .lookbook-dot.dot3 {
+  	 top: 28%;
+  	 left: 30%;
+  }
+   .lookbook .lookbook-block .lookbook-dot.dot4 {
+  	 top: 67%;
+  	 left: 8%;
+  }
+   .lookbook .lookbook-block .lookbook-dot.dot5 {
+  	 top: 40%;
+  	 left: 35%;
+  }
+   .lookbook .lookbook-block .lookbook-dot.dot6 {
+  	 top: 80%;
+  	 left: 58%;
+  }
+   .lookbook .lookbook-block .lookbook-dot.dot7 {
+  	 top: 67%;
+  	 left: 45%;
+  }
+   .lookbook .lookbook-block .lookbook-dot.dot8 {
+  	 top: 39%;
+  	 left: 69%;
+  }
+   .lookbook .lookbook-block .lookbook-dot.dot9 {
+  	 top: 32%;
+  	 left: 50%;
+  }
+   .lookbook .lookbook-block .lookbook-dot.dot10 {
+  	 top: 60%;
+  	 left: 50%;
+  }
+   .lookbook .lookbook-block .lookbook-dot.dot11 {
+  	 top: 50%;
+  	 left: 45%;
+  }
+   .lookbook .lookbook-block .lookbook-dot.dot12 {
+  	 top: 75%;
+  	 left: 45%;
+  }
+   .lookbook .lookbook-block .lookbook-dot.dot13 {
+  	 top: 40%;
+  	 left: 45%;
+  }
+   .lookbook .lookbook-block .lookbook-dot.dot14 {
+  	 top: 76%;
+  	 left: 45%;
+  }
+   .lookbook .lookbook-block .lookbook-dot.dot15 {
+  	 top: 50%;
+  	 left: 15%;
+  }
+
+   .lookbook .lookbook-block .lookbook-dot:before {
+  	 position: absolute;
+     inset: 0;
+  	 content: "";
+  	 background-color: #fff;
+  	 background-color: rgba(255, 255, 255, 0.5);
+  	 zoom: 1;
+  	 background-color: transparent\9;
+  	 z-index: -1;
+  	 border-radius: 50%;
+  	 -webkit-transition: all 0.3s ease;
+  	 transition: all 0.3s ease;
+  }
+  .dark .lookbook .lookbook-block .lookbook-dot span{
+        color: rgba(var(--black), 1);
+  }
+   .lookbook .lookbook-block .lookbook-dot span {
+  	 text-align: center;
+  	 justify-content: center;
+  	 display: flex;
+  }
+   .lookbook .lookbook-block .lookbook-dot .dot-showbox {
+  	 visibility: hidden;
+  	 position: absolute;
+  	 width: 130px;
+  	 background-color: white;
+  	 -webkit-box-shadow: -3px -3px 13px rgba(48, 54, 61, 0.1);
+  	 box-shadow: -3px -3px 13px rgba(48, 54, 61, 0.1);
+  }
+   .lookbook .lookbook-block .lookbook-dot .dot-showbox.pos_left {
+  	 top: -98px;
+  	 left: 150%;
+  }
+   .lookbook .lookbook-block .lookbook-dot .dot-showbox.pos_left:before {
+  	 border-right: 8px solid #fff;
+  	 left: -8px;
+  }
+   .lookbook .lookbook-block .lookbook-dot .dot-showbox.pos_right {
+  	 top: -98px;
+  	 right: 150%;
+  }
+   .lookbook .lookbook-block .lookbook-dot .dot-showbox.pos_right:before {
+  	 border-left: 8px solid #fff;
+  	 right: -8px;
+  }
+   .lookbook .lookbook-block .lookbook-dot .dot-showbox.pos_top {
+  	 bottom: 50px;
+  	 left: -50px;
+  }
+   .lookbook .lookbook-block .lookbook-dot .dot-showbox.pos_top:before {
+  	 border-left: 8px solid #fff;
+  	 transform: rotate(90deg);
+  	 bottom: -12px;
+  	 left: 60px;
+  	 top: unset;
+  }
+   .lookbook .lookbook-block .lookbook-dot .dot-showbox.pos_bottom {
+  	 top: 50px;
+  	 left: -50px;
+  }
+   .lookbook .lookbook-block .lookbook-dot .dot-showbox.pos_bottom:before {
+  	 border-left: 8px solid #fff;
+  	 transform: rotate(-90deg);
+  	 top: -12px;
+  	 left: 60px;
+  }
+  .lookbook .lookbook-block .lookbook-dot .dot-showbox .dot-showbox-image {
+    aspect-ratio: 1 / 1;
+    width: 100%;
+    object-fit: cover;
+  }
+   .lookbook .lookbook-block .lookbook-dot .dot-showbox img {
+  	 margin-top: 0;
+  }
+   .lookbook .lookbook-block .lookbook-dot .dot-showbox .dot-info {
+  	 padding: 5px;
+  	 text-align: center;
+  }
+   .lookbook .lookbook-block .lookbook-dot .dot-showbox .dot-info h5 {
+  	 margin-bottom: 0;
+  	 text-transform: capitalize;
+  	 line-height: 20px;
+  }
+   .lookbook .lookbook-block .lookbook-dot .dot-showbox .dot-info h5.title {
+  	 font-weight: 700;
+  }
+   .lookbook .lookbook-block .lookbook-dot .dot-showbox .dot-info h6 {
+  	 text-transform: uppercase;
+  	 color: rgba(var(--theme-default), 1);
+  	 margin-bottom: 0;
+  }
+   .lookbook .lookbook-block .lookbook-dot .dot-showbox:before {
+  	 position: absolute;
+  	 content: "";
+  	 width: 0;
+  	 height: 0;
+  	 border-top: 8px solid transparent;
+  	 border-bottom: 8px solid transparent;
+  	 top: 41%;
+  }
+   .lookbook .lookbook-block .lookbook-dot:hover,.lookbook .lookbook-block .lookbook-dot:active {
+  	 background-color: rgba(var(--theme-default), 1);
+  	 -webkit-box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5);
+  	 box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5);
+  	 z-index: 2;
+  }
+   .lookbook .lookbook-block .lookbook-dot:hover .dot-showbox,.lookbook .lookbook-block .lookbook-dot:active .dot-showbox {
+  	 animation: fadeInUp 400ms ease-in-out;
+  	 visibility: visible;
+  	 transition: all 0.5s ease;
+  }
+   .lookbook .lookbook-block .lookbook-dot:hover span,.lookbook .lookbook-block .lookbook-dot:active span {
+  	 color: white;
+  }
+   .lookbook .lookbook-block .lookbook-dot:hover:before,.lookbook .lookbook-block .lookbook-dot:active:before {
+  	 -webkit-transform: scale(1.3);
+  }
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

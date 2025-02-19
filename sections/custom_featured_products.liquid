@@ -1,0 +1,195 @@
+<section class="{% if section.settings.section_padding == 'top' %}section-t-space{% elsif section.settings.section_padding == 'bottom' %}section-b-space{% elsif section.settings.section_padding == 'both' %}section-space{% endif %} featured-product-section">
+  <div class="{% if section.settings.section_width == 'fluid' %}container-fluid{% else %}custom-container container{% endif %}">
+    <div class="product-wrapper">
+      <div class="product-image" data-aos="fade-right" data-aos-duration="1500" data-aos-delay="300">
+        <a href="{{ section.settings.url_1 }}" class="h-100">
+          {% if section.settings.image_1 %}
+            <img
+              class="img-fluid blur-up lazyload h-100"
+              {% if settings.enable_lazyload %}
+                data-src="{{ section.settings.image_1 | img_url: 'master' }}"
+              {% else %}
+                src="{{ section.settings.image_1 | img_url: 'master' }}"
+              {% endif %}
+              alt="Banner"
+            >
+          {% else %}
+            {{ 'image' | placeholder_svg_tag }}
+          {% endif %}
+        </a>
+      </div>
+      <div
+        class="product-container swiper special-slider"
+        data-aos="fade-left"
+        data-aos-duration="1500"
+        data-aos-delay="300"
+      >
+        <div class="swiper-wrapper">
+          {% if section.settings.featured_collection %}
+            {% assign featured_collection = collections[section.settings.featured_collection] %}
+            {% assign sort = section.settings.collection_sort %}
+
+            {% case sort %}
+              {% when 'title-ascending' %}
+                {% assign sorted_products = featured_collection.products | sort: 'title' %}
+              {% when 'title-descending' %}
+                {% assign sorted_products = featured_collection.products | sort: 'title' | reverse %}
+              {% when 'price-ascending' %}
+                {% assign sorted_products = featured_collection.products | sort: 'price' %}
+              {% when 'price-descending' %}
+                {% assign sorted_products = featured_collection.products | sort: 'price' | reverse %}
+              {% when 'created-ascending' %}
+                {% assign sorted_products = featured_collection.products | sort: 'created_at' %}
+              {% when 'created-descending' %}
+                {% assign sorted_products = featured_collection.products | sort: 'created_at' | reverse %}
+              {% else %}
+                {% assign sorted_products = featured_collection.products %}
+            {% endcase %}
+
+            {% if sorted_products.size > 0 %}
+              {% for product in sorted_products limit: section.settings.product_limit %}
+                <div class="swiper-slide">
+                  {% if settings.card_style == 'style-1' %}
+                    {% render 'product-card-1', product-info: product %}
+                  {% elsif settings.card_style == 'style-2' %}
+                    {% render 'product-card-2', product-info: product %}
+                  {% elsif settings.card_style == 'style-3' %}
+                    {% render 'product-card-3', product-info: product %}
+                  {% endif %}
+                </div>
+              {% endfor %}
+            {% else %}
+              <p>No products found in this collection.</p>
+            {% endif %}
+          {% else %}
+            <p>Please select a collection to feature products.</p>
+          {% endif %}
+        </div>
+        <div class="swiper-round-pagination"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Custom Featured Products",
+  "settings": [
+    {
+    "type": "select",
+    "id": "section_width",
+    "label": "Section Width",
+    "options": [
+      {
+        "value": "fluid",
+        "label": "Full Width"
+      },
+      {
+        "value": "normal",
+        "label": "Standard Width"
+      }
+    ],
+    "default": "fluid"
+  },
+  {
+    "type": "select",
+    "id": "section_padding",
+    "label": "Section Padding",
+    "options": [
+      {
+        "value": "top",
+        "label": "Top"
+      },
+      {
+        "value": "bottom",
+        "label": "Bottom"
+      },
+      {
+        "value": "both",
+        "label": "Top & Bottom"
+      }
+    ],
+    "default": "top"
+  },
+  {
+    "type": "image_picker",
+    "id": "image_1",
+    "label": "Banner Image"
+  },
+  {
+    "type": "url",
+    "id": "url_1",
+    "label": "Image Url"
+  },
+          {
+      "type": "collection",
+      "id": "featured_collection",
+      "label": "Featured Collection"
+    },
+    {
+      "type": "range",
+      "id": "product_limit",
+      "label": "Number Of Products",
+      "max": 10,
+      "min": 4,
+      "step": 1,
+      "default": 4
+    },
+    {
+    "type": "select",
+    "id": "collection_sort",
+    "label": "Sort Products By",
+    "options": [
+      {
+        "value": "title-ascending",
+        "label": "Title: A-Z"
+      },
+      {
+        "value": "title-descending",
+        "label": "Title: Z-A"
+      },
+      {
+        "value": "price-ascending",
+        "label": "Price: Low to High"
+      },
+      {
+        "value": "price-descending",
+        "label": "Price: High to Low"
+      },
+      {
+        "value": "created-ascending",
+        "label": "Date: Oldest to Newest"
+      },
+      {
+        "value": "created-descending",
+        "label": "Date: Newest to Oldest"
+      }
+    ]
+  },
+   {
+     "type": "header",
+     "content": "Slider Settings"
+   },
+    {
+      "type": "select",
+      "id": "dots_style",
+      "label": "Dots Style",
+      "options": [
+        {
+          "label": "Square",
+          "value": "square"
+        },
+        {
+          "label": "Round",
+          "value": "round"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Featured Products"
+    }
+  ]
+}
+{% endschema %}

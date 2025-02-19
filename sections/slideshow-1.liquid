@@ -1,0 +1,495 @@
+<div class="slick banner-slider-1">
+  {% if section.settings.banner_layout == 'classic' %}
+    <div class="classic-banner">
+      <section id="hero" class="hero-section">
+        <div class="slideshow-banner">
+          <div class="{% if section.settings.section_width == 'fluid' %}container-fluid{% else %}custom-container container{% endif %}">
+            <div class="banner-container">
+              <div class="banner-content content-alignment {{ section.settings.desktop_content_alignment }}">
+                <h1 style="color: {{ section.settings.banner_title_color }};">
+                  {{ section.settings.banner_title }}
+                </h1>
+                <p style="color: {{ section.settings.banner_description_color }};">
+                  {{ section.settings.banner_description }}
+                </p>
+                <a
+                  href="{{ section.settings.banner_url }}"
+                  class="btn btn_solid"
+                  style="color: {{ section.settings.banner_link_color }}; background-color: {{ section.settings.banner_link_bgcolor }};"
+                >
+                  {{ section.settings.banner_link }}
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="banner-img-wrapper">
+            <a href="{{ section.settings.banner_img_url }}">
+              {% if section.settings.banner_img != blank %}
+                <img src="{{ section.settings.banner_img | image_url }}" class="img-fluid" alt="Banner Image">
+              {% else %}
+                <img
+                  src="{{ 'image.png' | asset_url }}"
+                  class="img-fluid  "
+                  alt="Placeholder Image"
+                >
+              {% endif %}
+            </a>
+          </div>
+
+          <ul class="banner-icon-wrapper d-xl-flex d-none">
+            {% if section.settings.enable_facebook %}
+              <li>
+                <a href="https://www.facebook.com/shopify/" target="_blank"> Facebook </a>
+              </li>
+            {% endif %}
+            {% if section.settings.enable_instagram %}
+              <li>
+                <a href="https://www.instagram.com/shopify/" target="_blank"> Instagram </a>
+              </li>
+            {% endif %}
+            {% if section.settings.enable_twitter %}
+              <li>
+                <a href="https://twitter.com/shopifysupport" target="_blank"> Twitter </a>
+              </li>
+            {% endif %}
+            {% if section.settings.enable_pinterest %}
+              <li>
+                <a href="https://in.pinterest.com/shopify/" target="_blank"> Pinterest </a>
+              </li>
+            {% endif %}
+          </ul>
+        </div>
+      </section>
+    </div>
+  {% elsif section.settings.banner_layout == 'slider' %}
+    <div
+      class="banner-slider"
+      data-slick='{"slidesToShow": {{ section.settings.slide_main }}, "slidesToScroll": 1, "autoplay": {{ section.settings.use_autoplay | json }}, "autoplaySpeed": {{ section.settings.slider_speed }}000, "infinite": {{ section.settings.use_loop | json }}, {% if section.settings.slider_pagination == "dot" %}"dots": true, "arrows": false {% elsif section.settings.slider_pagination == "arrow" %}"arrows": true {% else %} "arrows": false {% endif %}, "responsive": [{"breakpoint":1600,"settings":{"slidesToShow":{{ section.settings.slide_2xl }},"slidesToScroll":1}},{"breakpoint":1200,"settings":{"slidesToShow":{{ section.settings.slide_xl }},"slidesToScroll":1}},{"breakpoint":992,"settings":{"slidesToShow":{{ section.settings.slide_lg }},"slidesToScroll":1}},{"breakpoint":768,"settings":{"slidesToShow":{{ section.settings.slide_md }},"slidesToScroll":1}},{"breakpoint":576,"settings":{"slidesToShow":{{ section.settings.slide_sm }},"slidesToScroll":1}} ]}'
+    >
+      {% for block in section.blocks %}
+        <section id="hero" class="hero-section slick-slide">
+          <div class="slideshow-banner">
+            <div class="{% if block.settings.section_width == 'fluid' %}container-fluid{% else %}custom-container container{% endif %}">
+              <div class="banner-container">
+                <div class="banner-content content-alignment {{ block.settings.desktop_content_alignment }}">
+                  <h1 style="color: {{ block.settings.banner_title_color }};">
+                    {{ block.settings.banner_title }}
+                  </h1>
+                  <p style="color: {{ block.settings.banner_description_color }};">
+                    {{ block.settings.banner_description }}
+                  </p>
+                  <a
+                    href="{{ block.settings.banner_url }}"
+                    class="btn btn_solid"
+                    style="color: {{ block.settings.banner_link_color }}; background-color: {{ block.settings.banner_link_bgcolor }};"
+                  >
+                    {{ block.settings.banner_link }}
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="banner-img-wrapper">
+              <a href="{{ block.settings.banner_img_url }}">
+                {% if block.settings.banner_img != blank %}
+                  <img src="{{ block.settings.banner_img | image_url }}" class="img-fluid" alt="Banner Image">
+                {% else %}
+                  <img
+                    src="{{ 'image.png' | asset_url }}"
+                    class="img-fluid"
+                    alt="Placeholder Image"
+                  >
+                {% endif %}
+              </a>
+            </div>
+            <ul class="banner-icon-wrapper d-xl-flex d-none">
+              {% if block.settings.enable_facebook %}
+                <li><a href="https://www.facebook.com/shopify/" target="_blank"> Facebook </a></li>
+              {% endif %}
+              {% if block.settings.enable_instagram %}
+                <li><a href="https://www.instagram.com/shopify/" target="_blank"> Instagram </a></li>
+              {% endif %}
+              {% if block.settings.enable_twitter %}
+                <li><a href="https://twitter.com/shopifysupport" target="_blank"> Twitter </a></li>
+              {% endif %}
+              {% if block.settings.enable_pinterest %}
+                <li><a href="https://in.pinterest.com/shopify/" target="_blank"> Pinterest </a></li>
+              {% endif %}
+            </ul>
+          </div>
+        </section>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+
+{% schema %}
+{
+  "name": "Slideshow",
+  "settings": [
+      {
+    "type": "select",
+    "id": "banner_layout",
+    "label": "Banner Layout",
+    "options": [
+      {
+        "label": "Classic",
+        "value": "classic"
+      },
+      {
+        "label": "Slider",
+        "value": "slider"
+      }
+    ],
+    "default": "classic"
+  },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Section Width",
+      "options": [
+        {
+          "value": "fluid",
+          "label": "Full Width"
+        },
+        {
+          "value": "normal",
+          "label": "Standard Width"
+        }
+      ],
+      "default": "normal"
+    },
+    {
+          "type": "text",
+          "id": "banner_title",
+          "label": "Banner Title",
+          "default": "Title"
+        },
+        {
+          "type": "color",
+          "id": "banner_title_color",
+          "label": "Title Color"
+        },
+        {
+          "type": "text",
+          "id": "banner_description",
+          "label": "Banner Description",
+          "default": "Description..."
+        },
+        {
+          "type": "color",
+          "id": "banner_description_color",
+          "label": "Description Color"
+        },
+        {
+          "type": "text",
+          "id": "banner_link",
+          "label": "Banner Button Text",
+          "default": "Button"
+        },
+        {
+          "type": "color",
+          "id": "banner_link_color",
+          "label": "Button Text Color"
+        },
+     {
+          "type": "color",
+          "id": "banner_link_bgcolor",
+          "label": "Button Background Color"
+        },
+        {
+          "type": "url",
+          "id": "banner_url",
+          "label": "Banner Url"
+        },
+        {
+          "type": "image_picker",
+          "id": "banner_img",
+          "label": "Banner Image"
+        },
+        {
+          "type": "url",
+          "id": "banner_img_url",
+          "label": "Banner Image Url"
+        },
+      {
+      "type": "select",
+      "id": "desktop_content_alignment",
+      "options": [{
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "right",
+      "label": "Content Alignment"
+    },
+        {
+          "type": "header",
+          "content": "Icons Settings"
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_instagram",
+          "label": "Instagram"
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_facebook",
+          "label": "Facebook"
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_twitter",
+          "label": "Twitter"
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_pinterest",
+          "label": "Pinterest"
+        },
+     {
+        "type": "header",
+        "content": "Slider Settings( Only for Slider layout )"
+      },
+      {
+        "type": "checkbox",
+        "id": "use_autoplay",
+        "label": "Enable Autoplay",
+        "info": "Enable to activate autoplay for the slider.",
+        "default": false
+      },
+      {
+        "type": "range",
+        "id": "slider_speed",
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "label": "Autoplay Speed In Milliseconds",
+        "unit": "sec",
+        "default": 3
+      },
+      {
+        "type": "checkbox",
+        "id": "use_loop",
+        "label": "Enable Infinite Loop Sliding",
+        "default": false
+      },
+   {
+        "type": "select",
+        "id": "slider_pagination",
+        "label": "Slider Pagination",
+        "options": [
+          {
+            "label": "Dots",
+            "value": "dot"
+          },
+          {
+            "label": "Arrows",
+            "value": "arrow"
+          },
+          {
+            "label": "None",
+            "value": "none"
+          }
+        ],
+        "default": "none"
+      },
+    {
+        "type": "header",
+        "content": "Slider Breakpoints"
+      },
+      {
+        "type": "range",
+        "id": "slide_main",
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "default": 7,
+        "label": "Slides To Show"
+      },
+      {
+        "type": "header",
+        "content": "Breakpoint: 1600px"
+      },
+      {
+        "type": "range",
+        "id": "slide_2xl",
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "default": 6,
+        "label": "Slides To Show"
+      },
+      {
+        "type": "header",
+        "content": "Breakpoint: 1200px"
+      },
+      {
+        "type": "range",
+        "id": "slide_xl",
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "default": 6,
+        "label": "Slides To Show"
+      },
+      {
+        "type": "header",
+        "content": "Breakpoint: 992px"
+      },
+      {
+        "type": "range",
+        "id": "slide_lg",
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "default": 5,
+        "label": "Slides To Show"
+      },
+      {
+        "type": "header",
+        "content": "Breakpoint: 768px"
+      },
+      {
+        "type": "range",
+        "id": "slide_md",
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "default": 4,
+        "label": "Slides To Show"
+      },
+      {
+        "type": "header",
+        "content": "Breakpoint: 576px"
+      },
+      {
+        "type": "range",
+        "id": "slide_sm",
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "default": 3,
+        "label": "Slides To Show"
+      }
+  ],
+  "blocks": [
+    {
+      "type": "banner_slide",
+      "name": "Banner Slide ",
+      "settings": [
+         {
+          "type": "text",
+          "id": "banner_title",
+          "label": "Banner Title",
+          "default": "Title"
+        },
+        {
+          "type": "color",
+          "id": "banner_title_color",
+          "label": "Title Color"
+        },
+        {
+          "type": "text",
+          "id": "banner_description",
+          "label": "Banner Description",
+          "default": "Description..."
+        },
+        {
+          "type": "color",
+          "id": "banner_description_color",
+          "label": "Description Color"
+        },
+        {
+          "type": "text",
+          "id": "banner_link",
+          "label": "Banner Button Text",
+          "default": "Button"
+        },
+
+         {
+          "type": "color",
+          "id": "banner_link_color",
+          "label": "Button Text Color"
+        },
+     {
+          "type": "color",
+          "id": "banner_link_bgcolor",
+          "label": "Button Background Color"
+        },
+        {
+          "type": "url",
+          "id": "banner_url",
+          "label": "Banner Url"
+        },
+        {
+          "type": "image_picker",
+          "id": "banner_img",
+          "label": "Banner Image"
+        },
+        {
+          "type": "url",
+          "id": "banner_img_url",
+          "label": "Banner Image Url"
+        },
+        {
+      "type": "select",
+      "id": "desktop_content_alignment",
+      "options": [{
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "right",
+      "label": "Content Alignment"
+    },
+        {
+          "type": "header",
+          "content": "Icons Settings"
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_instagram",
+          "label": "Instagram"
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_facebook",
+          "label": "Facebook"
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_twitter",
+          "label": "Twitter"
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_pinterest",
+          "label": "Pinterest"
+        },
+
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Slideshow"
+    }
+  ]
+}
+{% endschema %}

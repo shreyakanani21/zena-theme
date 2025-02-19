@@ -1,0 +1,151 @@
+<div class="product-box-3">
+  <div class="img-wrapper">
+    <div class="label-block">
+      {% if settings.show_wishlist %}
+        <a
+          class="label-2 wishlist-icon add-to-wishlist-btn icon wishlist wishlist-btn"
+          href="{{ shop.url }}/pages/wishlist"
+          data-product-handle="{{ card-product.handle }}"
+        >
+          {% render 'iconsax-wishlist' %}
+        </a>
+      {% endif %}
+    </div>
+    <div class="product-image">
+      {% if card-product.images.size > 0 %}
+        <a class="pro-first" href="{{ card-product.url }}">
+          <img
+            class="img-fluid blur-up lazyload"
+            src="{{ card-product.images[0] | img_url: 'master' }}"
+            alt="{{ card-product.title }}"
+          >
+        </a>
+      {% endif %}
+      {% if card-product.images.size > 1 %}
+        <a class="pro-sec" href="{{ card-product.url }}">
+          <img
+            class="img-fluid img-sizing"
+            src="{{ card-product.images[1] | img_url: 'master' }}"
+            alt="{{ card-product.title }}"
+          >
+        </a>
+      {% endif %}
+    </div>
+    <a
+      class="icon wishlist wishlist-btn {% if index == 3 %}filled{% endif %}"
+      data-product-handle="{{ card-product.handle }}"
+    >
+      {%- render 'icon-heart' %}
+    </a>
+    <div class="icon-div">
+      <a
+        class="icon add-to-cart-btn"
+        data-bs-toggle="modal"
+        data-bs-target="#variant-select"
+        data-product-handle="{{ card-product.handle }}"
+      >
+        {% render 'icon-cart-bag' %}
+      </a>
+      <a
+        class="icon compare-btn"
+        data-bs-toggle="modal"
+        data-bs-target="#compare"
+        data-product-handle="{{ card-product.handle }}"
+      >
+        <i class="iconsax" icon-name="refresh"></i>
+      </a>
+    </div>
+
+    <div class="button-div">
+      <button
+        class="view-btn"
+        data-bs-toggle="modal"
+        data-bs-target="#quick-view"
+        tabindex="0"
+        data-product-handle="{{ card-product.handle }}"
+      >
+        <i class="iconsax" icon-name="eye"></i> Quick View
+      </button>
+    </div>
+  </div>
+  <div class="product-detail">
+    <div class="rating">
+      <div class="custom-vstar-rating-widget" product-id="{{ card-product.id }}"></div>
+    </div>
+    <a href="{{ card-product.url }}">
+      <h6>{{ card-product.title }}</h6>
+    </a>
+    <div class="list-para ">
+      {{ card-product.description }}
+    </div>
+    {% assign price = card-product.price | divided_by: 100 %}
+    {% assign compare_price = card-product.compare_at_price | divided_by: 100 %}
+    {% if compare_price > price %}
+      {% assign discount = compare_price | minus: price %}
+      {% assign discount_amount = discount | times: 100 %}
+      {% assign discount_percentage = discount_amount | divided_by: compare_price %}
+    {% endif %}
+    {% if settings.enable_login_price %}
+      {% if customer %}
+        <p>
+          {{ card-product.price | money_with_currency }}
+          <del> {{ card-product.compare_at_price | money_with_currency }} </del>
+          {% if settings.show_sale_tag %}
+            {% if discount_percentage > 10 -%}
+              <span style="background-color: {{ settings.sale_tag_bg_color }}; color: {{ settings.sale_tag_text_color }};">
+                {{ discount_percentage | round }}%
+              </span>
+            {%- endif %}
+          {% endif %}
+        </p>
+      {% else %}
+        <p>
+          <a href="{{ routes.account_login_url }}" class="login-price-link">Login to see price</a>
+        </p>
+      {% endif %}
+    {% else %}
+      <p>
+        {{ card-product.price | money_with_currency }}
+        <del> {{ card-product.compare_at_price | money_with_currency }} </del>
+        {% if settings.show_sale_tag %}
+          {% if discount_percentage > 10 -%}
+            <span style="background-color: {{ settings.sale_tag_bg_color }}; color: {{ settings.sale_tag_text_color }};">
+              {{ discount_percentage | round }}%
+            </span>
+          {%- endif %}
+        {% endif %}
+      </p>
+    {% endif %}
+    <div class="advanced_add_cart">
+      {% if settings.add_cart_btn == 'advanced' %}
+        {% if card-product.available and card-product.variants.size > 1 %}
+          <div class="advanced_add_cart">
+            <form
+              action="/cart/add"
+              method="post"
+              enctype="multipart/form-data"
+            >
+              <div class="category-dropdown variant-dropdown">
+                <select
+                  name="id"
+                  id="productSelect-{{ card-product.id }}"
+                  class="variantsList form-select"
+                >
+                  {% for variant in card-product.variants %}
+                    {% if variant.available %}
+                      <option value="{{ variant.id }}">{{ variant.title }}</option>
+                    {% else %}
+                      <option disabled="disabled">{{ variant.title }} - Sold Out</option>
+                    {% endif %}
+                  {% endfor %}
+                </select>
+
+                <button type="submit" class="btn btn-submit">Add</button>
+              </div>
+            </form>
+          </div>
+        {% endif %}
+      {% endif %}
+    </div>
+  </div>
+</div>

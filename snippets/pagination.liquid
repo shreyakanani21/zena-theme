@@ -1,0 +1,59 @@
+{%- if paginate.parts.size > 0 -%}
+  <div class="pagination-wrap mt-0">
+    <ul class="pagination">
+      {%- if paginate.previous -%}
+        <li>
+          <a
+            href="{{ paginate.previous.url }}{{ anchor }}"
+            class="prev"
+            aria-label="{{ 'general.pagination.previous' | t }}"
+          >
+            <i class="iconsax" data-icon="chevron-left">{% render 'icon-left-chevron' %}</i>
+          </a>
+        </li>
+      {% else %}
+        <li class="disabled">
+          <a
+            href="{{ paginate.previous.url }}{{ anchor }}"
+            class="prev"
+            aria-label="{{ 'general.pagination.previous' | t }}"
+          >
+            <i class="iconsax" data-icon="chevron-left">{% render 'icon-left-chevron' %}</i>
+          </a>
+        </li>
+      {%- endif -%}
+
+      {%- for part in paginate.parts -%}
+        <li>
+          {%- if part.is_link -%}
+            <a href="{{ part.url }}{{ anchor }}">
+              {{- part.title -}}
+            </a>
+          {%- else -%}
+            {%- if part.title == paginate.current_page -%}
+              <a class="active" aria-current="page">
+                {{- part.title -}}
+              </a>
+            {%- else -%}
+              <a>{{ part.title }}</a>
+            {%- endif -%}
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+
+      {%- if paginate.next -%}
+        <li>
+          <a href="{{ paginate.next.url }}{{ anchor }}" class="next" aria-label="{{ 'general.pagination.next' | t }}">
+            <i class="iconsax" data-icon="chevron-right">{% render 'icon-right-chevron' %}</i>
+          </a>
+        </li>
+      {% else %}
+        <li class="disabled">
+          <a href="{{ paginate.next.url }}{{ anchor }}" class="next" aria-label="{{ 'general.pagination.next' | t }}">
+            <i class="iconsax" data-icon="chevron-right">{% render 'icon-right-chevron' %}</i>
+          </a>
+        </li>
+      {%- endif -%}
+    </ul>
+  </div>
+{%- endif -%}

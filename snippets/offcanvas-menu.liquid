@@ -1,0 +1,160 @@
+<div
+  class="offcanvas offcanvas-end mobile-header-menu"
+  tabindex="-1"
+  id="mobile-header-menu"
+  aria-labelledby="mobile-header-menu"
+>
+  <div class="mobile-header">
+    <h4 class="offcanvas-title" id="offcanvasRightLabel">Menu</h4>
+    <a href="" type="button" data-bs-dismiss="offcanvas" aria-label="Close">
+      <i class="fa-solid fa-xmark"></i>
+    </a>
+  </div>
+  <div class="mobile-menu">
+    <div class="accordion" id="mobileMenuAccordion">
+      <ul class="nav-menu">
+        {% for block in blocks %}
+          <li class="menu-item">
+            {% if block.type == 'menu_block' %}
+              <!-- Accordion header for dropdown -->
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="heading-{{ block.id }}">
+                  <button
+                    class="accordion-button collapsed"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#collapse-{{ block.id }}"
+                    aria-expanded="false"
+                    aria-controls="collapse-{{ block.id }}"
+                  >
+                    {{ block.settings.menu_label }}
+                  </button>
+                </h2>
+                <!-- Accordion content for dropdown links -->
+                <div
+                  id="collapse-{{ block.id }}"
+                  class="accordion-collapse collapse"
+                  aria-labelledby="heading-{{ block.id }}"
+                  data-bs-parent="#mobileMenuAccordion"
+                >
+                  <div class="accordion-body">
+                    <ul class="nav-submenu">
+                      {% for sub_link in block.settings.menu.links %}
+                        <li>
+                          <a href="{{ sub_link.url }}">
+                            {{ sub_link.title }}
+                          </a>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            {% elsif block.type == 'megamenu' %}
+              <!-- Mega Menu Block -->
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="heading-{{ block.id }}">
+                  <button
+                    class="accordion-button collapsed"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#collapse-{{ block.id }}"
+                    aria-expanded="false"
+                    aria-controls="collapse-{{ block.id }}"
+                  >
+                    {{ block.settings.menu_label }}
+                  </button>
+                </h2>
+                <!-- Accordion content for dropdown links -->
+                <div
+                  id="collapse-{{ block.id }}"
+                  class="accordion-collapse collapse"
+                  aria-labelledby="heading-{{ block.id }}"
+                  data-bs-parent="#mobileMenuAccordion"
+                >
+                  <div class="accordion-body">
+                    <div class="nav-megamenu">
+                      <div class="custom-container container">
+                        <div class="row">
+                          <div class="col">
+                            <div class="row">
+                              <div class="col-12 pt-3">
+                                <h5>{{ block.settings['menu1-title'] }}</h5>
+                                <ul>
+                                  {% for sub_link in block.settings.menu_1.links %}
+                                    <li>
+                                      <a href="{{ sub_link.url }}" title="{{ sub_link.title }}">
+                                        {{ sub_link.title }}
+                                      </a>
+                                    </li>
+                                  {% endfor %}
+                                </ul>
+                              </div>
+                              <div class="col-12 pt-3">
+                                <h5>{{ block.settings['menu2-title'] }}</h5>
+                                <ul>
+                                  {% for sub_link in block.settings.menu_2.links %}
+                                    <li>
+                                      <a href="{{ sub_link.url }}" title="{{ sub_link.title }}">
+                                        {{ sub_link.title }}
+                                      </a>
+                                    </li>
+                                  {% endfor %}
+                                </ul>
+                              </div>
+                              <div class="col-12 pt-3">
+                                <h5>{{ block.settings['menu3-title'] }}</h5>
+                                <ul>
+                                  {% for sub_link in block.settings.menu_3.links %}
+                                    <li>
+                                      <a href="{{ sub_link.url }}" title="{{ sub_link.title }}">
+                                        {{ sub_link.title }}
+                                      </a>
+                                    </li>
+                                  {% endfor %}
+                                </ul>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-12 pt-3">
+                            <div class="slick-slider ">
+                              <div class="header-slider">
+                                {% if block.settings.menu_img %}
+                                  <div>
+                                    <img
+                                      class="img-fluid"
+                                      src="{{ block.settings.menu_img | image_url }}"
+                                      alt="Image 1"
+                                    >
+                                  </div>
+                                {% endif %}
+                                {% if block.settings.menu_img_2 %}
+                                  <div>
+                                    <img
+                                      class="img-fluid"
+                                      src="{{ block.settings.menu_img_2 | image_url }}"
+                                      alt="Image 2"
+                                    >
+                                  </div>
+                                {% endif %}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% else %}
+              <!-- Regular link -->
+              <a href="{{ block.settings.link }}" class="mobile-menu-link">
+                {{ block.settings.menu_label }}
+              </a>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>

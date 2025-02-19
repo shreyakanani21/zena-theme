@@ -1,0 +1,401 @@
+<!-- Quick View Modal -->
+<div
+  class="modal modal-lg fade "
+  id="quick-view"
+  tabindex="-1"
+  aria-labelledby="quickViewModalLabel"
+>
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable quick-view-modal">
+    <div class="modal-content">
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      <div class="modal-body scrollable-theme">
+        <div id="quickViewLoader" class="d-flex justify-content-center align-items-center" style="height: 200px;">
+          <div class="loader"></div>
+        </div>
+        <div id="quickViewContent" class="row d-none">
+          <!-- Product details will be dynamically injected here -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  let product;
+
+  document.querySelectorAll('[data-bs-toggle="modal"][data-bs-target="#quick-view"]').forEach((link) => {
+    link.addEventListener("click", function (event) {
+      event.preventDefault();
+
+      var productHandle = this.getAttribute("data-product-handle");
+
+      console.log("Generated Product Handle:", productHandle);
+
+      document.getElementById('quickViewLoader').classList.remove('d-none');
+      document.getElementById('quickViewContent').classList.add('d-none');
+
+      if (productHandle) {
+        $.getJSON(`/products/${productHandle}.js`, function (data) {
+          product = data;  
+          var availabilityText = product.available ? 'In Stock' : 'Out of Stock';
+          
+          var optionsHtml = '';
+          product.options.forEach(function (option, index) {
+            var availableVariants = product.variants.filter(variant => variant.available);
+            var uniqueValues = [...new Set(availableVariants.map(variant => variant.options[index]))];
+
+            if (uniqueValues.length > 1) {
+              optionsHtml += `
+                <div class="mb-3">
+                  <label for="option-${index}" class="form-label">${option.name}:</label>
+                  <div class="variant-swatches" data-index="${index}">
+                    ${uniqueValues.map(value => {
+                      return `<span class="swatch" data-value="${value}" style="background-color: ${getSwatchColor(value)};" title="${value}" data-variant-id="${value}"></span>`;
+                    }).join('')}
+                  </div>
+                </div>
+              `;
+            }
+          });
+
+          var swiperHtml = `
+            <!-- Main Image Slider -->
+<div class="main-slick">
+  ${product.images.map(image => `
+    <div class="slick-slide">
+      <img src="${image}" alt="${product.title}" class="img-fluid main-img">
+    </div>
+  `).join('')}
+</div>
+
+<!-- Thumbnail Slider -->
+<div class="thumbnail-slick mt-3 p-1">
+  ${product.images.map(image => `
+    <div class="slick-slide">
+      <img src="${image}" alt="${product.title}" class="img-fluid thumbnail-img">
+    </div>
+  `).join('')}
+</div>
+
+          `;
+
+          var contentHtml = `
+            <div class="col-lg-6 col-xs-12">
+              <div class="quick-view-img">
+                ${swiperHtml}
+              </div>
+            </div>
+            <div class="col-lg-6 rtl-text ">
+              <div class="product-right">
+                <h3>${product.title}</h3>
+                <h5>Rs. ${product.price / 100} <span><del>Rs. ${product.compare_at_price / 100}</del></span></h5>
+                <p class-"info"><span>Availability:</span> ${availabilityText}</p>
+                <p class="info"><span>Type:</span> ${product.type}</p>
+                <div class="border-product">
+                <div class="description">${product.description}</div>
+                </div>
+                ${optionsHtml}
+            <div class="quantity-section" style="display: flex; align-items: center; gap: 8px;">
+  <div class="quantity_box">
+    <button type="button" id="decrease-quantity" class="quantity-btn" style="padding: 5px 10px; font-size: 16px;">-</button>
+  <input type="number" id="product-quantity" name="quantity" min="1" max="10" value="1" class="form-control" style="width: 60px; text-align: center;">
+  <button type="button" id="increase-quantity" class="quantity-btn" style="padding: 5px 10px; font-size: 16px;">+</button>
+</div>
+</div>
+
+                <div class="product-buttons">
+                  <a href="#" class="btn btn_solid add-to-cart" data-product-id="${product.id}">Add To Cart</a>
+                  <a href="${product.url}" class="btn btn_solid">View Details</a>
+                </div>
+              </div>
+            </div>
+          `;
+
+         setTimeout(function () {
+  document.getElementById('quickViewContent').innerHTML = contentHtml;
+
+  // Initialize the main Slick slider
+  $('.main-slick').slick({
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    arrows: false,
+    fade: true,
+    asNavFor: '.thumbnail-slick'
+  });
+
+  // Initialize the thumbnail Slick slider
+  $('.thumbnail-slick').slick({
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    asNavFor: '.main-slick',
+    focusOnSelect: true,
+    arrows: false
+  });
+
+  document.getElementById('quickViewLoader').classList.add('d-none');
+  document.getElementById('quickViewContent').classList.remove('d-none');
+
+  attachSwatchEventListeners();
+  attachAddToCartListeners(product.variants);
+  attachQuantityButtonListeners();  // Added here
+
+}, 1000);
+
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+          console.warn("Error fetching product data:", textStatus, errorThrown);
+          document.getElementById('quickViewLoader').classList.add('d-none');
+        });
+      } else {
+        console.warn("Error: No valid product handle!");
+        document.getElementById('quickViewLoader').classList.add('d-none');
+      }
+    });
+  });
+
+  function attachSwatchEventListeners() {
+    document.querySelectorAll('.variant-swatches').forEach(function (swatchContainer) {
+      swatchContainer.addEventListener('click', function (event) {
+        var swatch = event.target;
+        
+        if (swatch.classList.contains('swatch')) {
+
+          var allSwatches = swatchContainer.querySelectorAll('.swatch');
+          allSwatches.forEach(function (s) {
+            s.classList.remove('selected');
+          });
+
+
+          swatch.classList.add('selected');
+          
+
+          var optionIndex = swatchContainer.getAttribute('data-index');
+          var selectedValue = swatch.getAttribute('data-value');
+          
+
+          updateSelectedOption(optionIndex, selectedValue);
+        }
+      });
+    });
+  }
+
+  function updateSelectedOption(index, value) {
+    var selectedOptions = Array.from(document.querySelectorAll('.variant-swatches')).map(function (container) {
+      var selectedSwatch = container.querySelector('.swatch.selected');
+      return selectedSwatch ? selectedSwatch.getAttribute('data-value') : null;
+    });
+
+    var selectedVariant = product.variants.find(function (variant) {
+      return JSON.stringify(variant.options) === JSON.stringify(selectedOptions);
+    });
+
+    if (selectedVariant) {
+      updateVariantDetails(selectedVariant);
+    }
+  }
+
+  function updateVariantDetails(variant) {
+
+    var priceElement = document.querySelector('.quick-view-modal .product-price');
+    if (priceElement) {
+      priceElement.textContent = 'Rs. ' + (variant.price / 100);
+    }
+  }
+
+
+  function attachAddToCartListeners(variants) {
+    document.querySelectorAll('.add-to-cart').forEach((button) => {
+      button.addEventListener('click', function (event) {
+        event.preventDefault();
+        
+        var selectedVariant = getSelectedVariant(variants);
+        
+        
+        var quantity = parseInt(document.getElementById('product-quantity').value) || 1; 
+
+        if (selectedVariant) {
+          addToCart(selectedVariant.id, quantity);  
+        } else {
+          alert('Please select a valid product option.');
+        }
+      });
+    });
+  }
+
+  function getSelectedVariant(variants) {
+    var selectedOptions = Array.from(document.querySelectorAll('.variant-swatches')).map(function (container) {
+      var selectedSwatch = container.querySelector('.swatch.selected');
+      return selectedSwatch ? selectedSwatch.getAttribute('data-value') : null;
+    });
+
+    if (selectedOptions.some(option => option === null)) {
+      return variants[0]; 
+    }
+
+    var selectedVariant = variants.find(function (variant) {
+      return JSON.stringify(variant.options) === JSON.stringify(selectedOptions);
+    });
+
+    return selectedVariant || variants[0];  
+  }
+
+  function addToCart(variantId, quantity) {
+    fetch('/cart/add.js', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        id: variantId,
+        quantity: quantity  
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Product added to cart:', data);
+      fetchCart();
+      var offCanvasCart = new bootstrap.Offcanvas(document.getElementById('offcanvasRight'));
+      offCanvasCart.show();
+    })
+    .catch(error => {
+      console.warn('Error adding to cart:', error);
+    });
+  }
+
+  function getSwatchColor(value) {
+    const colorMap = {
+      "Red": "#FF0000",
+      "Blue": "#0000FF",
+      "Green": "#00FF00",
+      "Black": "#000000",
+      "Beige": "#ecc9b6",
+      "Brown": "#9A5630",
+      "Caramel Charm": "#b98358",
+      "Chocolate Teddy": "#985648",
+      "Copper Rose": "#9c605b",
+      "Coral Tree": "#a66567",
+      "Deep beige": "#ebb384",
+      "Dawn": "#c66968",
+      "Deep Rose": "#d4456e",
+      "Dreamy Beige": "#edc3a1",
+      " Dusky Rose": "#ba6f5f",
+      "French Beige": "#ba6f5f",
+      "Classic Grey": "#989a9a",
+      "Grey": "#808080",
+      "Purple": "#800080",
+      "Off-White": "#e6e6e6"
+    };
+    return colorMap[value] || "#cccccc";
+  }
+
+  function attachQuantityButtonListeners() {
+    const increaseButton = document.getElementById('increase-quantity');
+    const decreaseButton = document.getElementById('decrease-quantity');
+    const quantityInput = document.getElementById('product-quantity');
+
+    if (increaseButton && decreaseButton && quantityInput) {
+      increaseButton.addEventListener('click', function () {
+        let currentValue = parseInt(quantityInput.value) || 1;
+        const maxValue = parseInt(quantityInput.max);
+
+        if (currentValue < maxValue) {
+          quantityInput.value = currentValue + 1;
+        }
+      });
+
+      decreaseButton.addEventListener('click', function () {
+        let currentValue = parseInt(quantityInput.value) || 1;
+        const minValue = parseInt(quantityInput.min);
+
+        if (currentValue > minValue) {
+          quantityInput.value = currentValue - 1;
+        }
+      });
+    }
+  }
+
+});
+</script>
+
+<style>
+      .main-swiper img{
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .thumbnail-swiper .swiper-slide{
+        height: auto;
+      }
+
+      .thumbnail-swiper .swiper-slide-thumb-active{
+        border: 1px solid rgba(var(--theme-default), 1);
+        opacity: 1;
+      }
+
+      .thumbnail-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        cursor: pointer;
+        opacity: 0.7;
+        box-shadow: 0 0 2px 2px rgba(var(--border), 0.7);
+      }
+
+      .thumbnail-img:hover {
+        opacity: 1;
+      }
+
+      .quick-view-img .main-swiper{
+        box-shadow: 0 0 2px 2px rgba(var(--border), 0.7);
+      }
+      @media screen and (max-width: 1200px) {
+        .modal-dialog.quick-view-modal {
+          max-width: 100%;
+        }
+      }
+
+      .quick-view-modal button:focus, .quick-view-modal button:focus-visible {
+        outline: none;
+        box-shadow: none;
+      }
+
+      .variant-swatches {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .swatch {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;  /* Make it round, or change to square if you prefer */
+      cursor: pointer;
+      border: 2px solid #ccc;
+      transition: transform 0.3s ease;
+    }
+
+    .swatch:hover {
+      transform: scale(1.1);  /* Add hover effect to indicate it's clickable */
+      border-color: rgba(0,0,0,0.5);  /* Change border on hover */
+    }
+
+    .swatch.selected {
+      border-color: rgba(0, 0, 0, 1);  /* Highlight selected swatch */
+      box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.2); /* Optional: Add shadow to highlight selection */
+    }
+    .quick-view-modal .thumbnail-slick .slick-slide {
+    margin-right: 10px; /* Add space between the images */
+  }
+
+  .quick-view-modal .thumbnail-slick .slick-slide:last-child {
+    margin-right: 0; /* Remove margin from the last item */
+  }
+
+  .quick-view-modal .thumbnail-slick .thumbnail-img {
+    padding: 5px; /* Optional: add padding around images */
+  }
+  .quick-view-modal .slick-list .thumbnail-slick .slick-current img{
+          border: 1px solid #b96d6d;
+  }
+</style>

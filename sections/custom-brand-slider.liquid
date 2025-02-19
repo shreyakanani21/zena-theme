@@ -1,0 +1,215 @@
+<section class="{% if section.settings.section_padding == 'top' %}section-t-space{% elsif section.settings.section_padding == 'bottom' %}section-b-space{% elsif section.settings.section_padding == 'both' %}section-space{% endif %}">
+  <div
+    class="{% if section.settings.section_width == 'fluid' %}container-fluid{% else %}custom-container container{% endif %}"
+  >
+    <!-- Slick Slider Container -->
+    <div
+      class="slick logo-slider"
+      data-slick='{"slidesToShow": {{ section.settings.slide_main }}, "slidesToScroll": 1, "autoplay": {{ section.settings.use_autoplay | json }}, "autoplaySpeed": {{ section.settings.slider_speed }}000, "infinite": {{ section.settings.use_loop | json }}, {% if section.settings.slider_pagination == "dot" %}"dots": true, "arrows": false {% elsif section.settings.slider_pagination == "arrow" %}"arrows": true {% else %} "arrows": false {% endif %}, "responsive": [{"breakpoint":1600,"settings":{"slidesToShow":{{ section.settings.slide_2xl }},"slidesToScroll":1}},{"breakpoint":1200,"settings":{"slidesToShow":{{ section.settings.slide_xl }},"slidesToScroll":1}},{"breakpoint":992,"settings":{"slidesToShow":{{ section.settings.slide_lg }},"slidesToScroll":1}},{"breakpoint":768,"settings":{"slidesToShow":{{ section.settings.slide_md }},"slidesToScroll":1}},{"breakpoint":576,"settings":{"slidesToShow":{{ section.settings.slide_sm }},"slidesToScroll":1}} ]}'
+    >
+      {% for block in section.blocks %}
+        <div>
+          <a href="{{ block.settings.logo_url }}">
+            {% if block.settings.logo_img %}
+              <img src="{{ block.settings.logo_img | image_url }}" alt="logo" class="img-fluid">
+            {% else %}
+              {{ 'image' | placeholder_svg_tag }}
+            {% endif %}
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Logo Slider",
+  "settings": [
+    {
+    "type": "select",
+    "id": "section_width",
+    "label": "Section Width",
+    "options": [
+      {
+        "value": "fluid",
+        "label": "Full Width"
+      },
+      {
+        "value": "normal",
+        "label": "Standard Width"
+      }
+    ],
+    "default": "normal"
+  },
+  {
+      "type": "select",
+      "id": "section_padding",
+      "label": "Section Padding",
+      "options": [
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        },
+        {
+          "value": "both",
+          "label": "Top & Bottom"
+        }
+      ],
+      "default": "top"
+    },
+     {
+        "type": "header",
+        "content": "Slider Settings( Only for Slider layout )"
+      },
+      {
+        "type": "checkbox",
+        "id": "use_autoplay",
+        "label": "Enable Autoplay",
+        "info": "Enable To Activate Autoplay For The Slider.",
+        "default": false
+      },
+      {
+        "type": "range",
+        "id": "slider_speed",
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "label": "Autoplay Speed In Milliseconds",
+        "unit": "sec",
+        "default": 3
+      },
+      {
+        "type": "checkbox",
+        "id": "use_loop",
+        "label": "Enable Infinite Loop Sliding",
+        "default": false
+      },
+    {
+      "type": "select",
+      "id": "slider_pagination",
+      "label": "Slider Pagination",
+      "options": [
+        {
+          "label": "Dots",
+          "value": "dot"
+        },
+        {
+          "label": "Arrows",
+          "value": "arrow"
+        },
+        {
+          "label": "None",
+          "value": "none"
+        }
+      ],
+      "default": "none"
+    },
+    {
+        "type": "header",
+        "content": "Slider Breakpoints"
+      },
+      {
+        "type": "range",
+        "id": "slide_main",
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "default": 7,
+        "label": "Slides To Show"
+      },
+      {
+        "type": "header",
+        "content": "Breakpoint: 1600px"
+      },
+      {
+        "type": "range",
+        "id": "slide_2xl",
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "default": 6,
+        "label": "Slides To Show"
+      },
+      {
+        "type": "header",
+        "content": "Breakpoint: 1200px"
+      },
+      {
+        "type": "range",
+        "id": "slide_xl",
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "default": 6,
+        "label": "Slides To Show"
+      },
+      {
+        "type": "header",
+        "content": "Breakpoint: 992px"
+      },
+      {
+        "type": "range",
+        "id": "slide_lg",
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "default": 5,
+        "label": "Slides To Show"
+      },
+      {
+        "type": "header",
+        "content": "Breakpoint: 768px"
+      },
+      {
+        "type": "range",
+        "id": "slide_md",
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "default": 4,
+        "label": "Slides To Show"
+      },
+      {
+        "type": "header",
+        "content": "Breakpoint: 576px"
+      },
+      {
+        "type": "range",
+        "id": "slide_sm",
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "default": 3,
+        "label": "Slides To Show"
+      }
+  ],
+  "blocks": [
+    {
+      "type": "logo_block",
+      "name": "Logo Slide",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "logo_img",
+          "label": "Logo Image"
+        },
+        {
+          "type": "url",
+          "id": "logo_url",
+          "label": "Redirecting Url"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Logo Slider"
+    }
+  ]
+}
+{% endschema %}

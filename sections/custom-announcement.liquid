@@ -1,0 +1,154 @@
+    <section class="marquee-section"  style="background-color: {{ section.settings.marquee_bg_color }};">
+        <div class="{% if section.settings.section_width == 'fluid' %}container-fluid{% else %}custom-container container{% endif %}">
+            <div class="announcement-bar py-2">
+                <div class="text-wrapper {% if section.settings.pause_on_hover %}pause{% endif %}" style="animation-direction: {{ section.settings.direction }};">
+                  {% for block in section.blocks %}
+                  <div class="text-block">
+                  <a href="{{ block.settings.marquee_url }}" style="color: {{ section.settings.marquee_text_color }};"> 
+                   {{ block.settings.marquee_text }}
+                  </a>
+                    <div class="symbol-block">
+                    {% if block.settings.icon == 'icon-serum' %}
+                      {% render 'icon-serum' %}
+                    {% elsif block.settings.icon == 'icon-powder' %}
+                      {% render 'icon-powder' %}
+                    {% elsif block.settings.icon == 'icon-bronzer' %}
+                      {% render 'icon-bronzer' %}
+                    {% elsif block.settings.icon == 'icon-brush' %}
+                      {% render 'icon-brush' %}
+                    {% elsif block.settings.icon == 'icon-lotion' %}
+                      {% render 'icon-lotion' %}
+                    {% endif %}
+                  </div>
+                </div>                  
+                  {% endfor %}              
+                {% for block in section.blocks %}
+                  <div class="text-block">
+                  <a href="{{ block.settings.marquee_url }}" style="color: {{ section.settings.marquee_text_color }};"> 
+                   {{ block.settings.marquee_text }}
+                  </a>
+                    <div class="symbol-block">
+                    {% if block.settings.icon == 'icon-serum' %}
+                      {% render 'icon-serum' %}
+                    {% elsif block.settings.icon == 'icon-powder' %}
+                      {% render 'icon-powder' %}
+                    {% elsif block.settings.icon == 'icon-bronzer' %}
+                      {% render 'icon-bronzer' %}
+                    {% elsif block.settings.icon == 'icon-brush' %}
+                      {% render 'icon-brush' %}
+                    {% elsif block.settings.icon == 'icon-lotion' %}
+                      {% render 'icon-lotion' %}
+                    {% endif %}
+                  </div>
+                </div>                  
+              {% endfor %}     
+                </div>         
+            </div>
+        </div>
+    </section>
+    
+{% schema %}
+  {
+    "name": "Custom Announcement Bar",
+    "settings": [
+      {
+      "type": "select",
+      "id": "section_width",
+      "label": "Section Width",
+      "options": [
+        {
+          "value": "fluid",
+          "label": "Full Width"
+        },
+        {
+          "value": "normal",
+          "label": "Standard Width"
+        }
+      ],
+      "default": "fluid"
+    },
+    {
+      "type": "select",
+      "id": "direction",
+      "options": [
+          {
+          "value": "normal",
+          "label": "Right to Left"
+          },
+          {
+          "value": "reverse",
+          "label": "Left to Right"
+          }
+      ],
+        "default": "normal",
+        "label": "Direction"
+    },
+    {
+      "type": "checkbox",
+      "id": "pause_on_hover",
+      "label": "Pause on hover"
+    },
+    {
+      "type": "color",
+      "id": "marquee_bg_color",
+      "label": "Background Color",
+    },  
+    {
+      "type": "color",
+      "id": "marquee_text_color",
+      "label": "Text Color",
+    },
+    ],
+    "blocks": [
+      {
+        "type": "marquee_block",
+        "name": "Text Block",
+        "settings": [
+          {
+            "type": "text",
+            "id": "marquee_text",
+            "label": "Text",
+            "default": "Marquee"
+          },
+          {
+            "type": "url",
+            "id": "marquee_url",
+            "label": "Redirecting Url"
+          },
+          {
+    "type": "select",
+    "id": "icon",
+    "label": "Symbol",
+    "options": [
+      {
+        "value": "icon-serum",
+        "label": "Serum"
+      },
+      {
+        "value": "icon-powder",
+        "label": "Makeup Accecsory"
+      },
+      {
+        "value": "icon-bronzer",
+        "label": "Hair Dye"
+      },
+      {
+        "value": "icon-brush",
+        "label": "Wipes"
+      },
+      {
+        "value": "icon-lotion",
+        "label": "Cream & Lotion"
+      },
+    ]
+  },
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Custom Announcement Bar"
+      }
+    ]
+  }
+{% endschema %}

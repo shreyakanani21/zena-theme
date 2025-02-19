@@ -1,0 +1,230 @@
+<section class="{% if section.settings.section_padding == 'top' %}section-t-space{% elsif section.settings.section_padding == 'bottom' %}section-b-space{% elsif section.settings.section_padding == 'both' %}section-space{% endif %} ">
+  <div class="{% if section.settings.section_width == 'fluid' %}container-fluid{% else %}custom-container container{% endif %}">
+    <div class="contact-main">
+      <div class="row align-items-center gy-4 {% if section.settings.content_order == 'first' %}flex-row-reverse{% else %}flex-row{% endif %}">
+        <div class="col-xl-5 col-lg-6 order-lg-1 order-2 ">
+          <div class="contact-img">
+            {% if 'contact2.png' != blank %}
+              <img class="img-fluid" src="{{ 'contact2.png' | asset_url }}" alt="">
+            {% else %}
+              <img
+                src="{{ 'image.png' | asset_url }}"
+                class="img-fluid  "
+                alt="Placeholder Image"
+              >
+            {% endif %}
+          </div>
+        </div>
+        <div class="col-lg-6 order-lg-1 order-2">
+          <div class="contact-box">
+            <h4>
+              {{ section.settings.title }}
+            </h4>
+            <p>
+              {{ section.settings.subtitle }}
+            </p>
+            {%- form 'contact', id: 'ContactForm' -%}
+              {%- if form.errors -%}
+                <div class="alert alert-danger" role="alert">
+                  <p class="form-status" tabindex="-1" autofocus>
+                    {{ 'templates.contact.form.error_heading' | t }}
+                  </p>
+                  <ul class="form-status-list caption-large">
+                    {%- for field in form.errors -%}
+                      <li>
+                        {%- if form.errors.translated_fields[field] contains 'author' -%}
+                          {{ 'blogs.article.name' | t }}
+                        {%- elsif form.errors.translated_fields[field] contains 'body' -%}
+                          {{ 'blogs.article.message' | t }}
+                        {%- else -%}
+                          {{ form.errors.translated_fields[field] }}
+                        {%- endif -%}
+                        {{ form.errors.messages[field] }}
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+                </div>
+              {%- elsif form.posted_successfully? -%}
+                <div class="alert alert-success" role="status">
+                  <p class="form-status text-success" tabindex="-1" autofocus>
+                    {{ 'templates.contact.form.post_success' | t }}
+                  </p>
+                </div>
+              {%- endif -%}
+              <div class="contact-form">
+                <div class="row gy-4">
+                  <div class="col-sm-6 col-12">
+                    <label class="form-label" for="ContactForm-name">{{ 'templates.contact.form.name' | t }}</label>
+                    <input
+                      class="form-control"
+                      id="ContactForm-name"
+                      type="text"
+                      name="contact[{{ 'templates.contact.form.name' | t }}]"
+                      value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}"
+                      placeholder="Enter Full Name"
+                      required
+                    >
+                    {%- if form.errors contains 'author' -%}
+                      <small id="CommentForm-author-error" class="text-danger"> Name can't be blank </small>
+                    {%- endif -%}
+                  </div>
+                  <div class="col-sm-6 col-12">
+                    <label class="form-label" for="ContactForm-email">{{ 'templates.contact.form.email' | t }}</label>
+                    <input
+                      class="form-control"
+                      id="ContactForm-email"
+                      type="email"
+                      name="contact[email]"
+                      value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
+                      placeholder="Email Email Address"
+                      required
+                    >
+                    {%- if form.errors contains 'email' -%}
+                      <small id="CommentForm-email-error" class="text-danger">
+                        Email cannot be empty and must be properly formatted
+                      </small>
+                    {%- endif -%}
+                  </div>
+                  <div class=" col-12">
+                    <label class="form-label" for="ContactForm-phone">{{ 'templates.contact.form.phone' | t }}</label>
+                    <input
+                      class="form-control"
+                      id="ContactForm-phone"
+                      type="tel"
+                      name="contact[{{ 'templates.contact.form.phone' | t }}]"
+                      value="{% if form.phone %}{{ form.phone }}{% elsif customer %}{{ customer.phone }}{% endif %}"
+                      placeholder="Enter Phone Number"
+                    >
+                    {%- if form.errors contains 'phone' -%}
+                      <small id="CommentForm-email-error" class="text-danger">
+                        Phone number must be properly formatted
+                      </small>
+                    {%- endif -%}
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label" for="ContactForm-subject">Subject</label>
+                    <input
+                      class="form-control"
+                      id="ContactForm-subject"
+                      type="text"
+                      name="contact[subject]"
+                      placeholder="Enter Subject"
+                      required
+                    >
+                    {%- if form.errors contains 'subject' -%}
+                      <small id="CommentForm-body-error" class="text-danger"> Subject can't be blank </small>
+                    {%- endif -%}
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label" for="ContactForm-body">Message</label>
+                    <textarea
+                      class="form-control"
+                      id="ContactForm-body"
+                      rows="6"
+                      name="contact[{{ 'templates.contact.form.comment' | t }}]"
+                      placeholder="Enter Your Message"
+                      required
+                    >{{- form.body -}}</textarea>
+                    {%- if form.errors contains 'body' -%}
+                      <small id="CommentForm-body-error" class="text-danger"> Message can't be blank </small>
+                    {%- endif -%}
+                  </div>
+                  <div class="col-12">
+                    <button class="btn btn_black  sm" type="submit">Send Message</button>
+                  </div>
+                </div>
+              </div>
+            {%- endform -%}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "t:sections.contact-form.name",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+     {
+      "type": "select",
+      "id": "section_padding",
+      "label": "Section Padding",
+      "options": [
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        },
+        {
+          "value": "both",
+          "label": "Top & Bottom"
+        }
+      ],
+      "default": "top"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Section Width",
+      "options": [
+        {
+          "value": "fluid",
+          "label": "Full Width"
+        },
+        {
+          "value": "normal",
+          "label": "Standard Width"
+        }
+      ],
+      "default": "normal"
+    },
+    {
+      "type": "header",
+      "content": "Contact Settings"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Contact Form Title",
+      "default": "Title"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Contact Form Subtitle",
+      "default": "Subtitle"
+    },
+
+     {
+      "type": "select",
+      "id": "content_order",
+      "label": "Content Order",
+      "options": [
+        {
+          "label": "First",
+          "value": "first"
+        },
+        {
+          "label": "Second",
+          "value": "second"
+        }
+      ],
+      "default": "second"
+    },
+  ],
+  "presets": [
+    {
+      "name": "t:sections.contact-form.presets.name"
+    }
+  ]
+}
+{% endschema %}

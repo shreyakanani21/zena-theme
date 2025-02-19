@@ -1,0 +1,336 @@
+<!-- Compare Products Modal -->
+<div
+  class="modal modal-lg fade theme-modal compare-modal"
+  id="compare"
+  tabindex="-1"
+  aria-labelledby="compareModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable compare-modal">
+    <div class="modal-content">
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      <div class="modal-body scrollable-theme p-0">
+        <div id="compareLoader" class="d-flex justify-content-center align-items-center" style="height: 200px;">
+          <div class="loader"></div>
+        </div>
+        <div id="compareContent" class="row g-3 d-none">
+          <!-- Product comparison details will be dynamically injected here -->
+        </div>
+        <div id="compareEmpty" class="d-none text-center">
+          <div class="empty-content">
+            <img
+              src="https://cdn.shopify.com/s/files/1/0714/3728/7637/files/compare.gif?v=1735635566"
+              class="empty-img"
+            >
+            <h3>No Products Yet.</h3>
+            <a href="/collections/all" class="btn btn_solid d-block">Add Product</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  updateCompareModal(); // Update modal content on load
+  updateComparePage(); // Update compare page content on load
+
+  // Add click event listener for comparison links
+  document.querySelectorAll('[data-bs-toggle="modal"][data-bs-target="#compare"]').forEach(link => {
+    link.addEventListener("click", function (event) {
+      event.preventDefault();
+
+      const productHandle = this.getAttribute("data-product-handle");
+
+      // Show loader and hide other content
+      document.getElementById('compareLoader').classList.remove('d-none');
+      document.getElementById('compareContent').classList.add('d-none');
+      document.getElementById('compareEmpty').classList.add('d-none');
+
+      fetch(`/products/${productHandle}.js`)
+        .then(response => {
+          if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+          return response.json();
+        })
+        .then(data => {
+          addProductToCompare(data);
+        })
+        .catch(error => {
+          console.error('Error fetching product:', error);
+          document.getElementById('compareLoader').classList.add('d-none');
+          document.getElementById('compareEmpty').classList.remove('d-none');
+        });
+    });
+  });
+
+  function addProductToCompare(productData) {
+    const compareProducts = JSON.parse(localStorage.getItem('compareProducts')) || [];
+
+    if (compareProducts.some(product => product.id === productData.id)) {
+      alert('This product is already in the comparison list.');
+      return;
+    }
+
+    if (compareProducts.length >= 5) {
+      alert('You can only compare up to 5 products.');
+      return;
+    }
+
+    // Add product to the localStorage
+    compareProducts.push({
+      id: productData.id,
+      title: productData.title,
+      price: productData.variants[0].price,
+      vendor: productData.vendor,
+      featured_image: productData.images[0] || '/path/to/placeholder-image.jpg',
+      variants: productData.variants,
+    });
+
+    localStorage.setItem('compareProducts', JSON.stringify(compareProducts));
+
+    // Update modal and compare page
+    updateCompareModal();
+    updateComparePage();
+  }
+
+  function removeProductFromCompare(productId) {
+    const compareProducts = JSON.parse(localStorage.getItem('compareProducts')) || [];
+    const updatedProducts = compareProducts.filter(product => product.id !== parseInt(productId));
+
+    localStorage.setItem('compareProducts', JSON.stringify(updatedProducts));
+
+    // Update modal and compare page
+    updateCompareModal();
+    updateComparePage();
+  }
+
+  function updateCompareModal() {
+    const compareProducts = JSON.parse(localStorage.getItem('compareProducts')) || [];
+
+    document.getElementById('compareLoader').classList.remove('d-none');
+    document.getElementById('compareContent').classList.add('d-none');
+    document.getElementById('compareEmpty').classList.add('d-none');
+
+    setTimeout(() => {
+      if (compareProducts.length === 0) {
+        document.getElementById('compareLoader').classList.add('d-none');
+        document.getElementById('compareEmpty').classList.remove('d-none');
+      } else {
+        const contentHtml = compareProducts.map(generateProductComparisonHtml).join('');
+        document.getElementById('compareContent').innerHTML = contentHtml;
+
+        document.getElementById('compareLoader').classList.add('d-none');
+        document.getElementById('compareContent').classList.remove('d-none');
+
+        attachRemoveFromCompareListeners();
+        attachAddToCartListeners();
+      }
+    }, 500);
+  }
+
+function updateComparePage() {
+  const compareProducts = JSON.parse(localStorage.getItem('compareProducts')) || [];
+  const comparePageContainer = document.getElementById('comparePageContent');
+
+  if (!comparePageContainer) return; // Exit if the compare page is not loaded
+
+  if (compareProducts.length === 0) {
+    // Add an empty content message when no products are in the comparison list
+    comparePageContainer.innerHTML = `
+      <div class="empty-compare-message">
+        <div class="empty-content">
+          <img
+            src="https://cdn.shopify.com/s/files/1/0714/3728/7637/files/compare.gif?v=1735635566"
+            alt="No Products"
+            class="empty-img"
+          >
+          <h3>No Products Yet.</h3>
+          <a href="/collections/all" class="btn btn_solid d-block">Add Products</a>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  // Generate HTML for the compare page
+  const contentHtml = compareProducts.map(generateProductComparisonHtml).join('');
+  comparePageContainer.innerHTML = contentHtml;
+
+  // Attach event listeners for remove and add-to-cart buttons
+  attachRemoveFromCompareListeners();
+  attachAddToCartListeners();
+}
+
+
+  function generateProductComparisonHtml(product) {
+    const price = product.price ? `Rs. ${product.price / 100}` : 'Unavailable';
+
+    return `
+      <div class="col-lg-4">
+        <div class="comparison-card">
+          <img src="${product.featured_image}" alt="${product.title}" class="img-fluid">
+          <h5>${product.title}</h5>
+          <p><strong>Price:</strong> ${price}</p>
+          <p><strong>Vendor:</strong> ${product.vendor}</p>
+          <div class="d-flex">
+            <button class="btn btn_solid add-to-cart" data-variant-id="${product.variants[0].id}">Add to Cart</button>
+            <button class="btn btn-outline-danger remove-from-compare" data-product-id="${product.id}">Remove</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function attachRemoveFromCompareListeners() {
+    document.querySelectorAll('.remove-from-compare').forEach(button => {
+      button.addEventListener('click', function (event) {
+        event.preventDefault();
+        const productId = this.getAttribute('data-product-id');
+        removeProductFromCompare(productId);
+      });
+    });
+  }
+
+  function attachAddToCartListeners() {
+    document.querySelectorAll('.add-to-cart').forEach(button => {
+      button.addEventListener('click', function (event) {
+        event.preventDefault();
+        const variantId = this.getAttribute('data-variant-id');
+        addToCart(variantId, 1);
+      });
+    });
+  }
+
+  function addToCart(variantId, quantity) {
+    fetch('/cart/add.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: variantId, quantity }),
+    })
+      .then(response => {
+        if (!response.ok) throw new Error(`Error adding to cart: ${response.statusText}`);
+        return response.json();
+      })
+      .then(() => {
+        alert('Product added to cart!');
+      })
+      .catch(error => {
+        console.error('Error adding to cart:', error);
+      });
+  }
+});
+</script>
+
+<style>
+    /* Compare Modal Styling */
+  .compare-modal .modal-content {
+    border-radius: 8px;
+    padding: 20px;
+    background-color: rgba(var(--white), 1);
+  }
+
+  .compare-modal .modal-body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  /* Loader styling */
+  .compare-modal #compareLoader {
+    width: 100%;
+    height: 200px;
+  }
+
+  .compare-modal #compareEmpty {
+    color: rgba(var(--secondary-color), 1);
+    font-size: 1.2rem;
+    margin-top: 20px;
+  }
+
+  /* Product Comparison Card */
+  .compare-modal .comparison-card {
+    border: 1px solid rgba(var(--border), 0.2);
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(var(--border), 1);
+    background-color: rgba(var(--box-background), 0.5);
+  }
+
+  .compare-modal .comparison-card img {
+    width: 250px;
+    height: 250px;
+    object-fit: cover;
+    max-width: 100%;
+    border-radius: 0;
+    margin-bottom: 12px;
+    box-shadow: 0 0 2px 2px rgba(var(--border), 0.4);
+  }
+
+  .compare-modal .comparison-card h5 {
+    font-size: 1.1rem;
+    color: rgba(var(--theme-font-color), 1);
+    margin-bottom: 5px;
+  }
+
+  .compare-modal .comparison-card p {
+    font-size: 0.9rem;
+    color: rgba(var(--secondary-color), 1);
+    margin-bottom: 10px;
+  }
+
+  /* Price, Vendor, Availability */
+  .compare-modal .comparison-card p strong {
+    font-weight: 600;
+    color:  rgba(var(--theme-font-color), 1);
+  }
+
+  .compare-modal .d-flex {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  /* Add to Cart Button */
+  .compare-modal .btn_solid.add-to-cart {
+    background-color:  rgba(var(--theme-default), 1);
+    color: rgba(var(--white), 1);
+    border: none;
+    padding: 8px 16px;
+    border-radius: 0px;
+    cursor: pointer;
+  }
+
+
+
+  /* Remove Button */
+  .compare-modal .btn-outline-danger.remove-from-compare {
+    color: rgba(var(--theme-default), 1);
+    border: 1px solid rgba(var(--theme-default), 1);
+    padding: 8px 16px;
+    border-radius: 0px;
+    cursor: pointer;
+  }
+
+  .compare-modal .btn-outline-danger.remove-from-compare:hover {
+    background-color: rgba(var(--theme-default), 1);
+    color: rgba(var(--white), 1);
+  }
+
+  /* Responsive Design */
+  @media (min-width: 768px) {
+    .compare-modal #compareContent {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 12px;
+      justify-content: space-around;
+    }
+
+    .compare-modal .col-lg-4 {
+      flex: 1 1 calc(33.333% - 20px);
+      max-width: 300px;
+    }
+  }
+</style>

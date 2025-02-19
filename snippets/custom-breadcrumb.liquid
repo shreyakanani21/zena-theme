@@ -1,0 +1,84 @@
+{% comment %}  or template == 'page.custom_maintenance' or template == 'page.custom_order_success'  {% endcomment %}
+{% if settings.enable_breadcrumb %}
+  {%- unless template == 'index' -%}
+    {%- assign t = template | split: '.' | first -%}
+    <section class="heading-banner">
+      <div class="custom-container container">
+        <div>
+          <ul class="breadcrumb">
+            <li class="breadcrumb-item">
+              <a href="/"> <i class="iconsax" icon-name="home-1"></i> </a>
+            </li>
+            {% if template == 'cart' %}
+              <li class="breadcrumb-item active"><a href="/cart"> Cart </a></li>
+            {% endif %}
+
+            {%- case t -%}
+              {%- when 'page' -%}
+                <li class="breadcrumb-item active">
+                  <a href="{{ page.url }}"> {{ page.title }} </a>
+                </li>
+              {%- when 'product' -%}
+                <li class="breadcrumb-item"><a href="/collections/all"> Product </a></li>
+
+                <li class="breadcrumb-item active">
+                  <a href="{{ product.url }}"> {{ product.title }} </a>
+                </li>
+              {%- when 'collection' and collection.handle -%}
+                <li class="breadcrumb-item active">
+                  <a href="{{ collection.url }}"> {{ collection.title }} </a>
+                </li>
+              {%- when 'blog' and blog.handle -%}
+                <li class="breadcrumb-item active">
+                  <a href="{{ blog.url }}"> {{ blog.title }} </a>
+                </li>
+              {%- when 'article' and article.handle -%}
+                <li class="breadcrumb-item active">
+                  <a href=""> {{ article.title }} </a>
+                </li>
+              {%- when '404' and 404.handle -%}
+                <li class="breadcrumb-item active">
+                  <a href="/404"> 404 </a>
+                </li>
+
+              {% when 'customers/login' %}
+                <li class="breadcrumb-item">
+                  <a href="/account/login">Login</a>
+                </li>
+
+              {% when 'customers/register' %}
+                <li class="breadcrumb-item">
+                  <a href="/account/register">Register</a>
+                </li>
+
+              {% when 'customers/account' %}
+                <li class="breadcrumb-item">
+                  <a href="/account">Account</a>
+                </li>
+
+              {% when 'customers/addresses' %}
+                <li class="breadcrumb-item">
+                  <a href="/account/addresses">Account</a>
+                </li>
+
+              {%- when 'collections' -%}
+                <li class="breadcrumb-item">
+                  <a href="{{ routes.collections_url }}">Collections</a>
+                </li>
+                {%- if collection -%}
+                  <li class="breadcrumb-item active">
+                    {{ collection.title }}
+                  </li>
+                {%- endif -%}
+
+              {%- when 'search' and search.handle -%}
+                <li class="breadcrumb-item">
+                  <a href="/search">Search</a>
+                </li>
+            {%- endcase -%}
+          </ul>
+        </div>
+      </div>
+    </section>
+  {%- endunless -%}
+{% endif %}

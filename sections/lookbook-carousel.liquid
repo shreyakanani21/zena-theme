@@ -1,0 +1,284 @@
+<section>
+  <div class="title">
+    <h2 style="color: {{ section.settings.section_title_color }}; text-align: {{ section.settings.title_align }};">
+      {{ section.settings.section_title }}
+    </h2>
+  </div>
+  <div class="lookbook-banner">
+    <div class="{% if section.settings.section_width == 'fluid' %}{% else %}{% endif %}">
+      <div class="post-list ">
+        {% for block in section.blocks %}
+          <div class="post-block">
+            <a href="{{ block.settings.post_url }}" style="color: {{ section.settings.post_text_color }};">
+              <img class="img-fluid" src="{{ block.settings.post_img | image_url }}">
+            </a>
+
+            {% for i in (1..4) %}
+              {% assign pro = 'product_' | append: i %}
+              {% assign product_key = block.settings[pro] %}
+              {% assign product_ = all_products[product_key] %}
+
+              {% if product_key != '' %}
+                {% assign dot_position = 'setposition_' | append: i %}
+
+                <div class="lookbook-dot dot{{i}}" style="{{ block.settings[dot_position] }}">
+                  <span>{{ i }}</span>
+                  <a href="{{ product_.url }}" target="_blank">
+                    <div class="dot-showbox">
+                      <div class="dot-showbox-image">
+                        <img
+                          src="{{ product_ | img_url: 'medium' }}"
+                          class="img-fluid"
+                          alt="{{ product_.title | split: '|' | first }}"
+                        >
+                      </div>
+                      <div class="dot-info">
+                        <p>{{ product_.title | truncatewords: 10 }}</p>
+                        <span>{{ product_.price | money }}</span>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+           .lookbook-banner {
+            padding: 50px 0;
+          }
+
+          .lookbook-banner .post-list {
+            display: flex;
+            gap: 15px;
+          }
+
+          .post-block {
+            width: calc(33.333% - 10px);
+            position: relative;
+          }
+
+          .post-block img {
+            width: 100%;
+            height: 250px;
+            border-radius: 0;
+                object-fit: cover;
+             filter: brightness(90%) contrast(110%);
+            transition: filter 0.5s ease-in-out;
+          }
+  .post-block img:hover {
+      filter: brightness(67%) contrast(100%);
+  }
+      .lookbook-banner .lookbook-dot span{
+            font-size: 15px;
+      }
+          .lookbook-banner .lookbook-dot {
+          position: absolute;
+          width: 25px;
+          height: 25px;
+          background-color: #fff;
+          color: #fff;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 14px;
+          cursor: pointer;
+          transition: all 0.3s ease-in-out;
+                box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+
+
+        /* Lookbook Dot Showbox */
+        .lookbook-banner  .dot-showbox {
+          position: absolute;
+          background: #fff;
+          border-radius: 0;
+         width: 200px;
+              height: 282px;
+          box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+          opacity: 0;
+          visibility: hidden;
+          transition: 0.3s ease-in-out;
+          z-index: 10;
+        }
+
+        .lookbook-dot:hover .dot-showbox {
+          opacity: 1;
+          visibility: visible;
+        }
+
+        .lookbook-banner .dot-showbox-image img {
+          width: 100%;
+          height: 209px;
+          border-radius: 0;
+        }
+        .lookbook-banner .dot-info{
+              text-align: center;
+        }
+        .lookbook-banner .dot-info p {
+          margin: 5px 0 0;
+          font-size: 17px;
+          color: #333;
+          text-align: center;
+        }
+        .lookbook-banner .dot-info span{
+          font-size: 15px;
+        }
+      @media (max-width: 768px) {
+        .post-list {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .post-block {
+            max-width: 100%;
+          width: 100%;
+        }
+
+        .lookbook-dot {
+            width: 25px;
+            height: 25px;
+            font-size: 12px;
+        }
+    }
+
+    /* Small Mobile Screens */
+    @media (max-width: 480px) {
+        .lookbook-dot {
+            width: 20px;
+            height: 20px;
+            font-size: 10px;
+        }
+    }
+</style>
+
+{% schema %}
+{
+  "name": "Lookbook Slider",
+   "settings": [
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "Section Title"
+    },
+    {
+      "type": "color",
+      "id": "section_title_color",
+      "label": "Title Color",
+      "default": "#000000"
+    },
+    {
+      "type": "select",
+      "id": "title_align",
+      "label": "Title Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "color",
+      "id": "post_bg_color",
+      "label": "Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Section Width",
+      "options": [
+        { "value": "fluid", "label": "Full Width" },
+        { "value": "boxed", "label": "Boxed" }
+      ],
+      "default": "boxed"
+    }
+  ],
+ "blocks": [
+    {
+      "type": "lookbook_item",
+      "name": "Lookbook Item",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "post_img",
+          "label": "Post Image"
+        },
+        {
+          "type": "product",
+          "id": "product_1",
+          "label": "Product 1"
+        },
+           {
+      "type": "text",
+      "id": "setposition_1",
+      "label": "Set Position for Dot 1",
+      "default": "top:22%; left:45%;"
+    },
+        {
+          "type": "product",
+          "id": "product_2",
+          "label": "Product 2"
+        },
+        {
+      "type": "text",
+      "id": "setposition_2",
+      "label": "Set Position for Dot 2",
+      "default": "top:50%; left:30%;"
+    },
+        {
+          "type": "product",
+          "id": "product_3",
+          "label": "Product 3"
+        },
+            {
+      "type": "text",
+      "id": "setposition_3",
+      "label": "Set Position for Dot 3",
+      "default": "top:70%; left:60%;"
+    },
+        {
+          "type": "product",
+          "id": "product_4",
+          "label": "Product 4"
+        },
+          {
+      "type": "text",
+      "id": "setposition_4",
+      "label": "Set Position for Dot 4",
+      "default": "top:40%; left:80%;"
+    },
+      ]
+    },
+    {
+      "type": "instagram_post",
+      "name": "Instagram Post",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "post_img",
+          "label": "Post Image"
+        },
+        {
+          "type": "url",
+          "id": "post_url",
+          "label": "Post Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Lookbook Slider"
+    }
+  ]
+}
+{% endschema %}

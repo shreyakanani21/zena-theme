@@ -1,0 +1,630 @@
+<section class="section-b-space {% if settings.breadcrumb %}pt-0{% endif %}">
+  <div class="{% if section.settings.section_width == 'fluid' %}custom-container{% else %} container{% endif %}">
+    <div class="row g-4">
+      <div
+        class="col-xxl-9 col-xl-8"
+        style="    position: relative;"
+      >
+        <div class="cart-table">
+          <div class="table-title">
+            <h5>
+              Cart <span id="cartTitle">({{ cart.item_count }})</span>
+            </h5>
+            <button id="clearAllButton">Clear All</button>
+          </div>
+          <div class="table-responsive theme-scrollbar">
+            <table class="table" id="cart-table">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Price</th>
+                  <th>Quantity</th>
+                  <th>Total</th>
+                  <th></th>
+                </tr>
+              </thead>
+
+              <tbody id="cart-items-tbody">
+                <!-- Cart items will be dynamically inserted here -->
+              </tbody>
+              <div class="no-data" id="data-show">
+                <div class="empty-content">
+                  <img
+                    class="img-fluid for-light"
+                    src="https://cdn.shopify.com/s/files/1/0714/3728/7637/files/cart-empty_ly-1.gif?v=1739169709"
+                  >
+                  <img
+                    class="img-fluid for-dark"
+                    src="https://cdn.shopify.com/s/files/1/0714/3728/7637/files/cart-empty-dark_ly-1.gif?v=1739172259"
+                  >
+                  <h4>You have nothing in your shopping cart!</h4>
+                  <p>
+                    Today is a great day to purchase the things you have been holding onto!
+                    <a href="{{ shop.url }}/pages/wishlist">Go To Wishlist</a>
+                  </p>
+                  <a href="/collections/all" class="btn btn_black sm mt-3">Browse Products</a>
+                </div>
+              </div>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="col-xxl-3 col-xl-4">
+        <div class="cart-items">
+          <div class="cart-progress">
+            <div class="progress">
+              <div
+                class="progress-bar progress-bar-striped"
+                role="progressbar"
+                id="progress-bar"
+                style="width: 0%"
+                aria-valuenow="0"
+                aria-valuemin="0"
+                aria-valuemax="100"
+              >
+                <span
+                  ><i class="iconsax" data-icon="truck-fast">{% render 'icon-shipping' %}</i></span
+                >
+              </div>
+            </div>
+          </div>
+          <div class="cart-bottom">
+            <p>
+              <i class="iconsax me-1" data-icon="tag-2"></i>SPECIAL OFFER
+              {% assign total_discount = 0 %}
+              {% for discount_application in cart.cart_level_discount_applications %}
+                {% assign total_discount = total_discount | plus: discount_application.total_allocated_amount %}
+              {% endfor %}
+              ({{ total_discount | money }})
+            </p>
+            <h6>
+              Subtotal <span id="subtotal">{{ cart.total_price | money }}</span>
+            </h6>
+            <span>Taxes and shipping calculated at checkout</span>
+          </div>
+
+          <!-- End Gift With Purchase Section -->
+
+          <form action="/cart" method="post">
+            <input type="hidden" name="note" value="{{ cart.note }}">
+
+            {% render 'shipping-calculator' %}
+
+            <ul>
+              <li>
+                <span class="login-text">
+                  <a class="theme-color" href="{{ shop.url }}/account/login">Login</a> to view or add personalized
+                  messages
+                </span>
+              </li>
+            </ul>
+          </form>
+
+          <div class="log-in-box p-0 pb-2">
+            <div class="forgot-box">
+              <div class="forgot-content">
+                <input
+                  class="custom-checkbox me-2"
+                  id="cart-agree-terms-checkbox"
+                  type="checkbox"
+                  name="terms"
+                >
+                <!--
+                  <div class="svg-wrapper">
+                    {{- 'icon-checkmark.svg' | inline_asset_content -}}
+                  </div>
+                -->
+                <label for="cart-agree-terms-checkbox">
+                  I agree with <span>Terms</span> and <span>Privacy</span>
+                </label>
+              </div>
+            </div>
+          </div>
+          <a class="btn btn_black w-100  sm" href="/checkout" id="cart-checkout">Check Out</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+    #cart-checkout[disabled="true"] {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+  const currencySymbol = getCurrentCurrencySymbol();
+
+    var expiryTextElement = document.getElementById("expiry-text");
+    var countdownMessageElement = document.getElementById("countdown-message");
+
+  
+    function tick() {
+      var secs = timeInSecs;
+      if (secs > 0) {
+        timeInSecs--;
+      } else {
+        clearInterval(ticker);
+
+        countdownMessageElement.style.display = "none";
+        expiryTextElement.style.display = "block";
+        return;
+      }
+
+      var mins = Math.floor(secs / 60);
+      secs %= 60;
+      var pretty = ((mins < 10) ? "0" : "") + mins + ":" + ((secs < 10) ? "0" : "") + secs;
+
+      
+    }
+
+    // Cart Management
+    function fetchCart() {
+      fetch('/cart.js')
+        .then(response => response.json())
+        .then(data => {
+          renderCartItems(data.items);
+          updateCartTotal(data.total_price);
+          updateFooterProgressBar(data.total_price);
+          updateCartCount(data.item_count);
+        })
+        .catch(error => console.error('Error fetching cart:', error));
+    }
+
+    function renderCartItems(items) {
+      const cartItemsTbody = document.querySelector('#cart-items-tbody');
+      const noData = document.querySelector('#data-show');
+      cartItemsTbody.innerHTML = '';
+
+      if (items.length === 0) {
+        noData.style.display = 'block';
+        return;
+      }
+      noData.style.display = 'none';
+
+      items.forEach(item => {
+        const row = document.createElement('tr');
+
+        const isGiftWrap = item.handle === 'gift-wrap';
+
+        row.innerHTML = `
+          <td>
+            <div class="cart-box">
+              <a href="${item.url}"><img  src="${item.image}" alt="${item.title}"></a>
+              <div>
+                <a href="${item.url}">
+                  <h5>${item.product_title}</h5>
+                </a>
+                ${!isGiftWrap ? `
+                <p>Sold by: <span>${item.vendor}</span></p>
+                <p>Variant: <span>${item.variant_title}</span></p>
+                ` : ' '}
+              </div>
+            </div>
+          </td>
+          <td>${currencySymbol}${(item.price / 100).toFixed(2)}</td>
+          <td>
+          ${!isGiftWrap ? `
+            <div class="quantity">
+              <button class="minus" data-id="${item.id}">
+              <i>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M432 256c0 17.7-14.3 32-32 32L48 288c-17.7 0-32-14.3-32-32s14.3-32 32-32l352 0c17.7 0 32 14.3 32 32z"/></svg>
+              </i>
+              </button>
+              <input type="number" value="${item.quantity}" min="1" max="20" data-id="${item.id}" class="quantity-input">
+              <button class="plus" data-id="${item.id}">
+              <i>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z"/></svg>
+              </i>
+              </button>
+            </div>
+          ` : ' '}
+          </td>
+          <td>${currencySymbol}${(item.line_price / 100).toFixed(2)}</td>
+          <td><a class="deleteButton" href="javascript:void(0)" data-id="${item.id}"><i class="iconsax" data-icon="trash" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21 5.97998C17.67 5.64998 14.32 5.47998 10.98 5.47998C9 5.47998 7.02 5.57998 5.04 5.77998L3 5.97998" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="M8.5 4.97L8.72 3.66C8.88 2.71 9 2 10.69 2H13.31C15 2 15.13 2.75 15.28 3.67L15.5 4.97" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="M18.85 9.14001L18.2 19.21C18.09 20.78 18 22 15.21 22H8.79002C6.00002 22 5.91002 20.78 5.80002 19.21L5.15002 9.14001" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="M10.33 16.5H13.66" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="M9.5 12.5H14.5" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+            </i></a></td>
+        `;
+        cartItemsTbody.appendChild(row);
+      });
+
+      attachQuantityListeners();
+    }
+
+    function updateCartTotal(totalPrice) {
+      const cartTotal = document.querySelector('#subtotal');
+      cartTotal.textContent = `${currencySymbol} ${(totalPrice / 100).toFixed(2)}`;
+    }
+
+  function updateFooterProgressBar(cartTotalPrice) {
+    const freeShippingElement = document.getElementById('free-shipping-price');
+    const progressBarElement = document.getElementById('progress-bar');
+    const footerText = document.getElementById('footerText');
+
+    if (!freeShippingElement || !progressBarElement || !footerText) {
+        console.warn("Required elements not found on cart page.");
+        return; // Elements na mile toh function exit kare
+    }
+
+    const freeShippingThreshold = parseFloat(freeShippingElement.getAttribute('data-price')) || 0;
+    const currencySymbol = window.currencySymbol || '$'; // Default currency symbol
+    
+    if (freeShippingThreshold <= 0) {
+        console.warn("Invalid free shipping threshold.");
+        return;
+    }
+
+    const remainingAmount = (freeShippingThreshold - cartTotalPrice / 100).toFixed(2);
+    const progressPercent = Math.min((cartTotalPrice / 100 / freeShippingThreshold) * 100, 100);
+
+    progressBarElement.style.width = `${progressPercent}%`;
+    
+    footerText.innerHTML = progressPercent >= 100
+        ? 'Congratulations! Use code <span>FREESHIP</span> for free shipping!'
+        : `Spend <span id="remaining-amount">${currencySymbol}${remainingAmount}</span> more & enjoy <span>Free Shipping!</span>`;
+}
+
+
+   function updateCartCount(count) {
+    const cartCountElement = document.querySelector('.cart-count'); // ya jo bhi selector ho
+    if (cartCountElement) { 
+        cartCountElement.textContent = count;
+    } else {
+        console.warn("Cart count element not found.");
+    }
+}
+
+
+    function attachQuantityListeners() {
+    document.querySelectorAll('.quantity-input').forEach(input => {
+    
+      input.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+          const productId = this.getAttribute('data-id');
+          let newQuantity = parseInt(this.value);
+    
+          this.value = newQuantity;
+    
+          const oldQuantity = parseInt(this.getAttribute('value'), 10);
+    
+          if (newQuantity !== oldQuantity) {
+            const delta = newQuantity ;
+            editCartQuantity(productId, delta);
+            this.setAttribute('value', newQuantity);
+          }
+        }
+      });
+    });
+
+      document.querySelectorAll('.plus').forEach(button => {
+        button.addEventListener('click', function () {
+          const productId = this.getAttribute('data-id');
+          changeCartQuantity(productId, 1);
+        });
+      });
+
+      document.querySelectorAll('.minus').forEach(button => {
+        button.addEventListener('click', function () {
+          const productId = this.getAttribute('data-id');
+          changeCartQuantity(productId, -1);
+        });
+      });
+
+      document.querySelectorAll('.deleteButton').forEach(button => {
+        button.addEventListener('click', function () {
+          const productId = this.getAttribute('data-id');
+          removeCartItem(productId);
+        });
+      });
+    }
+
+  function changeCartQuantity(productId, delta) {
+      const quantityInput = document.querySelector(`.quantity-input[data-id="${productId}"]`);
+      let newQuantity = parseInt(quantityInput.value, 10) + delta;
+
+      if (newQuantity < 1) {
+        newQuantity = 1;
+      }
+      else if (newQuantity > 150) {
+          newQuantity = 150;
+        }
+
+      fetch('/cart/change.js', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({
+          id: productId,
+          quantity: newQuantity,
+        }),
+      })
+        .then(response => response.json())
+        .then(() => {
+          fetchCart();
+        })
+        .catch(error => console.error('Error updating cart:', error));
+    }
+ 
+    function editCartQuantity(productId, delta) {
+      const quantityInput = document.querySelector(`.quantity-input[data-id="${productId}"]`);
+      let newQuantity = delta;
+
+          if (newQuantity < 1) {
+            newQuantity = 1;
+          } else if (newQuantity > 150) {
+            newQuantity = 150;
+          }
+
+      fetch('/cart/change.js', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({
+          id: productId,
+          quantity: newQuantity,
+        }),
+      })
+        .then(response => response.json())
+        .then(() => {
+          fetchCart();
+        })
+        .catch(error => console.error('Error updating cart:', error));
+    }
+
+    function removeCartItem(productId) {
+      fetch('/cart/change.js', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({
+          id: productId,
+          quantity: 0,
+        }),
+      })
+        .then(response => response.json())
+        .then(() => {
+          fetchCart();
+        })
+        .catch(error => console.error('Error removing item:', error));
+    }
+
+    // Initial call to fetch cart
+    fetchCart();
+  });
+
+
+  // clear cart
+  document.getElementById('clearAllButton').addEventListener('click', function() {
+    fetch('/cart/clear.js', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        }
+        throw new Error('Failed to clear cart.');
+    })
+    .then(data => {
+        console.log('Cart cleared:', data);
+
+        window.location.reload();
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+  });
+
+
+  // Agree to terms then checkbout
+document.addEventListener('DOMContentLoaded', () => {
+  const agreeCheckbox = document.getElementById('cart-agree-terms-checkbox');
+  const checkoutButton = document.getElementById('cart-checkout');
+
+  function updateCheckoutButtonState() {
+    if (agreeCheckbox.checked) {
+      checkoutButton.removeAttribute('disabled');
+    } else {
+      checkoutButton.setAttribute('disabled', 'true');
+    }
+  }
+
+  updateCheckoutButtonState();
+
+  agreeCheckbox.addEventListener('change', () => {
+    updateCheckoutButtonState();
+  });
+
+  checkoutButton.addEventListener('click', (event) => {
+    if (checkoutButton.hasAttribute('disabled')) {
+      event.preventDefault();
+    }
+  });
+
+  window.addEventListener('popstate', () => {
+    updateCheckoutButtonState();
+  });
+});
+
+
+function updateSubtotal() {
+  // Fetch the updated cart subtotal and update it on the page
+  fetch('/cart.js')
+    .then(response => response.json())
+    .then(cart => {
+      const subtotal = cart.total_price / 100; // Convert to the correct currency format
+      document.getElementById("subtotal").innerText = "Rs." + subtotal.toFixed(2);
+    });
+}
+</script>
+
+{% schema %}
+{
+  "name": "Custom Cart",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Products Recommendation Settings"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Section Width",
+      "options": [
+        {
+          "value": "fluid",
+          "label": "Full Width"
+        },
+        {
+          "value": "normal",
+          "label": "Standard Width"
+        }
+      ],
+      "default": "fluid"
+    },
+    {
+      "type": "collection",
+      "id": "recommendation",
+      "label": "Select Collection for Recommendation"
+    },
+    {
+      "type": "header",
+      "content": "Slider Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "cart_use_autoplay",
+      "label": "Enable Autoplay",
+      "info": "Enable to activate autoplay for the slider.",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "cart_slider_speed",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "label": "Autoplay Speed in milliseconds",
+      "unit": "sec",
+      "default": 3
+    },
+    {
+      "type": "checkbox",
+      "id": "cart_use_loop",
+      "label": "Enable Infinite loop sliding",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "cart_use_dots",
+      "default": false,
+      "label": "Enable dots for pagination control"
+    },
+    {
+      "type": "header",
+      "content": "Slider Breakpoints"
+    },
+    {
+      "type": "range",
+      "id": "cart_slide_main",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 3,
+      "label": "Slides to Show"
+    },
+    {
+      "type": "header",
+      "content": "Breakpoint: 1200px"
+    },
+    {
+      "type": "range",
+      "id": "cart_slide_lg",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 2,
+      "label": "Slides to Show"
+    },
+    {
+      "type": "header",
+      "content": "Breakpoint: 768px"
+    },
+    {
+      "type": "range",
+      "id": "cart_slide_md",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 1,
+      "label": "Slides to Show"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Cart"
+    }
+  ]
+}
+{% endschema %}
+
+{% javascript %}
+{% endjavascript %}
+{% stylesheet %}
+  .coupon-box ul li.note span i {
+      top: 13.5px;
+      left: 10px;
+      transform: none;
+  }
+  .coupon-box ul li span textarea{
+    min-height: 40px;
+  }
+    .cart-slider .cart-box .cart-upsell-image{
+      position: relative;
+      width: 150px;
+      padding-bottom: 187.5px;
+      overflow: hidden;
+    }
+
+    .cart-slider .cart-box .cart-upsell-image img{
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+  @media (max-width: 991.9px) {
+        .cart-slider .cart-box .cart-upsell-image{
+      width: 100px;
+      min-width: 100px;
+      padding-bottom: 125px;
+    }
+  }
+  .cart-box .category-dropdown form{
+    width: 100%;
+  }
+  @media (max-width: 575.9px) {
+   .cart-box .category-dropdown form{
+    width: 90%;
+  }
+  }
+{% endstylesheet %}

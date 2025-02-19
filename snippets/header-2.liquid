@@ -1,0 +1,170 @@
+<div class="main-menu">
+  <nav class="main-header  {% if section.settings.logo_position == 'middle-center' %}order-sm-1 order-2{% endif %} {% if section.settings.header_style == 'style-3' %}mx-xl-auto ms-sm-0 me-sm-auto m-0{% endif %}">
+    <div class="main-navbar">
+      <div id="mainnav">
+        <div class="toggle-nav{% if section.settings.logo_position == 'middle-center' or section.settings.header_style == 'style-3' %} d-xl-none d-block{% else %} d-sm-none d-block{% endif %}">
+          <a href="" data-bs-toggle="offcanvas" data-bs-target="#mobile-header-menu" role="button">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+              <path d="M0 96C0 78.3 14.3 64 32 64l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 128C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 288c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32L32 448c-17.7 0-32-14.3-32-32s14.3-32 32-32l384 0c17.7 0 32 14.3 32 32z" />
+            </svg>
+          </a>
+        </div>
+        <ul class="nav-menu d-xl-flex d-none">
+          {% for block in section.blocks %}
+            {% if block.type == 'link' %}
+              <li class="menu-item">
+                <a
+                  href="{{ block.settings.link }}"
+                  class="menu-link {% if page.url == block.settings.link %}active{% endif %}"
+                >
+                  {{ block.settings.menu_label }}
+                </a>
+              </li>
+            {% elsif block.type == 'menu_block' %}
+              <li class="menu-item">
+                <a
+                  href="{{ block.settings.link }}"
+                  class="menu-link {% if page.url == block.settings.link %}active{% endif %} menu-arrow"
+                >
+                  {{ block.settings.menu_label }}
+                  <span>
+                    {% render 'icon-angle-down' %}
+                  </span>
+                </a>
+                {% if block.settings.enable_badge %}
+                  <span
+                    class="badge"
+                    style="color: {{ block.settings.badge_color }}; background-color: {{ block.settings.badge_background_color }};"
+                  >
+                    {{ block.settings.badge_text }}
+                  </span>
+                {% endif %}
+                <ul class="nav-submenu">
+                  {% for sub_link in block.settings.menu.links %}
+                    <li>
+                      <a href="{{ sub_link.url }}">
+                        {{ sub_link.title }}
+                      </a>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </li>
+            {% elsif block.type == 'megamenu' %}
+              <li class="menu-item">
+                <a
+                  href="{{ block.settings.link }}"
+                  class="menu-link {% if page.url == block.settings.link %}active{% endif %} menu-arrow"
+                  title="{{ block.settings.menu_label }}"
+                >
+                  {{ block.settings.menu_label }}
+                  <span>
+                    {% render 'icon-angle-down' %}
+                  </span>
+                </a>
+                <div class="nav-megamenu">
+                  <div class="custom-container container">
+                    <div class="row">
+                      <div class="col-7">
+                        <div class="row">
+                          <div class="col-6">
+                            <h5>{{ block.settings['menu1-title'] }}</h5>
+                            <ul>
+                              {% for sub_link in block.settings.menu_1.links %}
+                                <li>
+                                  <a href="{{ sub_link.url }}" title="{{ sub_link.title }}">
+                                    {{ sub_link.title }}
+                                  </a>
+                                </li>
+                              {% endfor %}
+                            </ul>
+                          </div>
+                          <div class="col-6">
+                            <h5>{{ block.settings['menu2-title'] }}</h5>
+                            <ul>
+                              {% for sub_link in block.settings.menu_2.links %}
+                                <li>
+                                  <a href="{{ sub_link.url }}" title="{{ sub_link.title }}">
+                                    {{ sub_link.title }}
+                                  </a>
+                                </li>
+                              {% endfor %}
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-5">
+                        <div class="slick-slider header-slider">
+                          {% if block.settings.menu_img %}
+                            <div>
+                              <img class="img-fluid" src="{{ block.settings.menu_img | image_url }}" alt="Image 1">
+                            </div>
+                          {% endif %}
+                          {% if block.settings.menu_img_2 %}
+                            <div>
+                              <img class="img-fluid" src="{{ block.settings.menu_img_2 | image_url }}" alt="Image 2">
+                            </div>
+                          {% endif %}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    <div
+      class="menu-left {% if section.settings.logo_position == 'middle-center' %}order-sm-2 order-1{% endif %}"
+      style="{% if section.settings.logo_position == 'top-left' %}flex: 1 1 100%;{% elsif section.settings.logo_position == 'top-center' %}flex: 1 1 100%;text-align: center;{% endif %}"
+    >
+      <div class="brand-logo">
+        <a href="{{ shop.url }}">
+          {% if settings.theme == 'theme-2' %}
+            <img src="{{ 'logo-2.png' | asset_url }}" class="img-fluid logo-img for-light" alt="logo">
+            <img src="{{ 'logo-dark-2.png' | asset_url }}" class="img-fluid logo-img for-dark" alt="logo">
+          {% else %}
+            <h2 class="no-logo-text mb-0">Zena</h2>
+          {% endif %}
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="menu-right d-sm-block d-none {% if section.settings.logo_position == 'middle-center' %}order-3{% endif %}">
+    {% if section.settings.header_style == 'style-2' %}
+      <ul>
+        <li class="toggle-nav d-xl-none d-inline-block">
+          <a href="" data-bs-toggle="offcanvas" data-bs-target="#mobile-header-menu" role="button">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+              <path d="M0 96C0 78.3 14.3 64 32 64l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 128C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 288c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32L32 448c-17.7 0-32-14.3-32-32s14.3-32 32-32l384 0c17.7 0 32 14.3 32 32z"/>
+            </svg>
+          </a>
+        </li>
+        <li>
+          <a>
+            <i class="iconsax" icon-name="search-normal-1"></i>
+          </a>
+        </li>
+
+        <li>
+          <a>
+            {% render 'icon-user' %}
+          </a>
+        </li>
+        <li>
+          <a>
+            <i class="iconsax" icon-name="heart"></i>
+          </a>
+        </li>
+        <li>
+          <a>
+            {% render 'icon-cart-bag' %}
+            <span class="label">1</span>
+          </a>
+        </li>
+      </ul>
+    {% endif %}
+  </div>
+</div>

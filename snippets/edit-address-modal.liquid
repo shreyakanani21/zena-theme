@@ -1,0 +1,154 @@
+{% for address in customer.addresses %}
+  <div
+    class="modal fade theme-modal"
+    id="editProfile"
+    tabindex="-1"
+    aria-labelledby="exampleModalLabel2"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-fullscreen-sm-down">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel2">Edit Profile</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="EditAddress_{{ address.id }}">
+          {% form 'customer_address', address %}
+            <div class="row g-4">
+              <div class="col-xxl-6">
+                <div class="form-floating theme-form-floating">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="AddressFirstName_{{ form.id }}"
+                    name="address[first_name]"
+                    value="{{ form.first_name }}"
+                    required
+                  >
+                  <label for="AddressFirstName_{{ form.id }}">First Name</label>
+                </div>
+              </div>
+
+              <div class="col-xxl-6">
+                <div class="form-floating theme-form-floating">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="AddressLastName_{{ form.id }}"
+                    name="address[last_name]"
+                    value="{{ form.last_name }}"
+                    required
+                  >
+                  <label for="AddressLastName_{{ form.id }}">Last Name</label>
+                </div>
+              </div>
+
+              <div class="col-xxl-6">
+                <div class="form-floating theme-form-floating">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="AddressCompany_{{ form.id }}"
+                    name="address[company]"
+                    value="{{ form.company }}"
+                  >
+                  <label for="AddressCompany_{{ form.id }}">Company</label>
+                </div>
+              </div>
+
+              <div class="col-xxl-6">
+                <div class="form-floating theme-form-floating">
+                  <input
+                    class="form-control"
+                    type="number"
+                    value="{{ form.phone }}"
+                    name="address[phone]"
+                    id="AddressPhone_{{ form.id }}"
+                    pattern="[0-9\-]*"
+                    required
+                  >
+                  <label for="AddressPhone_{{ form.id }}">Mobile Number</label>
+                </div>
+              </div>
+
+              <div class="col-12">
+                <div class="form-floating theme-form-floating">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="AddressAddress1_{{ form.id }}"
+                    name="address[address1]"
+                    value="{{ form.address1 }}"
+                    required
+                  >
+                  <label for="AddressAddress1_{{ form.id }}">Add Address</label>
+                </div>
+              </div>
+
+              <div class="col-12">
+                <div class="form-floating theme-form-floating">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="AddressAddress2_{{ form.id }}"
+                    name="address[address2]"
+                    value="{{ form.address2 }}"
+                  >
+                  <label for="AddressAddress2_{{ form.id }}">Add Address 2</label>
+                </div>
+              </div>
+
+              <div class="col-xxl-4">
+                <div class="form-floating theme-form-floating">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="AddressCity_{{ form.id }}"
+                    name="address[city]"
+                    value="{{ form.city }}"
+                    required
+                  >
+                  <label for="AddressCity_{{ form.id }}">City</label>
+                </div>
+              </div>
+
+              <div class="col-xxl-4">
+                <div class="form-floating theme-form-floating">
+                  <select
+                    class="form-select"
+                    id="AddressCountry_{{ form.id }}"
+                    name="address[country]"
+                    data-default="{{ form.country }}"
+                    required
+                  >
+                    {{ all_country_option_tags }}
+                  </select>
+                  <label for="AddressCountry_{{ form.id }}">Country</label>
+                </div>
+              </div>
+
+              <div class="col-xxl-4">
+                <div class="form-floating theme-form-floating">
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="AddressZip_{{ form.id }}"
+                    name="address[zip]"
+                    value="{{ form.zip }}"
+                    required
+                  >
+                  <label for="AddressZip_{{ form.id }}">Pin Code</label>
+                </div>
+              </div>
+
+              <div class="modal-footer address_edit_btn">
+                <button type="button" class="btn btn_outline btn-md " data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn  btn-md  btn_solid">Save changes</button>
+              </div>
+            </div>
+          {% endform %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endfor %}

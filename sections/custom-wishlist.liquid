@@ -1,0 +1,47 @@
+<!-- Wishlist Page -->
+
+<section class="section-space wishlist-section">
+  <div class="custom-container container">
+    <div class="loader-container" id="loadingSpinner" style="display:none;">
+      <div class="loader"></div>
+    </div>
+
+    <div class="empty-container" id="emptyWishlistMessage" style="display:none;">
+      <div class="empty-content">
+        <img
+          src="https://cdn.shopify.com/s/files/1/0714/3728/7637/files/wishlist_ly-1.gif?v=1739169705"
+          class="empty-img for-light"
+        >
+        <img
+          src="https://cdn.shopify.com/s/files/1/0714/3728/7637/files/wishlist-dark_ly-1.gif?v=1739172258"
+          class="empty-img for-dark"
+        >
+        <h3>Your Wishlist is empty.</h3>
+        <a href="/collections/all" class="btn btn_solid d-block">Continue Shopping</a>
+      </div>
+    </div>
+
+    <div
+      id="wishlistContainer"
+      style="display:none;"
+      class="row row-cols-xxl-5 row-cols-xl-4 row-cols-md-3 row-cols-xs-2 row-cols-1 g-4 gy-5"
+    >
+      <!-- Wishlist items will be populated here -->
+      <p class="d-none">Wishlist products</p>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Wishlist",
+  "settings": [
+
+  ],
+  "presets": [
+    {
+      "name": "Wishlist"
+    }
+  ]
+}
+{% endschema %}

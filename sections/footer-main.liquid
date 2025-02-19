@@ -1,0 +1,495 @@
+{% if section.settings.footer_style == 'style-2' %}
+  <footer class="footer-section  footer-2 ">
+    <section class="section-b-space subscribe-section">
+      <div class="custom-container container">
+        <div class="footer-content-logo">
+          <div class="footer-logo">
+            <a href="{{ shop.url }}">
+              {% if settings.theme == 'theme-1' %}
+                <img src="{{ 'logo-1.png' | asset_url }}" class="img-fluid logo-img for-light" alt="logo">
+                <img src="{{ 'logo-dark.png' | asset_url }}" class="img-fluid logo-img for-dark" alt="logo">
+              {% elsif settings.theme == 'theme-2' %}
+                <img src="{{ 'logo-2.png' | asset_url }}" class="img-fluid" alt="logo">
+                <img src="{{ 'logo-dark-2.png' | asset_url }}" class="img-fluid logo-img for-dark" alt="logo">
+              {% elsif settings.theme == 'theme-3' %}
+                <img src="{{ 'logo-3.png' | asset_url }}" class="img-fluid" alt="logo">
+                <img src="{{ 'logo-dark-3.png' | asset_url }}" class="img-fluid logo-img for-dark" alt="logo">
+              {% elsif settings.theme == 'custom' %}
+                <img src="{{ settings.logo | image_url }}" class="img-fluid" alt="logo">
+              {% endif %}
+            </a>
+          </div>
+          <h6>{{ section.settings.footer_location }}</h6>
+        </div>
+        <div class="footer-social-icons">
+          <ul>
+            {% if section.settings.enable_facebook %}
+              <li>
+                <a href="{{ section.settings.facebook_url }}" target="_blank"
+                  ><i class="fa-brands fa-facebook-f"></i
+                ></a>
+              </li>
+            {% endif %}
+            {% if section.settings.enable_instagram %}
+              <li>
+                <a href="{{ section.settings.instagram_url }}" target="_blank"
+                  ><i class="fa-brands fa-instagram"></i
+                ></a>
+              </li>
+            {% endif %}
+            {% if section.settings.enable_pinterest %}
+              <li>
+                <a href="{{ section.settings.pinterest_url }}" target="_blank"
+                  ><i class="fa-brands fa-pinterest-p"></i
+                ></a>
+              </li>
+            {% endif %}
+            {% if section.settings.enable_youtube %}
+              <li>
+                <a href="{{ section.settings.youtube_url }}" target="_blank"><i class="fa-brands fa-youtube"></i></a>
+              </li>
+            {% endif %}
+            {% if section.settings.enable_twitter %}
+              <li>
+                <a href="{{ section.settings.twitter_url }}" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
+              </li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </section>
+    <section class="section-space">
+      <div class="custom-container container">
+        <div class="row">
+          <!-- Footer Menus -->
+          {% for block in section.blocks %}
+            <div class="col-lg-2 col-md-4 col-sm-3 col-12">
+              <div class="footer-content">
+                <div>
+                  <div class="footer-title d-md-block">
+                    <h4>{{ block.settings.footer_menu.title }}</h4>
+                    <ul class="footer-details accordion-hidden">
+                      {% for link in block.settings.footer_menu.links %}
+                        <li>
+                          <a href="{{ link.url }}">{{ link.title }}</a>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+          <div class="col-lg-4 col-md-8 col-12">
+            <div class="subscribe">
+              <div class="d-flex flex-column">
+                <div class="">
+                  <div>
+                    <h5>Subscribe to Our Newsletter!</h5>
+                  </div>
+                </div>
+                <div class="">
+                  <div class="subscribe-form">
+                    <div class="input-group form-group">
+                      <input type="text" class="form-control" placeholder="Enter email address">
+                      <div class="btn_group">
+                        <span>
+                          <i class="fa-solid fa-arrow-right-long"></i>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sub-Footer Section with Social Media Icons -->
+    <div class="sub-footer">
+      <div class="custom-container container">
+        <div class="row">
+          <div class="col-12">
+            <div class="footer-end">
+              <h6>
+                {{ section.settings.footer_note }}
+                <span id="current-year"></span>
+              </h6>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+{% elsif section.settings.footer_style == 'style-3' %}
+  <footer class="footer-section  footer-3 ">
+    <section class="section-space">
+      <div class="custom-container container">
+        <div class="row">
+          <div class="col-lg-4 col-md-8 col-12">
+            <div class="footer-content-logo">
+              <div class="footer-logo">
+                <a href="{{ shop.url }}">
+                  {% if settings.theme == 'theme-1' %}
+                    <img src="{{ 'logo-1.png' | asset_url }}" class="img-fluid logo-img for-light" alt="logo">
+                    <img src="{{ 'logo-dark.png' | asset_url }}" class="img-fluid logo-img for-dark" alt="logo">
+                  {% elsif settings.theme == 'theme-2' %}
+                    <img src="{{ 'logo-2.png' | asset_url }}" class="img-fluid" alt="logo">
+                    <img src="{{ 'logo-dark-2.png' | asset_url }}" class="img-fluid logo-img for-dark" alt="logo">
+                  {% elsif settings.theme == 'theme-3' %}
+                    <img src="{{ 'logo-3.png' | asset_url }}" class="img-fluid" alt="logo">
+                    <img src="{{ 'logo-dark-3.png' | asset_url }}" class="img-fluid logo-img for-dark" alt="logo">
+                  {% elsif settings.theme == 'custom' %}
+                    <img src="{{ settings.logo | image_url }}" class="img-fluid" alt="logo">
+                  {% endif %}
+                </a>
+              </div>
+              <h6>{{ section.settings.footer_location }}</h6>
+            </div>
+            <div class="footer-social-icons">
+              <ul>
+                {% if section.settings.enable_facebook %}
+                  <li>
+                    <a href="{{ section.settings.facebook_url }}" target="_blank"
+                      ><i class="fa-brands fa-facebook-f"></i
+                    ></a>
+                  </li>
+                {% endif %}
+                {% if section.settings.enable_instagram %}
+                  <li>
+                    <a href="{{ section.settings.instagram_url }}" target="_blank"
+                      ><i class="fa-brands fa-instagram"></i
+                    ></a>
+                  </li>
+                {% endif %}
+                {% if section.settings.enable_pinterest %}
+                  <li>
+                    <a href="{{ section.settings.pinterest_url }}" target="_blank"
+                      ><i class="fa-brands fa-pinterest-p"></i
+                    ></a>
+                  </li>
+                {% endif %}
+                {% if section.settings.enable_youtube %}
+                  <li>
+                    <a href="{{ section.settings.youtube_url }}" target="_blank"
+                      ><i class="fa-brands fa-youtube"></i
+                    ></a>
+                  </li>
+                {% endif %}
+                {% if section.settings.enable_twitter %}
+                  <li>
+                    <a href="{{ section.settings.twitter_url }}" target="_blank"
+                      ><i class="fa-brands fa-x-twitter"></i
+                    ></a>
+                  </li>
+                {% endif %}
+              </ul>
+            </div>
+          </div>
+          <!-- Footer Menus -->
+          {% for block in section.blocks %}
+            <div class="col-lg-2 col-md-4 col-sm-3 col-12">
+              <div class="footer-content">
+                <div>
+                  <div class="footer-title d-md-block">
+                    <h4>{{ block.settings.footer_menu.title }}</h4>
+                    <ul class="footer-details accordion-hidden">
+                      {% for link in block.settings.footer_menu.links %}
+                        <li>
+                          <a href="{{ link.url }}">{{ link.title }}</a>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
+    <!-- Sub-Footer Section with Social Media Icons -->
+    <div class="sub-footer">
+      <div class="custom-container container">
+        <div class="row">
+          <div class="col-12">
+            <div class="footer-end">
+              <h6>
+                {{ section.settings.footer_note }}
+                <span id="current-year"></span>
+              </h6>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+{% else %}
+  <footer class="footer-section ">
+    <section class="section-space subscribe-section">
+      <div class="{% if section.settings.section_width == 'fluid' %}container-fluid{% else %}custom-container container{% endif %}">
+        <div class="subscribe">
+          <div class="row align-items-center m-0">
+            <div class="col-xxl-4 col-xl-5">
+              <div>
+                <h5>Subscribe to Our Newsletter!</h5>
+              </div>
+            </div>
+            <div class="col-xxl-8 col-xl-7">
+              <div class="subscribe-form">
+                <div class="input-group form-group">
+                  <input type="text" class="form-control" placeholder="Enter email address" id="email-input">
+                  <button class="btn btn_solid" type="button" id="subscribe-btn">Subscribe</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="section-space footer-1">
+      <div class="{% if section.settings.section_width == 'fluid' %}container-fluid{% else %}custom-container container{% endif %}">
+        <div class="row">
+          <div class="col-lg-4 col-md-8 col-12">
+            <div class="footer-content-logo">
+              <div class="footer-logo">
+                <a href="{{ shop.url }}">
+                  {% if settings.theme == 'theme-1' %}
+                    <img src="{{ 'logo-1.png' | asset_url }}" class="img-fluid logo-img for-light" alt="logo">
+                    <img src="{{ 'logo-dark.png' | asset_url }}" class="img-fluid logo-img for-dark" alt="logo">
+                  {% elsif settings.theme == 'theme-2' %}
+                    <img src="{{ 'logo-2.png' | asset_url }}" class="img-fluid" alt="logo">
+                    <img src="{{ 'logo-dark-2.png' | asset_url }}" class="img-fluid logo-img for-dark" alt="logo">
+                  {% elsif settings.theme == 'theme-3' %}
+                    <img src="{{ 'logo-3.png' | asset_url }}" class="img-fluid" alt="logo">
+                    <img src="{{ 'logo-dark-3.png' | asset_url }}" class="img-fluid logo-img for-dark" alt="logo">
+                  {% elsif settings.theme == 'custom' %}
+                    <img src="{{ settings.logo | image_url }}" class="img-fluid" alt="logo">
+                  {% endif %}
+                </a>
+              </div>
+              <h6>{{ section.settings.footer_location }}</h6>
+            </div>
+          </div>
+
+          <!-- Footer Menus -->
+          {% for block in section.blocks %}
+            <div class="col-lg-2 col-md-4 col-sm-3 col-12">
+              <div class="footer-content">
+                <div>
+                  <div class="footer-title d-md-block">
+                    <h4>{{ block.settings.footer_menu.title }}</h4>
+                    <ul class="footer-details accordion-hidden">
+                      {% for link in block.settings.footer_menu.links %}
+                        <li>
+                          <a href="{{ link.url }}">{{ link.title }}</a>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+    <div class="sub-footer">
+      <div class="{% if section.settings.section_width == 'fluid' %}container-fluid{% else %}custom-container container{% endif %}">
+        <div class="row">
+          <div class="col-xl-6 col-md-6 col-sm-12">
+            <div class="footer-end">
+              <h6>
+                {{ section.settings.footer_note }}
+                <span id="current-year"></span>
+              </h6>
+            </div>
+          </div>
+          <div class="col-xl-6 col-md-6 col-sm-12">
+            <div class="footer-social-icons">
+              <ul>
+                {% if section.settings.enable_facebook %}
+                  <li>
+                    <a href="{{ section.settings.facebook_url }}" target="_blank"
+                      ><i class="fa-brands fa-facebook-f"></i
+                    ></a>
+                  </li>
+                {% endif %}
+                {% if section.settings.enable_instagram %}
+                  <li>
+                    <a href="{{ section.settings.instagram_url }}" target="_blank"
+                      ><i class="fa-brands fa-instagram"></i
+                    ></a>
+                  </li>
+                {% endif %}
+                {% if section.settings.enable_pinterest %}
+                  <li>
+                    <a href="{{ section.settings.pinterest_url }}" target="_blank"
+                      ><i class="fa-brands fa-pinterest-p"></i
+                    ></a>
+                  </li>
+                {% endif %}
+                {% if section.settings.enable_youtube %}
+                  <li>
+                    <a href="{{ section.settings.youtube_url }}" target="_blank"
+                      ><i class="fa-brands fa-youtube"></i
+                    ></a>
+                  </li>
+                {% endif %}
+                {% if section.settings.enable_twitter %}
+                  <li>
+                    <a href="{{ section.settings.twitter_url }}" target="_blank"
+                      ><i class="fa-brands fa-x-twitter"></i
+                    ></a>
+                  </li>
+                {% endif %}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Footer",
+  "settings": [
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Footer Width",
+      "options": [
+        {
+          "value": "fluid",
+          "label": "Full Width"
+        },
+        {
+          "value": "normal",
+          "label": "Standard Width"
+        }
+      ],
+      "default": "normal"
+    },
+    {
+      "type": "select",
+      "id": "footer_style",
+      "label": "Footer Layout Style",
+      "options": [
+        {
+          "label": "Style-1",
+          "value": "style-1"
+        },
+        {
+          "label": "Style-2",
+          "value": "style-2"
+        },
+        {
+          "label": "Style-3",
+          "value": "style-3"
+        }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Footer Description"
+    },
+    {
+      "type": "richtext",
+      "id": "footer_location",
+      "label": "Description"
+    },
+    {
+      "type": "header",
+      "content": "Footer Information"
+    },
+    {
+      "type": "text",
+      "id": "footer_note",
+      "label": "Footer Note",
+      "default": "2024 Copyright By Themeforest Powered By Pixelstrap"
+    },
+    {
+      "type": "header",
+      "content": "Social Media Links",
+      "info": "Add social media links that are available for your store."
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_facebook",
+      "label": "Enable Facebook"
+    },
+    {
+      "type": "url",
+      "id": "facebook_url",
+      "label": "Facebook URL"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_instagram",
+      "label": "Enable Instagram"
+    },
+    {
+      "type": "url",
+      "id": "instagram_url",
+      "label": "Instagram URL"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_pinterest",
+      "label": "Enable Pinterest"
+    },
+    {
+      "type": "url",
+      "id": "pinterest_url",
+      "label": "Pinterest URL"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_youtube",
+      "label": "Enable Youtube"
+    },
+    {
+      "type": "url",
+      "id": "youtube_url",
+      "label": "Youtube URL"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_twitter",
+      "label": "Enable Twitter"
+    },
+    {
+      "type": "url",
+      "id": "twitter_url",
+      "label": "Twitter URL"
+    },
+  ],
+  "presets": [
+    {
+      "name": "Footer"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "footer_menu",
+      "name": "Menu Block",
+      "settings": [
+            {
+                "type": "header",
+                "content": "Footer Menus"
+              },
+              {
+                "type": "link_list",
+                "id": "footer_menu",
+                "label":"Footer block menu"
+              },
+      ]
+    }
+  ]
+}
+{% endschema %}

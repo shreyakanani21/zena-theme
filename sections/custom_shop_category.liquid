@@ -1,0 +1,232 @@
+<section class="{% if section.settings.section_padding == 'top' %}section-t-space{% elsif section.settings.section_padding == 'bottom' %}section-b-space{% elsif section.settings.section_padding == 'both' %}section-space{% endif %} category-section" data-aos="fade-up" data-aos-duration="500" >
+  <div class="{% if section.settings.section_width == 'fluid' %}container-fluid{% else %}custom-container container{% endif %}">
+  <div class="title">
+      <h2 style="color: {{ section.settings.section_title_color }};text-align:{{ section.settings.title_align }};">
+      {{ section.settings.section_title }}
+    </h2>
+    </div>
+    <div class="category-container">
+      <div class="category-box">
+        <div class="category-item">
+          {% if section.settings.img_1 %}
+           <img
+              class="img-fluid blur-up lazyload"
+             {% if settings.enable_lazyload %}
+              data-src="{{ section.settings.img_1 | image_url }}"
+             {% else %}
+               src="{{ section.settings.img_1 | image_url }}"
+             {% endif %}
+              alt=""
+              loading="lazy"
+          >
+          {% else %}
+            {{ 'product-4' | placeholder_svg_tag }}
+          {% endif %}
+          <a class="btn" href="{{ section.settings.url_1 }}">
+            {{ section.settings.button_1 }}
+          </a>
+        </div>
+        <div class="category-item">
+          {% if section.settings.img_2 %}
+            <img
+            class="img-fluid blur-up lazyload"
+            {% if settings.enable_lazyload %}
+              data-src="{{ section.settings.img_2 | image_url }}"
+             {% else %}
+               src="{{ section.settings.img_2 | image_url }}"
+             {% endif %}
+            alt=""
+          >
+          {% else %}
+            {{ 'product-4' | placeholder_svg_tag }}
+          {% endif %}
+          <a class="btn" href="{{ section.settings.url_2 }}">
+            {{ section.settings.button_2 }}
+          </a>
+        </div>
+      </div>
+      <div class="category-box">
+        <div class="category-item">
+          {% if section.settings.img_3 %}
+            <img
+            class="img-fluid blur-up lazyload"
+            {% if settings.enable_lazyload %}
+              data-src="{{ section.settings.img_3 | image_url }}"
+             {% else %}
+               src="{{ section.settings.img_3 | image_url }}"
+             {% endif %}"
+            alt=""
+          >
+          {% else %}
+            {{ 'product-4' | placeholder_svg_tag }}
+          {% endif %}
+          <a class="btn" href="{{ section.settings.url_3 }}">
+            {{ section.settings.button_3 }}
+          </a>
+        </div>
+        <div class="category-item">
+          {% if section.settings.img_4 %}
+            <img
+            class="img-fluid blur-up lazyload"
+            {% if settings.enable_lazyload %}
+              data-src="{{ section.settings.img_4 | image_url }}"
+             {% else %}
+               src="{{ section.settings.img_4 | image_url }}"
+             {% endif %}
+            alt=""
+          >
+          {% else %}
+            {{ 'product-4' | placeholder_svg_tag }}
+          {% endif %}
+          <a class="btn" href="{{ section.settings.url_4 }}">
+            {{ section.settings.button_4 }}
+          </a>
+        </div>
+      </div>      
+    </div>
+  </div>
+</section>
+
+{% schema %}
+  {
+    "name": "Shop By Category",
+    "settings": [
+      {
+        "type": "select",
+        "id": "section_width",
+        "label": "Section Width",
+        "options": [
+          {
+            "value": "fluid",
+            "label": "Full Width"
+          },
+          {
+            "value": "normal",
+            "label": "Standard Width"
+          }
+        ],
+        "default": "normal"
+      },
+      {
+        "type": "select",
+        "id": "section_padding",
+        "label": "Section Padding",
+        "options": [
+          {
+            "value": "top",
+            "label": "Top"
+          },
+          {
+            "value": "bottom",
+            "label": "Bottom"
+          },
+          {
+            "value": "both",
+            "label": "Top & Bottom"
+          }
+        ],
+        "default": "top"
+      },
+      {
+        "type": "text",
+        "id": "section_title",
+        "label": "Section Title",
+        "default": "Title"
+      },
+      {
+        "type": "color",
+        "id": "section_title_color",
+        "label": "Title Color"
+      },
+      {
+      "type": "select",
+      "id": "title_align",
+      "label": "Title Alignment",
+      "options": [
+        {
+          "label": "Left",
+          "value": "left"
+        },
+        {
+          "label": "Center",
+          "value": "center"
+        },
+        {
+          "label": "Right",
+          "value": "right"
+        }
+      ],
+      "default": "center"
+      },
+      {
+        "type": "image_picker",
+        "id": "img_1",
+        "label": "Category Banner 1",
+      },
+      {
+        "type": "text",
+        "id": "button_1",
+        "label": "Button Text",
+        "default": "Button"
+      },
+      {
+        "type": "url",
+        "id": "url_1",
+        "label": "Link"
+      },
+      {
+        "type": "image_picker",
+        "id": "img_2",
+        "label": "Category Banner 2",
+      },
+      {
+        "type": "text",
+        "id": "button_2",
+        "label": "Button Text",
+        "default": "Button"
+      },
+      {
+        "type": "url",
+        "id": "url_2",
+        "label": "Link"
+      },
+      {
+        "type": "image_picker",
+        "id": "img_3",
+        "label": "Category Banner 3",
+      },
+      {
+        "type": "text",
+        "id": "button_3",
+        "label": "Button Text",
+        "default": "Button"
+      },
+      {
+        "type": "url",
+        "id": "url_3",
+        "label": "Link"
+      },
+      {
+        "type": "image_picker",
+        "id": "img_4",
+        "label": "Category Banner 4",
+      },
+      {
+        "type": "text",
+        "id": "button_4",
+        "label": "Button Text",
+        "default": "Button"
+      },
+      {
+        "type": "url",
+        "id": "url_4",
+        "label": "Link"
+      },
+    ],
+    "presets": [
+      {
+        "name": "Shop By Category"
+      }
+    ]
+  }
+{% endschema %}

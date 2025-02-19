@@ -1,0 +1,33 @@
+<div class="product-slider left">
+  <!-- Main Slider -->
+  <div
+    class="main-slider"
+  >
+    {% for image in product.images %}
+      <div>
+        <img src="{{ image.src | image_url }}" alt="Product Image" class="img-fluid">
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Thumbnail Slider -->
+  <div
+    class="thumbnail-slider"
+    data-slick='
+      {
+        "slidesToShow": 4,
+        "slidesToScroll": 1,
+        "asNavFor": ".main-slider",
+        "dots": false,
+        "centerMode": true,
+        "focusOnSelect": true
+      }
+    '
+  >
+    {% for image in product.images %}
+      <div>
+        <img src="{{ image.src | image_url }}" alt="Product Thumbnail" class="img-fluid p-1">
+      </div>
+    {% endfor %}
+  </div>
+</div>

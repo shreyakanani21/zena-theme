@@ -1,0 +1,113 @@
+{% comment %}
+  Renders a swatch input component.
+  Accepts:
+  - id: {String} unique input id
+  - type: {String} input type. Accepts 'radio' or 'checkbox', defaults to 'radio' (optional)
+  - name: {String} input name,
+  - value: {ProductOptionValueDrop} input value
+  - swatch: {SwatchDrop} the swatch drop
+  - product_form_id: {String} id of the form associted with the input
+  - checked: {Boolean} default checked status
+  - disabled: {Boolean} default disabled status (optional)
+  - visually_disabled: {Boolean} style the swatch as disabled, but leave the input enabled (optional)
+  - shape: {String} swatch shape. Accepts 'square', defaults to circle (optional)
+  - help_text: {String} additional content to render inside the label (optional)
+  - additional_props: {String} (optional) additional properties to attach to the input
+  - product: product
+
+  Usage:
+   {% render 'swatch-input',
+      id: input_id,
+      name: input_name,
+      value: input_value,
+      swatch: swatch,
+      product_form_id: product_form_id,
+      checked: checked
+    %}
+{% endcomment %}
+
+<input
+  type="{{ type | default: 'radio' }}"
+  id="{{ id }}"
+  name="{{ name }}"
+  value="{{ value }}"
+  form="{{ product_form_id }}"
+  class="swatch-input__input{% if visually_disabled %} visually-disabled{% endif %}"
+  {% if checked %}
+    checked
+  {% endif %}
+  {% if disabled %}
+    disabled
+  {% endif %}
+  {% if additional_props %}
+    {{ additional_props }}
+  {% endif %}
+  data-image="{% assign variant_image = '' %}{% for variant in product.variants %}{% for option in variant.options %}{% if option == value %}{% if variant.image %}{% assign variant_image = variant.image | image_url %}{% endif %}{% endif %}{% endfor %}{% endfor %}{{ variant_image }}"
+>
+<label
+  for="{{ id }}"
+  title="{{ value }}"
+  class="
+    swiper-slide swatch-input__label{% if shape == 'square' %} swatch-input__label--square {% elsif shape == 'circle' %} swatch-input__label--circle {% elsif shape == 'none' %} swatch-input__label--none {% elsif shape == 'image' %} swatch-input__label--image {% endif %} mb-0 {% if value_color == 'White' %}white-label{% endif %}
+  "
+>
+  {% render 'swatch', swatch: swatch, shape: shape %}
+  {{ help_text }}
+</label>
+
+<script>
+// document.addEventListener("DOMContentLoaded", function () {
+//   const swatchInputs = document.querySelectorAll(".swatch-input__input");
+//   const slickSlider = $(".slick-slider");
+
+//   slickSlider.slick({
+//     slidesToShow: 1,
+//     slidesToScroll: 1,
+//     arrows: true,
+//     infinite: true,
+//   });
+
+//   slickSlider.slick("slickGoTo", 0);
+
+//   swatchInputs.forEach((input) => {
+//     const label = document.querySelector(`label[for="${input.id}"]`);
+//     const imageUrl = input.getAttribute("data-image");
+
+//     if (label && imageUrl) {
+//       Object.assign(label.style, {
+//         backgroundImage: `url(${imageUrl})`,
+//         height: "100px",
+//         width: "80px",
+//         backgroundSize: "cover",
+//         backgroundPosition: "center",
+//         marginRight: "17px",
+//         cursor: "pointer",
+//       });
+
+//       label.addEventListener("click", function (event) {
+//         event.preventDefault();
+
+//         document.querySelectorAll(".swatch-input__label").forEach((lbl) => {
+//           lbl.style.border = "none";
+//         });
+
+//         label.style.border = "1px solid rgb(185, 109, 109)";
+
+//         let foundSlide = false;
+//         $(".slick-slide").each(function (index) {
+//           const slideImage = $(this).find("img").attr("src");
+
+//           if (slideImage && slideImage.includes(imageUrl)) {
+//             slickSlider.slick("slickGoTo", index); 
+//             foundSlide = true;
+//           }
+//         });
+
+//         if (!foundSlide) {
+//           console.warn(`No slide found for swatch image: ${imageUrl}`);
+//         }
+//       });
+//     }
+//   });
+// });
+</script>

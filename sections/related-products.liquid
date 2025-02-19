@@ -1,0 +1,349 @@
+<section
+  class="
+    {% if section.settings.section_padding == 'top' %}section-t-space{% elsif section.settings.section_padding == 'bottom' %}section-b-space{% elsif section.settings.section_padding == 'both' %}section-space{% endif %}
+    {% if section.settings.bg %}light-bg{% endif %}
+  "
+>
+  <div class="{% if section.settings.section_width == 'fluid' %}container-fluid{% else %}custom-container container{% endif %}">
+    <div class="title">
+      <h2 class="related-products__heading inline-richtext {{ section.settings.heading_size }}">
+        {{ section.settings.heading }}
+      </h2>
+    </div>
+    <div
+      class="{% if settings.card_style == 'style-1' %}row{% else %}row row-cols-xxl-5 row-cols-xl-4 row-cols-md-3 row-cols-xs-2 row-cols-1{% endif %} g-4 gy-5"
+      data-aos="fade-left"
+      data-aos-duration="1200"
+    >
+      {% if section.settings.featured_collection %}
+        {% assign featured_collection = collections[section.settings.featured_collection] %}
+        {% assign sort = section.settings.collection_sort %}
+
+        {% case sort %}
+          {% when 'title-ascending' %}
+            {% assign sorted_products = featured_collection.products | sort: 'title' %}
+          {% when 'title-descending' %}
+            {% assign sorted_products = featured_collection.products | sort: 'title' | reverse %}
+          {% when 'price-ascending' %}
+            {% assign sorted_products = featured_collection.products | sort: 'price' %}
+          {% when 'price-descending' %}
+            {% assign sorted_products = featured_collection.products | sort: 'price' | reverse %}
+          {% when 'created-ascending' %}
+            {% assign sorted_products = featured_collection.products | sort: 'created_at' %}
+          {% when 'created-descending' %}
+            {% assign sorted_products = featured_collection.products | sort: 'created_at' | reverse %}
+          {% else %}
+            {% assign sorted_products = featured_collection.products %}
+        {% endcase %}
+
+        {% if sorted_products.size > 0 %}
+          {% for product in sorted_products limit: section.settings.product_limit %}
+            <div class="col-lg-3 col-md-3 col-12 product-col {% if section.settings.image_shape != 'default' %}image-shape-{{ section.settings.image_shape }}{% endif %}">
+              <div class="product-card  releted-product">
+                <div class="img-wrapper">
+                  {% assign price = product.price | divided_by: 100 %}
+                  {% assign compare_price = product.compare_at_price | divided_by: 100 %}
+                  {% if compare_price > price %}
+                    {% assign discount = compare_price | minus: price %}
+                    {% assign discount_amount = discount | times: 100 %}
+                    {% assign discount_percentage = discount_amount | divided_by: compare_price %}
+                  {% endif %}
+                  {% if discount_percentage >= 10 %}
+                    <span class="discount">{{ discount_percentage | round }}% Off</span>
+                  {% endif %}
+                  {% if product.images.size > 0 %}
+                    <a class="pro-first" href="{{ product.url }}">
+                      <img
+                        alt="{{ product.title }}"
+                        class="img-fluid blur-up lazyload"
+                        {% if settings.enable_lazyload %}
+                          data-src="{{ product.featured_image | image_url }}"
+                        {% else %}
+                          src="{{ product.featured_image | image_url }}"
+                        {% endif %}
+                      >
+                    </a>
+                  {% endif %}
+                  {% if product.images.size > 1 %}
+                    <a class="pro-sec" href="{{ product.url }}">
+                      <img
+                        alt="{{ product.title }}"
+                        class="img-fluid blur-up lazyload"
+                        {% if settings.enable_lazyload %}
+                          data-src="{{ product.images[1] | img_url: 'master' }}"
+                        {% else %}
+                          src="{{ product.images[1] | img_url: 'master' }}"
+                        {% endif %}
+                      >
+                    </a>
+                  {% endif %}
+
+                  <a
+                    class="icon wishlist wishlist-btn {% if index == 3 %}filled{% endif %}"
+                    data-product-handle="{{ product.handle }}"
+                  >
+                    {% render 'icon-heart' %}
+                  </a>
+                  <div class="icon-div">
+                    <a
+                      class="icon"
+                      class="btn btn_solid"
+                      data-bs-toggle="modal"
+                      data-bs-target="#variant-select"
+                      data-product-handle="{{ product.handle }}"
+                    >
+                      {% render 'icon-cart-bag' %}
+                    </a>
+                    <a
+                      class="icon"
+                      data-bs-toggle="modal"
+                      data-bs-target="#compare"
+                      data-product-handle="{{ product.handle }}"
+                    >
+                      <i class="iconsax" icon-name="refresh"></i>
+                    </a>
+                  </div>
+                  <div class="button-div">
+                    <ul class="color-variant">
+                      {% assign color_patterns = shop.metaobjects['shopify--color-pattern'].values %}
+
+                      {% for option in product.options_with_values %}
+                        {% if option.name == 'Color' %}
+                          {% for value in option.values %}
+                            {% assign matching_color = color_patterns | where: 'label', value | first %}
+
+                            {% if matching_color %}
+                              <li
+                                style="background-color: {{ matching_color.color.value }};"
+                                class="variant-option"
+                                onclick="changeSlide({{ forloop.index0 }}, {{ product.id }})"
+                              ></li>
+                            {% endif %}
+                          {% endfor %}
+                        {% endif %}
+                      {% endfor %}
+                    </ul>
+                    <button
+                      class="view-btn"
+                      data-bs-toggle="modal"
+                      data-bs-target="#quick-view"
+                      tabindex="0"
+                      data-product-handle="{{ product.handle }}"
+                    >
+                      <i class="iconsax" icon-name="eye"></i> Quick View
+                    </button>
+                  </div>
+                </div>
+
+                <a href="{{ product.url }}">
+                  <h5>{{ product.title }}</h5>
+                </a>
+
+                <p>
+                  {{ product.price | money_without_trailing_zeros }}
+                  <del>{{ product.compare_at_price | money_without_trailing_zeros }}</del>
+                </p>
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <p>No products found in this collection.</p>
+        {% endif %}
+      {% else %}
+        <p>Please select a collection to feature products.</p>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "t:sections.related-products.name",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+         {
+      "type": "select",
+      "id": "section_width",
+      "label": "Section width",
+      "options": [
+        {
+          "value": "fluid",
+          "label": "Full Width"
+        },
+        {
+          "value": "normal",
+          "label": "Standard Width"
+        }
+      ],
+      "default": "normal"
+    },
+    {
+      "type": "select",
+      "id": "section_padding",
+      "label": "Section padding",
+      "options": [
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        },
+        {
+          "value": "both",
+          "label": "Top & Bottom"
+        }
+      ],
+      "default": "top"
+    },
+        {
+      "type": "collection",
+      "id": "featured_collection",
+      "label": "Featured collection"
+    },
+    {
+      "type": "paragraph",
+      "content": "t:sections.related-products.settings.paragraph__1.content"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "default": "t:sections.related-products.settings.paragraph__1.default",
+      "label": "t:sections.related-products.settings.heading.label"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        {
+          "value": "h2",
+          "label": "t:sections.all.heading_size.options__1.label"
+        },
+        {
+          "value": "h1",
+          "label": "t:sections.all.heading_size.options__2.label"
+        },
+        {
+          "value": "h0",
+          "label": "t:sections.all.heading_size.options__3.label"
+        },
+        {
+          "value": "hxl",
+          "label": "t:sections.all.heading_size.options__4.label"
+        },
+        {
+          "value": "hxxl",
+          "label": "t:sections.all.heading_size.options__5.label"
+        }
+      ],
+      "default": "h1",
+      "label": "t:sections.all.heading_size.label"
+    },
+   {
+      "type": "range",
+      "id": "product_limit",
+      "label": "Number of products",
+      "max": 10,
+      "min": 4,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "t:sections.related-products.settings.header__2.content"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "options": [
+        {
+          "value": "adapt",
+          "label": "t:sections.related-products.settings.image_ratio.options__1.label"
+        },
+        {
+          "value": "portrait",
+          "label": "t:sections.related-products.settings.image_ratio.options__2.label"
+        },
+        {
+          "value": "square",
+          "label": "t:sections.related-products.settings.image_ratio.options__3.label"
+        }
+      ],
+      "default": "adapt",
+      "label": "t:sections.related-products.settings.image_ratio.label"
+    },
+    {
+      "type": "select",
+      "id": "image_shape",
+      "options": [
+        {
+          "value": "default",
+          "label": "t:sections.all.image_shape.options__1.label"
+        },
+        {
+          "value": "arch",
+          "label": "t:sections.all.image_shape.options__2.label"
+        },
+        {
+          "value": "blob",
+          "label": "t:sections.all.image_shape.options__3.label"
+        },
+        {
+          "value": "chevronleft",
+          "label": "t:sections.all.image_shape.options__4.label"
+        },
+        {
+          "value": "chevronright",
+          "label": "t:sections.all.image_shape.options__5.label"
+        },
+        {
+          "value": "diamond",
+          "label": "t:sections.all.image_shape.options__6.label"
+        },
+        {
+          "value": "parallelogram",
+          "label": "t:sections.all.image_shape.options__7.label"
+        },
+        {
+          "value": "round",
+          "label": "t:sections.all.image_shape.options__8.label"
+        }
+      ],
+      "default": "default",
+      "label": "t:sections.all.image_shape.label",
+      "info": "t:sections.all.image_shape.info"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_secondary_image",
+      "default": false,
+      "label": "t:sections.related-products.settings.show_secondary_image.label"
+    },
+
+    {
+      "type": "header",
+      "content": "t:sections.related-products.settings.header_mobile.content"
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "default": "2",
+      "label": "t:sections.related-products.settings.columns_mobile.label",
+      "options": [
+        {
+          "value": "1",
+          "label": "t:sections.related-products.settings.columns_mobile.options__1.label"
+        },
+        {
+          "value": "2",
+          "label": "t:sections.related-products.settings.columns_mobile.options__2.label"
+        }
+      ]
+    },
+
+
+  ]
+}
+{% endschema %}

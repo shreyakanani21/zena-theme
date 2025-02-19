@@ -1,0 +1,149 @@
+{% if settings.enable_cookie_bar %}
+  <div
+    class="wrapper show {% if settings.cookie_bar_position == 'top-left' %}top left{% elsif settings.cookie_bar_position == 'top-right' %}top{% elsif settings.cookie_bar_position == 'bottom-left' %}left{% endif %}"
+    style="background: {{ settings.cookie_bar_background_color }};"
+    id="cookieBar"
+  >
+    <div class="title-box">
+      <img class="img-fluid" src="{{ settings.cookie_bar_image | image_url}}" alt="Cookies">
+      <h3 class="cookie-title" style="color: {{ settings.cookie_bar_title_color }};">
+        {{ settings.cookie_bar_title }}
+      </h3>
+    </div>
+    <div id="infoSection">
+      <div class="info">
+        <p class="cookie-text" style="color: {{ settings.cookie_bar_text_color }};">
+          {{ settings.cookie_msg }}
+        </p>
+        <a
+          href="#"
+          id="togglePreferences"
+          style="color: {{ settings.cookie_bar_text_color }}; text-decoration: underline;"
+          >Customize cookies settings</a
+        >
+      </div>
+
+      <div class="buttons">
+        <button class="button btn btn_outline sm" id="acceptBtn">{{ settings.cookie_btn_text }}</button>
+        <button class="button btn btn_black sm" id="declineBtn">{{ settings.decline_button_text }}</button>
+      </div>
+    </div>
+    <div class="preferences hidden" id="preferencesSection">
+      <label>
+        <input type="checkbox" id="necessaryCookies" class="custom-checkbox" disabled checked> Necessary Cookies (Always
+        Active)
+      </label>
+      <label> <input type="checkbox" id="analyticsCookies" class="custom-checkbox"> Analytics Cookies </label>
+      <label> <input type="checkbox" id="marketingCookies" class="custom-checkbox"> Marketing Cookies </label>
+      <a href="#" id="toggleInfo" style="color: {{ settings.cookie_bar_text_color }}; text-decoration: underline;"
+        >Back to Info</a
+      >
+      <button class="button btn btn_outline sm" id="savePreferencesBtn">Save Preferences</button>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+      const cookieBar = document.getElementById('cookieBar');
+      const infoSection = document.getElementById('infoSection');
+      const preferencesSection = document.getElementById('preferencesSection');
+      const togglePreferences = document.getElementById('togglePreferences');
+      const toggleInfo = document.getElementById('toggleInfo');
+      const acceptBtn = document.getElementById('acceptBtn');
+      const declineBtn = document.getElementById('declineBtn');
+      const savePreferencesBtn = document.getElementById('savePreferencesBtn');
+
+      function setCookie(name, value, days) {
+        const date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        const expires = "expires=" + date.toUTCString();
+        document.cookie = name + "=" + value + ";" + expires + ";path=/";
+      }
+
+      function getCookie(name) {
+        const nameEQ = name + "=";
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          let c = cookies[i];
+          while (c.charAt(0) == ' ') c = c.substring(1);
+          if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+      }
+
+      // Toggle between Info and Preferences
+      togglePreferences.addEventListener('click', function (e) {
+        e.preventDefault();
+        infoSection.classList.add('hidden');
+        preferencesSection.classList.remove('hidden');
+      });
+
+      toggleInfo.addEventListener('click', function (e) {
+        e.preventDefault();
+        preferencesSection.classList.add('hidden');
+        infoSection.classList.remove('hidden');
+      });
+
+      // Hide cookie bar if cookies are accepted
+      if (getCookie('userAcceptedCookies') === 'true') {
+        cookieBar.style.display = 'none';
+      }
+
+      // Accept all cookies
+      acceptBtn.addEventListener('click', function () {
+        setCookie('userAcceptedCookies', 'true', 365);
+        setCookie('analyticsCookies', 'true', 365);
+        setCookie('marketingCookies', 'true', 365);
+        cookieBar.style.display = 'none';
+      });
+
+      // Decline all cookies
+      declineBtn.addEventListener('click', function () {
+        setCookie('userAcceptedCookies', 'false', 365);
+        cookieBar.style.display = 'none';
+      });
+
+      // Save preferences
+      savePreferencesBtn.addEventListener('click', function () {
+        const analyticsCookies = document.getElementById('analyticsCookies').checked;
+        const marketingCookies = document.getElementById('marketingCookies').checked;
+
+        setCookie('userAcceptedCookies', 'true', 365);
+        setCookie('analyticsCookies', analyticsCookies ? 'true' : 'false', 365);
+        setCookie('marketingCookies', marketingCookies ? 'true' : 'false', 365);
+        cookieBar.style.display = 'none';
+      });
+    });
+  </script>
+{% endif %}
+
+<style>
+  .wrapper .preferences{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .wrapper .preferences label{
+    display: flex;
+    font-size: 14px;
+    gap: 6px;
+    align-items: center;
+  }
+  .wrapper .preferences label .custom-checkbox{
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+  }
+  .wrapper .preferences label .custom-checkbox:disabled{
+    opacity: 0.5;
+  }
+  .wrapper .preferences label .custom-checkbox:checked:before{
+    transform: translate(-50%,-50%) scale(0.85);
+  }
+  .wrapper button{
+    font-size: 17.5px;
+    border-radius: 4px;
+        width: 100%;
+
+  }
+</style>

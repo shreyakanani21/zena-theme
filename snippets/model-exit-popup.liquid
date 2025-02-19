@@ -1,0 +1,72 @@
+{% if settings.exit_enable %}
+  <div id="exit_popup">
+    <div class="exit-popup-modal">
+      <div class="exit-popup-body">
+        <div class="close">
+          <a href="#"><span aria-hidden="true">×</span></a>
+        </div>
+        <div class="media">
+          <div class="media-body text-left">
+            <h2>{{ settings.exit_heading }}</h2>
+            <h4>{{ settings.exit_heading_sub }}</h4>
+            <h5>{{ settings.exit_popup_text }}</h5>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    function enableExitIntent() {
+        let hasExited = false;
+
+        document.addEventListener('mouseout', function (event) {
+            if (!hasExited && !event.toElement && !event.relatedTarget && event.clientY <= 0) {
+                hasExited = true;
+                handleExitIntent();
+            }
+        });
+    }
+
+    function handleExitIntent() {
+        if (typeof Storage !== 'undefined') {
+            if (sessionStorage.getItem('exit_popup') === 'true') {
+                return;
+            }
+
+            sessionStorage.setItem('exit_popup', 'true');
+            setTimeout(function () {
+                if (getCookie('exit-popup') !== 'hide_exit_popup') {
+                    document.getElementById('exit_popup').style.display = 'block';
+                }
+            }, 100);
+        }
+    }
+
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+        return null;
+    }
+
+    function hidePopup() {
+        const popup = document.getElementById('exit_popup');
+        if (popup) {
+            popup.style.display = 'none';
+        }
+    }
+
+    enableExitIntent();
+
+    const closeLinks = document.querySelectorAll('#exit_popup a');
+    closeLinks.forEach(function (link) {
+        link.addEventListener('click', function (event) {
+            event.preventDefault();
+            hidePopup();
+        });
+    });
+});
+  </script>
+{% endif %}

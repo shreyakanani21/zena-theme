@@ -1,0 +1,120 @@
+<div
+  class="reviews-modal modal theme-modal fade question-answer-modal"
+  id="question-box"
+  tabindex="-1"
+  role="dialog"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>Ask a Question</h4>
+        <button
+          class="btn-close"
+          type="button"
+          data-bs-dismiss="modal"
+        ></button>
+      </div>
+      <div class="modal-body ">
+        <div class="row g-3">
+          <form method="post" action="/contact#contact_form" accept-charset="UTF-8" class="ask-question-form">
+            <input type="hidden" name="form_type" value="contact">
+            <input type="hidden" name="utf8" value="✓">
+
+            <!-- Hidden field to capture product details -->
+            <input type="hidden" name="contact[product]" id="product-title">
+            <input type="hidden" name="contact[price]" id="product-price">
+
+            <div class="col-12">
+              <div class="form-group">
+                <label class="form-label" for="name">Your Name:</label>
+                <input type="text" class="form-control" name="contact[name]" id="name" placeholder="Your Name" required>
+              </div>
+            </div>
+
+            <div class="col-12">
+              <div class="form-group">
+                <label class="form-label" for="email">Your Email:</label>
+                <input
+                  type="email"
+                  class="form-control"
+                  name="contact[email]"
+                  id="email"
+                  placeholder="Your Email"
+                  required
+                >
+              </div>
+            </div>
+
+            <div class="col-12">
+              <div class="form-group">
+                <label class="form-label" for="comment">Your Question:</label>
+                <textarea
+                  class="form-control"
+                  name="contact[body]"
+                  id="comment"
+                  cols="30"
+                  rows="4"
+                  placeholder="Write your question here..."
+                  required
+                ></textarea>
+              </div>
+            </div>
+
+            <div class="modal-button-group pt-4">
+              <button
+                class="btn btn-cancel"
+                type="button"
+                data-bs-dismiss="modal"
+              >
+                Cancel
+              </button>
+              <button
+                class="btn btn-submit"
+                type="submit"
+              >
+                Submit
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll('[data-bs-toggle="modal"][data-bs-target="#question-box"]').forEach((button) => {
+    button.addEventListener("click", function (event) {
+      event.preventDefault();
+
+      var productHandle = this.getAttribute("data-product-handle");
+
+      if (productHandle) {
+        $.getJSON(`/products/${productHandle}.js`, function (data) {
+          var product = data;
+          
+          // Update the modal with product details
+          var contentHtml = `
+            <div class="d-flex">
+              <img src="${product.featured_image}" alt="${product.title}" class="img-fluid" style="max-width: 100px;">
+              <div>
+                <h5>${product.title}</h5>
+                <p>Rs. ${product.price / 100} <del>Rs. ${product.compare_at_price / 100}</del></p>
+              </div>
+            </div>
+          `;
+          document.querySelector('.reviews-product').innerHTML = contentHtml;
+
+          // Inject product details into the form's hidden fields
+          document.getElementById('product-title').value = product.title;
+          document.getElementById('product-price').value = product.price / 100;
+
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+          console.error("Error fetching product details:", textStatus, errorThrown);
+          document.querySelector('.reviews-product').innerHTML = '<p>Error Loading Product Details.</p>';
+        });
+      }
+    });
+  });
+});
+</script>

@@ -1,0 +1,286 @@
+{% if settings.newsletter %}
+  {% if settings.newsletter_layout == 'layout-1' %}
+    <div
+      class="modal theme-modal newsletter-modal fade"
+      id="newsletter"
+      tabindex="-1"
+      role="dialog"
+    >
+      <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <button
+            class="btn-close"
+            type="button"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+          <div class="modal-body p-0">
+            <div
+              class="news-latter-box"
+              {% if settings.newsletter_bg %}
+                style="background-image: url({{ settings.newsletter_bg | image_url }});"
+              {% endif %}
+            >
+              <div class="row align-items-center">
+                <div class="col-md-6 d-none d-lg-block p-0">
+                  <div class="newslwtter-img">
+                    {% if settings.newsletter_image %}
+                      <img
+                        class="img-fluid"
+                        src="{{ settings.newsletter_image | image_url }}"
+                        alt=""
+                      >
+                    {% endif %}
+                  </div>
+                </div>
+                <div class="col-lg-6 p-0">
+                  <div class="newslwtter-content">
+                    <h4>{{ settings.newsletter_title }}</h4>
+                    <p>{{ settings.newsletter_subtitle }}</p>
+                    <div class="form-floating">
+                      {% form 'customer', id: 'customerForm' %}
+                        <div class="form-floating">
+                          <input
+                            type="email"
+                            name="contact[email]"
+                            placeholder="Enter Your Email.."
+                            required
+                          >
+                        </div>
+
+                        <div>
+                          <button
+                            class="btn btn-submit"
+                            type="submit"
+                          >
+                            Subscribe
+                          </button>
+                        </div>
+                      {% endform %}
+                    </div>
+                    <p>{{ settings['newsletter-subtitle'] }}</p>
+                    <h5
+                      class="newsletter-btn"
+                    >
+                      No, thanks. I’ll shop later
+                    </h5>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% elsif settings.newsletter_layout == 'layout-2' %}
+    <div
+      class="modal theme-modal newsletter-modal newsletter-2 fade"
+      id="newsletter"
+      tabindex="-1"
+      role="dialog"
+    >
+      <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+          <div class="modal-body p-0">
+            <div
+              class="news-latter-box"
+              {% if settings.newsletter_bg %}
+                style="background-image: url({{ settings.newsletter_bg | image_url }});"
+              {% endif %}
+            >
+              <div class="row align-items-center">
+                <div class="col-lg-6">
+                  <div class="newslwtter-content">
+                    <h2>Stay Classy,</h2>
+                    <span>Stay Enlightened!</span>
+                    <h4>{{ settings.newsletter_title }}</h4>
+                    <p>{{ settings.newsletter_subtitle }}</p>
+                    <div class="form-floating"><input type="text" placeholder="Your Name.."></div>
+
+                    {% form 'customer' %}
+                      <div class="form-floating">
+                        <input
+                          type="email"
+                          name="contact[email]"
+                          placeholder="Enter Your Email.."
+                          required
+                        >
+                      </div>
+
+                      <button
+                        class="btn btn-submit"
+                        type="submit"
+                      >
+                        Submit
+                      </button>
+                    {% endform %}
+                  </div>
+                </div>
+
+                <div class="col-md-6 d-none d-lg-block">
+                  <div class="newslwtter-img">
+                    {% if settings.newsletter_image %}
+                      <img
+                        class="img-fluid"
+                        src="{{ settings.newsletter_image | image_url }}"
+                        alt=""
+                      >
+                    {% else %}
+                      <img
+                        class="img-fluid"
+                        src="{{ 'news-latter2.png' | asset_url}}"
+                        alt=""
+                      >
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% elsif settings.newsletter_layout == 'layout-3' %}
+    <div
+      class="modal theme-modal newsletter-modal newsletter-3 fade"
+      id="newsletter"
+      tabindex="-1"
+      role="dialog"
+    >
+      <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+          <div class="modal-body p-0">
+            <div
+              class="news-latter-box"
+              {% if settings.newsletter_bg %}
+                style="background-image: url({{ settings.newsletter_bg | image_url }});"
+              {% endif %}
+            >
+              <div class="row align-items-center">
+                <div class="col-lg-6">
+                  <div class="newslwtter-content">
+                    <h2>Stay Elegant,<span> Stay Aware!</span></h2>
+                    <h4>{{ settings.newsletter_title }}</h4>
+                    <p>{{ settings.newsletter_subtitle }}</p>
+                    <div class="form-floating">
+                      {% form 'customer' %}
+                        <div class="form-floating">
+                          <input
+                            type="email"
+                            name="contact[email]"
+                            placeholder="Enter Your Email.."
+                            required
+                          >
+                        </div>
+
+                        <button
+                          class="btn btn-submit"
+                          type="submit"
+                        >
+                          Submit
+                        </button>
+                      {% endform %}
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6 d-none d-lg-block">
+                  <div class="newslwtter-img">
+                    {% if settings.newsletter_image %}
+                      <img
+                        class="img-fluid"
+                        src="{{ settings.newsletter_image | image_url }}"
+                        alt=""
+                      >
+                    {% else %}
+                      <img
+                        class="img-fluid"
+                        src="{{ 'news-latter3.png' | asset_url }}"
+                        alt=""
+                      >
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% elsif settings.newsletter_layout == 'layout-4' %}
+    <div
+      class="modal theme-modal newsletter-modal newsletter-4 fade"
+      id="newsletter"
+      tabindex="-1"
+      role="dialog"
+    >
+      <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <button
+            class="btn-close"
+            type="button"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+          <div class="modal-body p-0">
+            <div
+              class="news-latter-box"
+              {% if settings.newsletter_bg %}
+                style="background-image: url({{ settings.newsletter_bg | image_url }});"
+              {% endif %}
+            >
+              <div class="row align-items-center">
+                <div class="col-lg-6">
+                  <div class="newslwtter-content">
+                    <h2>Stay Fashionable</h2>
+                    <span>Stay Informed</span>
+                    <h4>{{ settings.newsletter_title }}</h4>
+                    <p>{{ settings.newsletter_subtitle }}</p>
+                    <div class="form-floating"><input type="text" placeholder="Enter Your Name.."></div>
+                    <div class="form-floating">
+                      {% form 'customer' %}
+                        <div class="form-floating">
+                          <input
+                            type="email"
+                            name="contact[email]"
+                            placeholder="Enter Your Email.."
+                            required
+                          >
+                        </div>
+
+                        <button
+                          class="btn btn-submit"
+                          type="submit"
+                        >
+                          Submit
+                        </button>
+                      {% endform %}
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6 d-none d-lg-block">
+                  <div class="newslwtter-img">
+                    {% if settings.newsletter_image %}
+                      <img
+                        class="img-fluid"
+                        src="{{ settings.newsletter_image | image_url }}"
+                        alt=""
+                      >
+                    {% else %}
+                      <img
+                        class="img-fluid"
+                        src="{{ 'news-latter4.png' | asset_url }}"
+                        alt=""
+                      >
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+{% endif %}

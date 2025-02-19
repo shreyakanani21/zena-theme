@@ -1,0 +1,203 @@
+<section class="slideshow-section slideshow-3">
+  <div class="{% if section.settings.section_width == 'fluid' %}container-fluid{% else %}custom-container container{% endif %}">
+    <div class="banner-container">
+      <div class="banner-content">
+          <h1> {{ section.settings.banner_title }} </h1>
+        <button class="btn btn_solid" type="button">
+          {{ section.settings.banner_link }}
+        </button>
+         <div class="bg-image d-xl-block d-none">
+          <img
+            class="img-fluid"
+            src="https://cdn.shopify.com/s/files/1/0714/3728/7637/files/Bg_rectangle.png?v=1730703509"
+            alt=""
+          >
+        </div>
+        </div>
+    </div>
+  </div>
+    <div class="swiper banner-slider">
+      <div class="swiper-wrapper">
+        {% for block in section.blocks %}
+        <div class="swiper-slide">
+          <div class="{% if block.settings.section_width == 'fluid' %}container-fluid{% else %}custom-container container{% endif %}">
+             <div class="banner-container">
+              <div class="banner-image">
+                {% if block.settings.banner_img_1 %}
+                  <img
+                  class="img-fluid"
+                  src="{{ block.settings.banner_img_1 | image_url }}"
+                  alt=""
+                >
+                {% else %}
+                  {{ 'lifestyle-1' | placeholder_svg_tag }}
+                {% endif %}
+                {% if block.settings.enable_rotate_img %}
+                <div class="rotating-img {% if block.settings.enable_rotation %}animated {% endif %}d-lg-block d-none">
+                 {% if block.settings.rotate_img %}
+                    <img src="{{ block.settings.rotate_img | img_url: 'master' }}" alt="Rotating Image" class="img-fluid">
+                  {% else %}
+                    {{ 'image' | placeholder_svg_tag }}
+                  {% endif %}
+                  <span>
+                    {% render 'icon-play' %}
+                  </span>
+                </div>
+                {% endif %}
+              </div>
+              <div class="image-1 d-xxl-block d-none">
+                {% if block.settings.banner_img_2 %}
+                <img
+                  class="img-fluid"
+                  src="{{ block.settings.banner_img_2 | image_url }}"
+                  alt=""
+                >
+                {% else %}
+                  {{ 'product-1' | placeholder_svg_tag }}
+                {% endif %}
+              </div>
+            </div>    
+          </div>
+              <div class="image-2 d-lg-block d-none">
+                {% if block.settings.banner_img_3 %}
+                <img
+                  class="img-fluid"
+                  src="{{ block.settings.banner_img_3 | image_url }}"
+                  alt=""
+                >
+                {% else %}
+                  {{ 'product-1' | placeholder_svg_tag }}
+                {% endif %}
+              </div>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="swiper-round-pagination"></div>
+    </div>
+</section>
+
+{% schema %}
+  {
+    "name": "Slideshow 3",
+    "settings": [
+      {
+      "type": "select",
+      "id": "section_width",
+      "label": "Section Width",
+      "options": [
+        {
+          "value": "fluid",
+          "label": "Full Width"
+        },
+        {
+          "value": "normal",
+          "label": "Standard Width"
+        }
+      ],
+      "default": "fluid"
+    },
+    {
+      "type": "text",
+      "id": "banner_title",
+      "label": "Banner Title",
+      "default": "Add Title"
+    },
+    {
+      "type": "color",
+      "id": "banner_title_color",
+      "label": "Title Color",
+    },
+    {
+      "type": "text",
+      "id": "banner_link",
+      "label": "Banner Link Text",
+      "default": "Link Text"
+    },
+    {
+      "type": "url",
+      "id": "banner_url",
+      "label": "Banner Link URL",
+      "info": "Add a URL to redirect when the banner link is clicked."
+    },    
+    {
+      "type": "image_picker",
+      "id": "banner_img_1",
+      "label": "Banner 1",
+    },
+    {
+      "type": "image_picker",
+      "id": "banner_img_2",
+      "label": "Banner 2",
+    },
+    {
+      "type": "image_picker",
+      "id": "banner_img_3",
+      "label": "Banner 3",
+    }
+    ],
+  "blocks":[
+    {
+    "type": "banner_slide",
+    "name": "Banner Slide",
+    "settings":[
+      {
+        "type": "image_picker",
+        "id": "banner_img_1",
+        "label": "Banner Background Image",
+      },
+      {
+        "type": "image_picker",
+        "id": "banner_img_2",
+        "label": "Banner Background Image",
+      },
+      {
+        "type": "image_picker",
+        "id": "banner_img_3",
+        "label": "Banner Background Image",
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_rotate_img",
+        "label": "Enable Rotating Image"
+      },
+      {
+        "type": "select",
+        "id": "slide_circular",
+        "label": "Rotating Content",
+        "options": [
+          {
+            "value": "image",
+            "label": "Image"
+          },
+          {
+            "value": "text",
+            "label": "Text"
+          }
+        ]
+      },
+      {
+        "type": "image_picker",
+        "id": "rotate_img",
+        "label": "Rotating Image"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_rotation",
+        "label": "Enable Rotation"
+      },
+      {
+        "type": "text",
+        "id": "circle_text",
+        "label": "Circular Text",
+        "default": "Summer Collection Best Arrival"
+      },
+    ]
+    }
+      ],
+    "presets": [
+      {
+        "name": "Slideshow 3"
+      }
+    ]
+  }
+{% endschema %}

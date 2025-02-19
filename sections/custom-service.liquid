@@ -1,0 +1,177 @@
+<section class="service-section" style="background-color: {{ section.settings.service_bg }};">
+  <div class="{% if section.settings.section_width == 'fluid' %}custom-container  container{% else %}custom-container container{% endif %}">
+    <div class="row service-list g-4" data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">
+      {% for block in section.blocks %}
+        <div class="col-xl-3 col-lg-4 col-sm-6 col-12 service-block{% if settings.theme == 'theme-2' %} service-block-2{% endif %} block-{{ block.id }}">
+          {% if block.settings.symbol == 'theme' %}
+            <span class="symbol">
+              {% if block.settings.icon == 'icon-shipping-truck' %}
+                {% render 'icon-shipping-truck' %}
+              {% elsif block.settings.icon == 'icon-quality' %}
+                {% render 'icon-quality' %}
+              {% elsif block.settings.icon == 'icon-return-box' %}
+                {% render 'icon-return-box' %}
+              {% elsif block.settings.icon == 'icon-message-gear' %}
+                {% render 'icon-message-gear' %}
+              {% endif %}
+            </span>
+          {% elsif block.settings.symbol == 'custom' %}
+            <span class="symbol">
+              {{ block.settings.symbol_icon }}
+            </span>
+          {% elsif block.settings.symbol == 'image' %}
+            <span class="symbol">
+              <img src="{{ block.settings.symbol_image | img_url: 'master' }}" class="img-fluid">
+            </span>
+          {% endif %}
+          <div>
+            <p class="heading" style="color: {{ block.settings.service_title_color }} ;">
+              {{ block.settings.service_title }}
+            </p>
+            <p class="content" style="color: {{ block.settings.service_subtitle_color }} ;">
+              {{ block.settings.service_subtitle }}
+            </p>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+<style>
+  {% for block in section.blocks %}
+    .service-section .service-list .service-block.block-{{ block.id }} svg {
+      stroke: {{ block.settings.svg_color }};
+    }
+    .service-section .service-list .service-block.block-{{ block.id }} .iconsax{
+    --Iconsax-Color: {{ block.settings.svg_color | default: 'rgba(var(--white), 1)'}};
+    }
+  {% endfor %}
+</style>
+{% schema %}
+{
+    "name": "Services",
+  "settings": [
+      {
+        "type": "header",
+        "content": "Service Section Settings"
+      },
+    {
+          "type": "select",
+          "id": "section_width",
+          "label": "Section Width",
+          "options": [
+            {
+              "value": "fluid",
+              "label": "Full Width"
+            },
+            {
+              "value": "normal",
+              "label": "Standard Width"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "service_bg",
+          "label": "Background Color"
+        },
+  ],
+  "blocks": [
+    {
+      "type": "service",
+      "name": "Service Block",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Service Block Setting"
+        },
+        {
+          "type": "text",
+          "id": "service_title",
+          "label": "Service Title",
+          "default": "Title"
+        },
+        {
+          "type": "color",
+          "id": "service_title_color",
+          "label": "Title Color"
+        },
+        {
+          "type": "text",
+          "id": "service_subtitle",
+          "label": "Service Subtitle",
+          "default": "Subtitle"
+        },
+        {
+          "type": "color",
+          "id": "service_subtitle_color",
+          "label": "Subtitle Color",
+        },
+         {
+        "type": "select",
+        "id": "symbol",
+        "label": "Choose Symbol Type",
+        "options":[
+            {
+                "value": "theme",
+                "label": "Theme Options"
+            },
+            {
+                "value": "custom",
+                "label": "Custom Icon"
+            },
+            {
+                "value": "image",
+                "label": "Symbol Image"
+            }
+        ]
+      },
+         {
+          "type": "select",
+          "id": "icon",
+          "label": "Theme Icon (SVG)",
+          "options": [
+            {
+              "value": "icon-shipping-truck",
+              "label": "Shipping Truck"
+            },
+            {
+              "value": "icon-return-box",
+              "label": "Secure Transaction"
+            },
+            {
+              "value": "icon-message-gear",
+              "label": "24/7 Service"
+            },
+            {
+              "value": "icon-quality",
+              "label": "Thumbs Up with Stars"
+            }
+          ]
+        },
+        {
+          "type": "html",
+          "id": "symbol_icon",
+          "label": "Web Icon",
+          "info": "E.g: <i class='fa-solid fa-list-check'></i> or <i class='iconsax' icon-name='heart'></i>"
+        },
+        {
+          "type": "color",
+          "id": "svg_color",
+          "label": "Icon Color"
+        },
+        {
+          "type": "image_picker",
+          "id": "symbol_image",
+          "label": "Choose Symbol Image"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Services"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,159 @@
+<section class="{% if section.settings.section_padding == 'top' %}section-t-space{% elsif section.settings.section_padding == 'bottom' %}section-b-space{% elsif section.settings.section_padding == 'both' %}section-space{% endif %} collection-banner-section" data-aos="fade-up" data-aos-duration="600" data-aos-delay="100">
+  <div class="{% if section.settings.section_width == 'fluid' %}container-fluid{% else %}custom-container container{% endif %}">
+    <div class="banner-container">
+      {% for block in section.blocks %}
+        <div class="banner-item" style="text-align: {{ block.settings.text_alignment }}">
+          <img 
+            alt="{{ block.settings.image_alt }}" 
+            class="img-fluid blur-up lazyload {% if block.settings.image_position == 'top' %}order-1{% elsif block.settings.image_position == 'bottom' %}order-md-2 order-1{% endif %}"
+            {% if settings.enable_lazyload %}
+              data-src="{{ block.settings.image | image_url }}"
+            {% else %}
+               src="{{ block.settings.image | image_url }}"
+            {% endif %}>
+          <div class="banner-content 
+            {% if block.settings.image_position == 'top' %}order-2 
+            {% elsif block.settings.image_position == 'bottom' %}order-md-1 order-2{% endif %}" 
+            style="background-color: {{ block.settings.background_color }}">
+            <h3 style="color: {{ block.settings.heading_color }}">{{ block.settings.heading }}</h3>
+            <p style="color: {{ block.settings.description_color }}">{{ block.settings.description }}</p>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Collection Banner 2",
+  "settings": [
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Section Width",
+      "options": [
+        {
+          "value": "fluid",
+          "label": "Full Width"
+        },
+        {
+          "value": "normal",
+          "label": "Standard Width"
+        }
+      ],
+      "default": "normal"
+    },
+          {
+        "type": "select",
+        "id": "section_padding",
+        "label": "Section Padding",
+        "options": [
+          {
+            "value": "top",
+            "label": "Top"
+          },
+          {
+            "value": "bottom",
+            "label": "Bottom"
+          },
+          {
+            "value": "both",
+            "label": "Top & Bottom"
+          }
+        ],
+        "default": "top"
+      },
+  ],
+  "presets": [
+    {
+      "name": "Collection Banner 2"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "banner-item",
+      "name": "Section Banner Item",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Banner Image"
+        },
+        {
+          "type": "text",
+          "id": "image_alt",
+          "label": "Image Alt Text",
+          "default": "Banner image"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading Text",
+          "default": "Banner Heading"
+        },
+        {
+          "type": "color",
+          "id": "heading_color",
+          "label": "Heading Color",
+          "default": "#333333"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description Text",
+          "default": "This is a description for the banner."
+        },
+        {
+          "type": "color",
+          "id": "description_color",
+          "label": "Description Color",
+          "default": "#666666"
+        },
+        {
+          "type": "color",
+          "id": "background_color",
+          "label": "Background Color",
+          "default": "#ffffff"
+        },
+        {
+          "type": "select",
+          "id": "text_alignment",
+          "label": "Text Alignment",
+          "options": [
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "center",
+              "label": "Center"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            }
+          ],
+          "default": "left"
+        },
+        {
+          "type": "select",
+          "id": "image_position",
+          "label": "Image Position",
+          "options": [
+            {
+              "value": "top",
+              "label": "Top"
+            },
+            {
+              "value": "bottom",
+              "label": "Bottom"
+            }
+          ],
+          "default": "top"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

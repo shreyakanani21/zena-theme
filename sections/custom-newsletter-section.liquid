@@ -1,0 +1,97 @@
+<section class="{% if section.settings.section_padding == 'top' %}section-t-space{% elsif section.settings.section_padding == 'bottom' %}section-b-space{% elsif section.settings.section_padding == 'both' %}section-space{% endif %} newsletter-section">
+  <div class="{% if section.settings.section_width == 'fluid' %}container-fluid{% else %}custom-container container{% endif %}">
+   <div class="newsletter-wrapper">
+     <div class="newsletter-form" data-aos="fade-right" data-aos-duration="1000">
+        <div class="subscribe">
+          <div>
+            <h5>Subscribe Our Newsletters!</h5>
+            <p>
+              I've tried countless skincare brands, but nothing compares to Zena. My skin feels smoother, more hydrated, and I love how natural the products are. The results speak for themselves—I’m glowing!
+            </p>
+        </div>
+     <div class="subscribe-form">
+            <div class="input-group form-group">
+              <input type="text" class="form-control" placeholder="Enter email address">
+              <button class="btn btn_solid" type="button">Subscribe</button>
+            </div>
+        </div>
+      </div>
+     </div>
+     <div class="newsletter-image" data-aos="fade-left" data-aos-duration="1000">
+        <a href="{{ section.settings.url_1 }}">
+          {% if section.settings.image_1 %}
+              <img 
+                  class="img-fluid blur-up lazyload"
+                  {% if settings.enable_lazyload %}
+                    data-src="{{ section.settings.image_1 | img_url: 'master' }}"
+                  {% else %}
+                     src="{{ section.settings.image_1 | img_url: 'master' }}"
+                  {% endif %}
+                  alt="Banner">
+        {% else %}
+          {{ 'image' | placeholder_svg_tag }}
+        {% endif %}
+        </a>
+     </div>
+   </div>    
+  </div>
+</section>
+
+{% schema %}
+  {
+    "name": "Newsletter",
+    "settings": [
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Section Width",
+      "options": [
+        {
+          "value": "fluid",
+          "label": "Full Width"
+        },
+        {
+          "value": "normal",
+          "label": "Standard Width"
+        }
+      ],
+      "default": "fluid"
+    },
+            {
+        "type": "select",
+        "id": "section_padding",
+        "label": "Section Padding",
+        "options": [
+          {
+            "value": "top",
+            "label": "Top"
+          },
+          {
+            "value": "bottom",
+            "label": "Bottom"
+          },
+          {
+            "value": "both",
+            "label": "Top & Bottom"
+          }
+        ],
+        "default": "top"
+      },
+      {
+        "type": "image_picker",
+        "id": "image_1",
+        "label": "Banner Image"
+      },
+      {
+        "type": "url",
+        "id": "url_1",
+        "label": "Image Url"
+      },
+    ],
+    "presets": [
+      {
+        "name": "Newsletter"
+      }
+    ]
+  }
+{% endschema %}

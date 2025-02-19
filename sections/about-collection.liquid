@@ -1,0 +1,135 @@
+<div class="about-collection {% if section.settings.section_padding == 'top' %}section-t-space{% elsif section.settings.section_padding == 'bottom' %}section-b-space{% elsif section.settings.section_padding == 'both' %}section-space{% endif %}">
+  <div class="custom-container">
+    {% if section.blocks.size > 0 %}
+      <div class="row about-image-content gy-4">
+        {% for block in section.blocks %}
+          <div class="about-collection_item col-xl-6">
+            <div class="about-collection-card">
+              <div class="about-collection-image">
+                <div class="media">
+                  {% if block.settings['collection-img'] != blank %}
+                    <img
+                      class="collection_image"
+                      src="{{ block.settings.collection-img | image_url }}"
+                      alt="{{ block.settings.collection-info-text }}"
+                    >
+                  {% else %}
+                    <img
+                      src="{{ 'image.png' | asset_url }}"
+                      class="img-fluid  "
+                      alt="Placeholder Image"
+                    >
+                  {% endif %}
+                </div>
+              </div>
+              <div class="about-collection-info">
+                <div class="block-info">
+                  <div class="collection-block">
+                    {% if block.settings['block-icon'] != blank %}
+                      <img
+                        src="{{ block.settings.block-icon | image_url }}"
+                        alt="Icon"
+                        class="block_icon"
+                      >
+                    {% else %}
+                      <img
+                        src="{{ 'image.png' | asset_url }}"
+                        class="img-fluid  "
+                        alt="Placeholder Image"
+                      >
+                    {% endif %}
+                  </div>
+                  <h3 style="color:{{ block.settings.collection-text-color }};">
+                    {{ block.settings['collection-info-text'] }}
+                  </h3>
+                  <div class="rte">
+                    <p class="color: {{ block.settings.description-color }};">{{ block.settings.description }}</p>
+                  </div>
+                  <a class="button link animate-arrow" href="">READ MORE<span class="icon-wrap"></span></a>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>No collection items added yet.</p>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "About Collection ",
+  "settings": [
+    {
+      "type": "select",
+      "id": "section_padding",
+      "label": "Section Padding",
+      "options": [
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        },
+        {
+          "value": "both",
+          "label": "Top & Bottom"
+        }
+      ],
+      "default": "top"
+    },
+  ],
+  "blocks": [
+    {
+      "type": "collection_item",
+      "name": "Collection Item",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "collection-img",
+          "label": "Collection image"
+        },
+        {
+          "type": "image_picker",
+          "id": "block-icon",
+          "label": "Block icon"
+        },
+        {
+          "type": "text",
+          "id": "collection-info-text",
+          "label": "Heading"
+        },
+          {
+          "type": "color",
+          "id": "collection-text-color",
+          "label": "Heading color"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description"
+        },
+         {
+          "type": "color",
+          "id": "description-color",
+          "label": "Description color"
+        },
+        {
+          "type": "url",
+          "id": "button-link",
+          "label": "Button link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "About Collection",
+    }
+  ]
+}
+{% endschema %}
